@@ -8,7 +8,7 @@ sources:
   - https://github.com/snowplow-devops/helm-charts
   - https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/crds/crds.yaml
 maintainers:
-  - name: Joshua Beemster
+  - name: jbeemster
     url: https://github.com/jbeemster
     email: jbeemster@users.noreply.github.com
 keywords:

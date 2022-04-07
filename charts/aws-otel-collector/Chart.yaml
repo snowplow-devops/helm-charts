@@ -7,7 +7,7 @@ home: https://github.com/snowplow-devops/helm-charts
 sources:
   - https://github.com/snowplow-devops/helm-charts
 maintainers:
-  - name: Joshua Beemster
+  - name: jbeemster
     url: https://github.com/jbeemster
     email: jbeemster@users.noreply.github.com
 keywords:
