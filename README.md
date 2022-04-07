@@ -1,7 +1,5 @@
 [![License][license-image]][license]
 
-# helm-charts
-
 A collection of Helm Charts for deploying Snowplow micro-services and additional addons for public cloud based kubernetes services.
 
 ## Usage
