@@ -1,3 +1,8 @@
+Version 0.1.1 (2022-04-07)
+--------------------------
+Fix README for aws-load-balancer-controller-crds (#5)
+Fix README for aws-otel-collector (#6)
+
 Version 0.1.0 (2022-04-07)
 --------------------------
 Add aws-otel-collector Helm Chart (#4)
