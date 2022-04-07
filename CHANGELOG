@@ -1,3 +1,9 @@
+Version 0.1.3 (2022-04-07)
+--------------------------
+Add linting + testing actions to assert validity of charts (#8)
+Update README for aws-otel-collector (#9)
+Add icon to Helm Charts (#10)
+
 Version 0.1.2 (2022-04-07)
 --------------------------
 Add artifact hub badge (#7)
