@@ -1,4 +1,4 @@
-[![License][license-image]][license]
+[![License][license-image]][license] [![Artifact Hub][artifact-hub-image]][artifact-hub] 
 
 # helm-charts
 
@@ -31,3 +31,6 @@ limitations under the License.
 
 [license]: https://www.apache.org/licenses/LICENSE-2.0
 [license-image]: https://img.shields.io/badge/license-Apache--2-blue.svg?style=flat
+
+[artifact-hub]: https://artifacthub.io/packages/search?repo=snowplow-devops
+[artifact-hub-image]: https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/snowplow-devops
