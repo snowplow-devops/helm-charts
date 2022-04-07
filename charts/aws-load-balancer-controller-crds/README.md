@@ -9,13 +9,13 @@ The chart templates are pulled entirely from this file: https://github.com/aws/e
 Add the repository to Helm:
 
 ```bash
-helm repo add eks https://snowplow-devops.github.io/helm-charts
+helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts
 ```
 
 Install or upgrading the chart with default configuration:
 
 ```bash
-helm upgrade --install aws-load-balancer-controller-crds --namespace kube-system snowplow-devops/aws-otel-collector
+helm upgrade --install aws-load-balancer-controller-crds --namespace kube-system snowplow-devops/aws-load-balancer-controller-crds
 ```
 
 ## Uninstalling the Chart
