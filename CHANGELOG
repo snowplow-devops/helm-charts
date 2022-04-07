@@ -1,0 +1,5 @@
+Version 0.1.0 (2022-04-07)
+--------------------------
+Add aws-otel-collector Helm Chart (#4)
+Add aws-load-balancer-controller-crds Helm Chart (#3)
+Add automated release workflow (#2)
