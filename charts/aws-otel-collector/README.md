@@ -18,7 +18,7 @@ Further reading on this system:
 Add the repository to Helm:
 
 ```bash
-helm repo add eks https://snowplow-devops.github.io/helm-charts
+helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts
 ```
 
 Install or upgrading the chart with default configuration:
