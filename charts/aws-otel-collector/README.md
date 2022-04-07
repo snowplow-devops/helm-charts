@@ -1,6 +1,6 @@
 # aws-otel-collector
 
-A helm chart for [AWS-open-telemetry-collecto](https://github.com/aws-observability/aws-otel-collector).
+A helm chart for [AWS-open-telemetry-collector](https://github.com/aws-observability/aws-otel-collector).
 
 The deployment is based largely on this [Kubernetes Manifest](https://github.com/aws-observability/aws-otel-collector/blob/main/deployment-template/eks/otel-container-insights-infra.yaml) but with some specific changes to reduce the cost foot-print of the exported metrics from EKS.  Focusing in on reporting only:
 
