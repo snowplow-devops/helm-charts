@@ -1,0 +1,26 @@
+# -- Overrides the name given to the deployment (default: .Release.Name)
+nameOverride: ""
+# -- Overrides the full-name given to the deployment resources (default: .Release.Name)
+fullnameOverride: ""
+
+image:
+  # -- Image to use for deploying
+  repository: amazon/aws-otel-collector
+  tag: v0.17.0
+  pullPolicy: IfNotPresent
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 200Mi
+  requests:
+    cpu: 200m
+    memory: 200Mi
+
+serviceAccount:
+  # -- Whether to create a service account or not
+  create: true
+  # -- The name of the service account to create or use
+  name: ""
+  # -- Optional annotations to be applied to service account
+  annotations: {}
