@@ -3,6 +3,30 @@ entries:
   aws-load-balancer-controller-crds:
   - apiVersion: v1
     appVersion: v2.3.1
+    created: "2022-04-07T19:46:48.754982578Z"
+    description: AWS Load Balancer Controller CRDs Helm chart for Kubernetes
+    digest: 2d3449a0dd7ebee513d6ec9a2e6f50bffd938c552d7ca8f2ba71d699ff570733
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - eks
+    - alb
+    - load balancer
+    - ingress
+    - nlb
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: aws-load-balancer-controller-crds
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/crds/crds.yaml
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/aws-load-balancer-controller-crds-0.1.2/aws-load-balancer-controller-crds-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v1
+    appVersion: v2.3.1
     created: "2022-04-07T16:01:53.350315089Z"
     description: AWS Load Balancer Controller CRDs Helm chart for Kubernetes
     digest: 93ba7863229a16d1e396061bdf80a6010d1badf25ae97620e57c965a407ee04e
@@ -50,6 +74,26 @@ entries:
   aws-otel-collector:
   - apiVersion: v1
     appVersion: v0.17.0
+    created: "2022-04-07T19:46:48.904906082Z"
+    description: A Helm chart to deploy aws-otel-collector project
+    digest: 5c1fe3507586bd5dc8c88c9b56efe1f918be8b2b4b6961cb802cbc34ffb09b96
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - eks
+    - telemetry
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: aws-otel-collector
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/aws-otel-collector-0.1.2/aws-otel-collector-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v1
+    appVersion: v0.17.0
     created: "2022-04-07T16:01:53.485250927Z"
     description: A Helm chart to deploy aws-otel-collector project
     digest: 87576c45006b8943cd24fa81122bbebe1b273cda24f5a9bda35765a773a5e03e
@@ -86,4 +130,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/aws-otel-collector-0.1.0/aws-otel-collector-0.1.0.tgz
     version: 0.1.0
-generated: "2022-04-07T16:01:53.485269227Z"
+generated: "2022-04-07T19:46:48.904924882Z"
