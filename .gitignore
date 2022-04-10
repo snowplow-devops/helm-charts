@@ -17,3 +17,6 @@ _tmp/
 build/
 
 .idea
+
+# Ignore all local values files other thant the chart default
+**/values-*.yaml
