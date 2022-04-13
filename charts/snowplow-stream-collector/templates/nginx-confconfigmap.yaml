@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-nginx-config-conf
 binaryData:
-  collector.conf: {{ tpl (.Files.Get "configs/collector.conf") . | b64enc }}
+  collector.conf: {{ include "service.nginx.confBase64" . }}

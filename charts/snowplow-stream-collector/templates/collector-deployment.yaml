@@ -11,7 +11,8 @@ spec:
       labels:
         app: {{ .Release.Name }}
       annotations:
-        checksum/config: {{ include "service.config.hoconBase64" . | sha256sum}}
+        checksum/config.hocon: {{ include "service.config.hoconBase64" . | sha256sum}}
+        checksum/collector.conf: {{ include "service.nginx.confBase64" . | sha256sum}}
     spec:
       {{- if .Values.serviceAccount.deploy }}
       serviceAccountName: {{ .Release.Name }}

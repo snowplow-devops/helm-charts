@@ -19,6 +19,10 @@ Define default values for required values.
 {{- end -}}
 {{- end -}}
 
+{{- define "service.nginx.confBase64" -}}
+{{- tpl (.Files.Get "configs/collector.conf") . | b64enc -}}
+{{- end -}}
+
 {{- define "collector.port" -}}
 {{- if .Values.service.nginx.deploy }}
 {{- add .Values.service.port 1 -}}
