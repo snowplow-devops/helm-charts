@@ -7,7 +7,7 @@ service:
 
   nginx:
     # -- Whether to serve request with an NGINX proxy side-car instead of the Collector directly
-    deploy: true
+    deploy: false
     image:
       repository: "nginx"
       tag: "stable-alpine"

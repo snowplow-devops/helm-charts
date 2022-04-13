@@ -225,7 +225,7 @@ You will need to fill these targeted fields:
 | service.image.target | string | `"stdout"` | Which image should be pulled (options: stdout, nsq, kinesis, sqs, kafka or pubsub) |
 | service.maxReplicas | int | `4` |  |
 | service.minReplicas | int | `1` |  |
-| service.nginx.deploy | bool | `true` | Whether to serve request with an NGINX proxy side-car instead of the Collector directly |
+| service.nginx.deploy | bool | `false` | Whether to serve request with an NGINX proxy side-car instead of the Collector directly |
 | service.nginx.image.isRepositoryPublic | bool | `true` |  |
 | service.nginx.image.repository | string | `"nginx"` |  |
 | service.nginx.image.tag | string | `"stable-alpine"` |  |
