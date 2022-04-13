@@ -1,0 +1,9 @@
+{{- if .Values.service.ssl.enable }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-nginx-cert
+binaryData:
+  collector_cert.pem: {{ .Values.service.ssl.certificateBase64 }}
+  collector_key.pem: {{ .Values.service.ssl.certificatePrivateKeyBase64 }}
+{{- end }}

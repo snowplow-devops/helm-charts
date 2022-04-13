@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include "service.config.hoconBase64" . | sha256sum}}
+    spec:
+      {{- if .Values.serviceAccount.deploy }}
+      serviceAccountName: {{ .Release.Name }}
+      {{- end }}
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: {{ .Values.service.terminationGracePeriodSeconds }}
+
+      {{- if not .Values.service.image.isRepositoryPublic }}
+      imagePullSecrets:
+      - name: {{ .Values.secrets.docker.name }}
+      {{- end }}
+
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: {{ .Release.Name }}-config-hocon
+          optional: false
+        name: {{ .Release.Name }}-config-volume
+      - configMap:
+          defaultMode: 420
+          name: {{ .Release.Name }}-nginx-config-conf
+          optional: false
+        name: {{ .Release.Name }}-nginx-config-volume
+      {{- if .Values.service.ssl.enable }}
+      - configMap:
+          defaultMode: 420
+          name: {{ .Release.Name }}-nginx-cert
+          optional: false
+        name: {{ .Release.Name }}-nginx-cert-volume
+      {{- end }}
+
+      containers:
+      {{- if .Values.service.nginx.deploy }}
+      - name: {{ .Release.Name }}-nginx
+        image: {{ .Values.service.nginx.image.repository}}:{{ .Values.service.nginx.image.tag}}
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          protocol: TCP
+        {{- if .Values.service.ssl.enable }}
+        - containerPort: {{ .Values.service.ssl.port }}
+          protocol: TCP
+        {{- end }}
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.service.port }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.service.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.service.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.service.readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.service.readinessProbe.failureThreshold }}
+          successThreshold: {{ .Values.service.readinessProbe.successThreshold }}
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 90Mi
+
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          mountPropagation: None
+          name: {{ .Release.Name }}-nginx-config-volume
+        {{- if .Values.service.ssl.enable }}
+        - mountPath: /etc/nginx/ssl
+          mountPropagation: None
+          name: {{ .Release.Name }}-nginx-cert-volume
+        {{- end }}
+      {{- end }}
+
+      - name: {{ .Release.Name }}-collector
+        image: {{ .Values.service.image.repository}}-{{ .Values.service.image.target }}:{{ .Values.service.image.tag}}
+        imagePullPolicy: Always
+
+        args:
+        - "--config"
+        - "/etc/config/config.hocon"
+
+        {{- if not .Values.service.nginx.deploy }}
+        ports:
+        - containerPort: {{ include "collector.port" . }}
+          protocol: TCP
+        {{- end }}
+
+        env:
+        - name : "COLLECTOR_PORT"
+          value: "{{ include "collector.port" . }}"
+        {{- if not (empty .Values.service.config.javaOpts) }}
+        - name : "JAVA_OPTS"
+          value: "{{ .Values.service.config.javaOpts }}"
+        {{- end }}
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ include "collector.port" . }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.service.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.service.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.service.readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.service.readinessProbe.failureThreshold }}
+          successThreshold: {{ .Values.service.readinessProbe.successThreshold }}
+
+        resources:
+          limits:
+            memory: 2018Mi
+          requests:
+            cpu: 400m
+
+        volumeMounts:
+        - mountPath: /etc/config
+          mountPropagation: None
+          name: {{ .Release.Name }}-config-volume
