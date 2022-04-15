@@ -1,0 +1,10 @@
+# -- Whether to create a service-account
+deploy: false
+# -- Name of the service-account to create
+name: "my-service-account"
+aws:
+  # -- IAM Role ARN to bind to the k8s service account
+  roleARN: ""
+gcp:
+  # -- Service Account email to bind to the k8s service account
+  serviceAccount: ""
