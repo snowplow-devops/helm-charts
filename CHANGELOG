@@ -1,3 +1,7 @@
+Version 0.1.6 (2022-04-15)
+--------------------------
+Fix documentation for snowplow-iglu-server (#21)
+
 Version 0.1.5 (2022-04-15)
 --------------------------
 Add self as repository in CI (#20)
