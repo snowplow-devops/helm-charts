@@ -1,0 +1,10 @@
+# -- Name of the secret to use for the private repository
+name: "dockerhub"
+# -- Username for the private repository
+username: ""
+# -- Password for the private repository
+password: ""
+# -- Repository server URL
+server: "https://index.docker.io/v1/"
+# -- Email address for user of the private repository
+email: ""
