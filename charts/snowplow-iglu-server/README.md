@@ -83,8 +83,8 @@ resource "google_service_account" "snowplow_iglu_server" {
 resource "google_service_account_iam_binding" "snowplow_iglu_server_sa_wiu_binding" {
   role = "roles/iam.workloadIdentityUser"
   members = [
-    "serviceAccount:<project>.svc.id.goog[default/snowplow-iglu-server]",
-    "serviceAccount:<project>.svc.id.goog[default/snowplow-iglu-server-cloudsqlproxy]"
+    "serviceAccount:<project>.svc.id.goog[<namespace>/<release_name>-iglu-app]",
+    "serviceAccount:<project>.svc.id.goog[<namespace>/<release_name>-iglu-cloudsqlproxy]"
   ]
   service_account_id = google_service_account.snowplow_iglu_server.id
 }
