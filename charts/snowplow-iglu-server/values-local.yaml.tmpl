@@ -1,0 +1,26 @@
+service:
+  deploySetupHooks: true
+  port: 8080
+  image:
+    repository: "snowplow/iglu-server"
+    tag: "0.8.3"
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 75
+  terminationGracePeriodSeconds: 630
+
+  config:
+    secrets:
+      superApiKey: "<uuidv4>"
+    repoServer:
+      maxConnections: 16384
+      idleTimeout: "65 seconds"
+    database:
+      type: "postgres"
+      host: "<host>" 
+      port: 5432
+      dbname: "postgres"
+      secrets:
+        username: "postgres"
+        password: "<password>"
+    patchesAllowed: false

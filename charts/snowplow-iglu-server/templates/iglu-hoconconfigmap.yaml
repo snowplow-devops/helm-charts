@@ -1,0 +1,8 @@
+{{- if ne .Values.service.config.hoconBase64 "" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "iglu.app.config.name" . }}
+binaryData:
+  config.hocon: {{ .Values.service.config.hoconBase64 }}
+{{- end }}
