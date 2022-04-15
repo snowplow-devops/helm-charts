@@ -1,0 +1,18 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "iglu.app.name" . }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "iglu.app.name" . }}
+  {{- if eq (include "iglu.service.config.database.type" .) "postgres" }}
+  minReplicas: {{ .Values.service.minReplicas }}
+  maxReplicas: {{ .Values.service.maxReplicas }}
+  targetCPUUtilizationPercentage: {{ include "iglu.service.targetCPUUtilizationPercentage" . }}
+  {{- else }}
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 75
+  {{- end }}

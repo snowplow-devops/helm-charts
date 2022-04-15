@@ -1,0 +1,11 @@
+{{- if eq .Values.global.cloud "aws" }}
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ include "iglu.app.name" . }}
+spec:
+  serviceRef:
+    name: {{ include "iglu.app.name" . }}
+    port: {{ .Values.service.port }}
+  targetGroupARN: {{ .Values.service.aws.targetGroupARN }}
+{{- end }}
