@@ -20,3 +20,6 @@ build/
 
 # Ignore all local values files other thant the chart default
 **/values-*.yaml
+
+# Ignore all local charts
+**/*.tgz
