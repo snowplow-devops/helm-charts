@@ -18,10 +18,14 @@ jobs:
         run: |
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
       - name: Install Helm
         uses: azure/setup-helm@v1
         with:
           version: v3.8.1
+
+      - name: Add self
+        run: helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.4.0

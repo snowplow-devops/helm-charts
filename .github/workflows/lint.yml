@@ -20,6 +20,9 @@ jobs:
         with:
           python-version: 3.7
 
+      - name: Add self
+        run: helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts
+
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.2.1
 
