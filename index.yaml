@@ -130,4 +130,47 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/aws-otel-collector-0.1.0/aws-otel-collector-0.1.0.tgz
     version: 0.1.0
-generated: "2022-04-07T19:46:48.904924882Z"
+  cloudserviceaccount:
+  - apiVersion: v2
+    created: "2022-04-15T09:16:26.555345583Z"
+    description: A helm chart which can create a ServiceAccount with cloud specific
+      bindings
+    digest: 7fded72e1fecb03cece4e56a4928944f01922c34de6fe27765cb80cbcd2afaec
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - aws
+    - gcp
+    - iam
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: cloudserviceaccount
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cloudserviceaccount-0.1.0/cloudserviceaccount-0.1.0.tgz
+    version: 0.1.0
+  dockerconfigjson:
+  - apiVersion: v2
+    created: "2022-04-15T09:16:26.711631254Z"
+    description: A helm chart to configure a secret for pulling a container image
+      from a private repository
+    digest: 119e60cdbaf8bc5374d44e18f1ffbf8026a8bfab3e2ce20b7414ca5760d82acf
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - docker
+    - repository
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: dockerconfigjson
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/dockerconfigjson-0.1.0/dockerconfigjson-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-04-15T09:16:26.711653154Z"
