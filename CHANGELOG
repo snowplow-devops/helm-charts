@@ -1,3 +1,7 @@
+Version 0.1.7 (2022-04-20)
+--------------------------
+charts/snowplow-iglu-server: Bump to v0.8.4 (#22)
+
 Version 0.1.6 (2022-04-15)
 --------------------------
 Fix documentation for snowplow-iglu-server (#21)
