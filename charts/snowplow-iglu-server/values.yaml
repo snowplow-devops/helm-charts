@@ -10,7 +10,7 @@ service:
   port: 8080
   image:
     repository: "snowplow/iglu-server"
-    tag: "0.8.3"
+    tag: "0.8.4"
     # -- Whether the repository is public
     isRepositoryPublic: true
   minReplicas: 1
