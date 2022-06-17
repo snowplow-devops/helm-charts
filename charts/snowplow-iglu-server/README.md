@@ -136,7 +136,7 @@ You will need to fill these targeted fields:
 | service.deploySetupHooks | bool | `true` | Whether to run the post-deploy setup hooks |
 | service.port | int | `8080` | Port to bind and expose the service on |
 | service.image.repository | string | `"snowplow/iglu-server"` |  |
-| service.image.tag | string | `"0.8.4"` |  |
+| service.image.tag | string | `"0.8.5"` |  |
 | service.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | service.minReplicas | int | `1` |  |
 | service.maxReplicas | int | `4` |  |
