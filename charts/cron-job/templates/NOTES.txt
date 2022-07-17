@@ -1,0 +1,1 @@
+{{ .Release.Name }} has been installed or updated.  Your job will now execute on the following schedule "{{ .Values.job.schedule }}".

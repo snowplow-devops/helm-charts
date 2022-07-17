@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "job.app.name" . }}
+spec:
+  schedule: "{{ .Values.job.schedule }}"
+  concurrencyPolicy: "{{ .Values.job.concurrencyPolicy }}"
+  failedJobsHistoryLimit: {{ .Values.job.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.job.successfulJobsHistoryLimit }}
+
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ include "job.app.name" . }}
+        spec:
+          automountServiceAccountToken: true
+
+          {{- if not .Values.job.image.isRepositoryPublic }}
+          imagePullSecrets:
+          - name: {{ .Values.dockerconfigjson.name }}
+          {{- end }}
+
+          restartPolicy: "Never"
+
+          containers:
+          - name: "{{ include "job.app.name" . }}"
+            image: "{{ .Values.job.image.repository }}:{{ .Values.job.image.tag }}"
+            imagePullPolicy: Always
+
+            {{- if .Values.job.config.command  }}
+            command:
+            {{- range $v := .Values.job.config.command }}
+            - "{{ $v }}"
+            {{- end }}
+            {{- end }}
+
+            {{- if .Values.job.config.args  }}
+            args:
+            {{- range $v := .Values.job.config.args }}
+            - "{{ $v }}"
+            {{- end }}
+            {{- end }}
+
+            {{- if .Values.job.config.env  }}
+            env:
+            {{- range $k, $v := .Values.job.config.env }}
+            - name: "{{ $k }}"
+              value: "{{ $v }}"
+            {{- end }}
+            {{- end }}
+            
+            {{- if .Values.job.config.secrets  }}
+            envFrom:
+            - secretRef:
+                name: {{ include "job.app.secret.name" . }}
+            {{- end }}
