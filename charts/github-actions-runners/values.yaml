@@ -4,7 +4,7 @@ runnerDeployment:
   runnerDeploymentName: "github-runner-deployment"
 
   deploymentType: "repository"
-  repositoryName: "FOR USE WITH REPO DEPLOYMENT TYPE"
+  repositoryName: "example/repo"
   organizationName: "FOR USE WITH  Organization DEPLOYMENT TYPE"
   enterpriseName: "FOR USE WITH Enterprise DEPLOYMENT TYPE"
 
