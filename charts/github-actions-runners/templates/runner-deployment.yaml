@@ -1,0 +1,34 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: {{ $.Values.runnerDeployment.name }}
+  labels:
+    helm.sh/chart: {{ include "githubActionsRunners.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: RunnerDeployment
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+spec:
+  replicas: 0
+  template:
+    spec:
+      {{- if eq .Values.runnerDeployment.deploymentType "repository" }}
+      repository: {{ $.Values.runnerDeployment.repositoryName  }}
+      {{- end}}
+      {{- if eq .Values.runnerDeployment.deploymentType "organization" }}
+      organization: {{ $.Values.runnerDeployment.organizationName  }}
+      {{- end}}
+      {{- if eq .Values.runnerDeployment.deploymentType "enterprise" }}
+      enterprise: {{ $.Values.runnerDeployment.enterpriseName  }}
+      {{- end}}
+      image: "{{ $.Values.runnerDeployment.image.runnerImage }}:{{ .Values.runnerDeployment.image.tag }}"
+      imagePullPolicy: {{ $.Values.runnerDeployment.image.pullPolicy }}
+      {{- if .Values.runnerDeployment.isRepositoryPrivate }}
+
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      {{- end}}
+      env:
+      - name: RUNNER_FEATURE_FLAG_EPHEMERAL
+        value: "true"
