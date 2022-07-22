@@ -4,7 +4,7 @@ metadata:
   name: {{ $.Values.runnerDeployment.runnerDeploymentName }}
   {{- if not eq .Values.runnerDeployment.runnerNamespace "" -}}
   namespace: {{ $.Values.runnerDeployment.runnerNamespace }}
-  {{-end-}}
+  {{- end -}}
   labels:
     helm.sh/chart: {{ include "github_actions_runners.chart" . }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
@@ -16,21 +16,21 @@ spec:
   replicas: 0
   template:
     spec:
-      {{- if eq .Values.runnerDeployment.deploymentType "repository" }}
+      {{- if eq .Values.runnerDeployment.deploymentType "repository" -}}
       repository: {{ $.Values.runnerDeployment.repositoryName  }}
-      {{- end}}
-      {{- if eq .Values.runnerDeployment.deploymentType "organization" }}
+      {{- end -}}
+      {{- if eq .Values.runnerDeployment.deploymentType "organization" -}}
       organization: {{ $.Values.runnerDeployment.organizationName  }}
-      {{- end}}
-      {{- if eq .Values.runnerDeployment.deploymentType "enterprise" }}
+      {{- end -}}
+      {{- if eq .Values.runnerDeployment.deploymentType "enterprise" -}}
       enterprise: {{ $.Values.runnerDeployment.enterpriseName  }}
-      {{- end}}
+      {{- end -}}
       image: {{ $.Values.runnerDeployment.image.runnerImage }}
       imagePullPolicy: {{ $.Values.runnerDeployment.image.pullPolicy }}
-      {{- if not .Values.runnerDeployment.isRepositoryPublic }}
+      {{- if not .Values.runnerDeployment.isRepositoryPublic -}}
       imagePullSecrets:
       - name: {{ .Values.secrets.docker.name }}
-      {{- end}}
+      {{- end -}}
       env:
       - name: RUNNER_FEATURE_FLAG_EPHEMERAL
         value: "true"
