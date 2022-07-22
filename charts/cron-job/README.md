@@ -23,6 +23,8 @@ helm upgrade --install cron-job snowplow-devops/cron-job
 
 _Note_: As default the chart simply deploys an example busybox to illustrate running a simple command - take note of the default `values.yaml` and alter to suit your needs!
 
+To see example input you should also dig through the `values.yaml` to understand the full range of options available.
+
 ## Uninstalling the Chart
 
 To uninstall/delete the `cron-job` release:
@@ -38,6 +40,7 @@ helm delete cron-job
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp) |
 | job.schedule | string | `"*/1 * * * *"` |  |
 | job.concurrencyPolicy | string | `"Forbid"` |  |
+| job.restartPolicy | string | `"Never"` |  |
 | job.failedJobsHistoryLimit | int | `1` |  |
 | job.successfulJobsHistoryLimit | int | `1` |  |
 | job.image.repository | string | `"busybox"` |  |
@@ -45,8 +48,9 @@ helm delete cron-job
 | job.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | job.config.command | list | `[]` |  |
 | job.config.args | list | `[]` |  |
-| job.config.env | object | `{}` |  |
-| job.config.secrets | object | `{}` |  |
+| job.config.env | object | `{}` | Map of environment variables to use within the job |
+| job.config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
+| job.configMaps | list | `[]` | List of config maps to mount to the deployment |
 | dockerconfigjson.name | string | `"snowplow-cron-job-dockerhub"` | Name of the secret to use for the private repository |
 | dockerconfigjson.username | string | `""` | Username for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |

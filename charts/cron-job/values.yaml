@@ -5,6 +5,7 @@ global:
 job:
   schedule: "*/1 * * * *"
   concurrencyPolicy: "Forbid"
+  restartPolicy: "Never"
   failedJobsHistoryLimit: 1
   successfulJobsHistoryLimit: 1
 
@@ -20,10 +21,22 @@ job:
     args: []
     #  - "-c"
     #  - "echo 'Environment $(hello_env)! Secret $(username).'"
+
+    # -- Map of environment variables to use within the job
     env: {}
     #  hello_env: "world"
+
+    # -- Map of secrets that will be exposed as environment variables within the job
     secrets: {}
     #  username: "password"
+
+  # -- List of config maps to mount to the deployment
+  configMaps: []
+  #  - name: "volume-1"
+  #    key: "file.cfg"
+  #    contentsB64: "" # The file contents which have already been base-64 encoded
+  #    mountPath: "/etc/config" # Must be unique
+  #    mountPropagation: None # If unset will default to 'None'
 
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
