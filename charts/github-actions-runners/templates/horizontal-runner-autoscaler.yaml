@@ -1,0 +1,22 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: runnerautoscaler
+  namespace: {{ $.Values.runnerDeployment.runnerNamespace }}
+  labels:    
+    helm.sh/chart: {{ include "github_actions_runners.chart" . }}    
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" }}
+    app.kubernetes.io/component: HorizontalRunnerAutoscaler
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+spec:
+  scaleTargetRef: 
+    name: {{ $.Values.runnerDeployment.runnerDeploymentName }} 
+  minReplicas: {{ $.Values.runnerDeployment.minimumReplicaCount }} 
+  maxReplicas: {{ $.Values.runnerDeployment.maximumReplicaCount }}
+  scaleUpTriggers:
+  - githubEvent: {}
+    duration: "1m"
+  
+
