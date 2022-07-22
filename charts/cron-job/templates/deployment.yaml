@@ -14,6 +14,12 @@ spec:
         metadata:
           labels:
             app: {{ include "job.app.name" . }}
+          annotations:
+            {{- if .Values.job.configMaps }}
+            {{- range $v := .Values.job.configMaps }}
+            checksum/{{ $v.name }}-{{ $v.key }}: "{{ $v.contentsB64 | sha256sum }}"
+            {{- end }}
+            {{- end }}
         spec:
           {{- if .Values.cloudserviceaccount.deploy }}
           serviceAccountName: {{ .Values.cloudserviceaccount.name }}
@@ -25,7 +31,17 @@ spec:
           - name: {{ .Values.dockerconfigjson.name }}
           {{- end }}
 
-          restartPolicy: "Never"
+          restartPolicy: "{{ .Values.job.restartPolicy }}"
+
+          {{- if .Values.job.configMaps }}
+          volumes:
+          {{- range $v := .Values.job.configMaps }}
+          - configMap:
+              name: {{ $v.name }}
+              optional: false
+            name: {{ $v.name }}
+          {{- end }}
+          {{- end }}
 
           containers:
           - name: "{{ include "job.app.name" . }}"
@@ -58,4 +74,17 @@ spec:
             envFrom:
             - secretRef:
                 name: {{ include "job.app.secret.name" . }}
+            {{- end }}
+
+            {{- if .Values.job.configMaps }}
+            volumeMounts:
+            {{- range $v := .Values.job.configMaps }}
+            - mountPath: "{{ $v.mountPath }}"
+              {{- if $v.mountPropagation }}
+              mountPropagation: {{ $v.mountPropagation }}
+              {{- else }}
+              mountPropagation: None
+              {{- end }}
+              name: {{ $v.name }}
+            {{- end }}
             {{- end }}
