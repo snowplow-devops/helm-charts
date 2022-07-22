@@ -2,6 +2,5 @@ apiVersion: v2
 appVersion: "0.1.0"
 name: github_actions_runners
 description: A Helm chart for deploying Github Repository Runners 
-
 type: application
 version: 0.1.0
