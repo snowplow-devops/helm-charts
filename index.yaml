@@ -154,6 +154,31 @@ entries:
     version: 0.1.0
   cron-job:
   - apiVersion: v2
+    created: "2022-07-22T17:16:50.571273539Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    description: A Helm Chart to deploy an arbitrary container as a cron job.
+    digest: 43ff8062ee20f963244f7a7301efb145bee7c8eb1d3e61b81b18032106e325fa
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cron
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: cron-job
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cron-job-0.3.0/cron-job-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     created: "2022-07-22T14:26:23.288566123Z"
     dependencies:
     - name: dockerconfigjson
@@ -338,4 +363,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2022-07-22T14:26:23.288591387Z"
+generated: "2022-07-22T17:16:50.571299139Z"
