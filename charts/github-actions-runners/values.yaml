@@ -2,11 +2,11 @@ runnerDeployment:
   enabled: true
   isRepositoryPublic: true
   runnerDeploymentName: "github-runner-deployment"
-
   deploymentType: "repository"
   repositoryName: "example/repo"
   organizationName: "FOR USE WITH  Organization DEPLOYMENT TYPE"
   enterpriseName: "FOR USE WITH Enterprise DEPLOYMENT TYPE"
+  runnerNamespace: ""
 
   minimumReplicaCount: "1"
   maximumReplicaCount: "1"
