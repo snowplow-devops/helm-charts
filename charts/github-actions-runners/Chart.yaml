@@ -1,6 +1,6 @@
 apiVersion: v2
 name: github_actions_runners
-description: A Helm chart for deploying Github Self-hosted Runners 
+description: A Helm chart for deploying Github Self-hosted Runners
 type: application
 appVersion: "0.1.0"
 version: 0.1.0
