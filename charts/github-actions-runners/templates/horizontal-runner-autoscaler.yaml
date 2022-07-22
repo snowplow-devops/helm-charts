@@ -18,5 +18,3 @@ spec:
   scaleUpTriggers:
   - githubEvent: {}
     duration: "1m"
-  
-

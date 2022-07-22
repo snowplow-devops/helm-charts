@@ -18,7 +18,6 @@ runnerDeployment:
     runnerImage: "summerwind/actions-runner"
     tag: "latest"
     pullPolicy: IfNotPresent
-
   minimumReplicaCount: "1"
   maximumReplicaCount: "1"
 

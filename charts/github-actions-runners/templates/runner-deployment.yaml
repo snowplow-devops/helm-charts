@@ -25,14 +25,10 @@ spec:
       {{- end}}
       image: {{ $.Values.runnerDeployment.image.runnerImage }}  
       imagePullPolicy: {{ $.Values.runnerDeployment.image.pullPolicy }}
-
       {{- if not .Values.runnerDeployment.isRepositoryPublic }}
       imagePullSecrets:
       - name: {{ .Values.secrets.docker.name }}
       {{- end}}
-
       env:
       - name: RUNNER_FEATURE_FLAG_EPHEMERAL
         value: "true"
-
-
