@@ -2,25 +2,30 @@ runnerDeployment:
   enabled: true
   isRepositoryPublic: true
   runnerDeploymentName: "github-runner-deployment"
+  
   deploymentType: "repository"
   repositoryName: "FOR USE WITH REPO DEPLOYMENT TYPE"
   organizationName: "FOR USE WITH  Organization DEPLOYMENT TYPE"
   enterpriseName: "FOR USE WITH Enterprise DEPLOYMENT TYPE"
   runnerNamespace: "github-runners"
   
+  minimumReplicaCount: "1"
+  maximumReplicaCount: "1"
+
   image:
     runnerImage: "summerwind/actions-runner"
     tag: "latest"
     pullPolicy: IfNotPresent
-  minimumReplicaCount: "1"
-  maximumReplicaCount: "1"
 
 secrets:
   docker:
+  # -- Name of the secret to use for the private repository
     name: "dockerhub"
+  # -- Username for the private repository
     username: ""
+  # -- Password for the private repository
     password: ""
+  # -- Repository server URL
     server: "https://index.docker.io/v1/"
+  # -- Email address for user of the private repository
     email: ""
-
-
