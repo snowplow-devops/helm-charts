@@ -1,3 +1,7 @@
+global:
+  # -- Cloud specific bindings (options: aws, gcp)
+  cloud: ""
+
 job:
   schedule: "*/1 * * * *"
   concurrencyPolicy: "Forbid"
@@ -32,3 +36,15 @@ dockerconfigjson:
   server: "https://index.docker.io/v1/"
   # -- Email address for user of the private repository
   email: ""
+
+cloudserviceaccount:
+  # -- Whether to create a service-account
+  deploy: false
+  # -- Name of the service-account to create
+  name: "snowplow-cron-job-service-account"
+  aws:
+    # -- IAM Role ARN to bind to the k8s service account
+    roleARN: ""
+  gcp:
+    # -- Service Account email to bind to the k8s service account
+    serviceAccount: ""

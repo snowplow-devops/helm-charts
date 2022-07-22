@@ -35,6 +35,7 @@ helm delete cron-job
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp) |
 | job.schedule | string | `"*/1 * * * *"` |  |
 | job.concurrencyPolicy | string | `"Forbid"` |  |
 | job.failedJobsHistoryLimit | int | `1` |  |
@@ -51,3 +52,7 @@ helm delete cron-job
 | dockerconfigjson.password | string | `""` | Password for the private repository |
 | dockerconfigjson.server | string | `"https://index.docker.io/v1/"` | Repository server URL |
 | dockerconfigjson.email | string | `""` | Email address for user of the private repository |
+| cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |
+| cloudserviceaccount.name | string | `"snowplow-cron-job-service-account"` | Name of the service-account to create |
+| cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
+| cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
