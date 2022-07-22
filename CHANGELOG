@@ -1,3 +1,7 @@
+Version 0.1.10 (2022-07-22)
+---------------------------
+charts/cron-job: Add support for cloud service-accounts (#30)
+
 Version 0.1.9 (2022-07-17)
 --------------------------
 charts/cron-job: Add chart for installing a cron-job (#27)
