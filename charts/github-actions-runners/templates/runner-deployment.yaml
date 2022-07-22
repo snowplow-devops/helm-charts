@@ -2,7 +2,6 @@ apiVersion: actions.summerwind.dev/v1alpha1
 kind: RunnerDeployment
 metadata:
   name: {{ $.Values.runnerDeployment.runnerDeploymentName }}
-  namespace: {{ $.Values.runnerDeployment.runnerNamespace }}
   labels:
     helm.sh/chart: {{ include "github_actions_runners.chart" . }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
