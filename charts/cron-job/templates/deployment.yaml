@@ -15,6 +15,9 @@ spec:
           labels:
             app: {{ include "job.app.name" . }}
         spec:
+          {{- if .Values.cloudserviceaccount.deploy }}
+          serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+          {{- end }}
           automountServiceAccountToken: true
 
           {{- if not .Values.job.image.isRepositoryPublic }}
