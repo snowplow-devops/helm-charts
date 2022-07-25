@@ -21,6 +21,9 @@ Create a default fully qualified app name
 {{- end -}}
 {{- end -}}
 
+{{/*
+Create naming structure to be used bt the component name
+*/}}
 {{- define "githubActionsRunners.componentname" -}}
 {{- $global := index . 0 -}}
 {{- $component := index . 1 | trimPrefix "-" -}}
