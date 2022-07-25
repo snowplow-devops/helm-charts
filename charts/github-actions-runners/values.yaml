@@ -25,12 +25,12 @@ runnerDeployment:
 # -- For use with private hosted images on Dockerhub
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
-    name: "snowplow-github-runner-deployment-dockerhub"
+  name: "snowplow-github-runner-deployment-dockerhub"
   # -- Username for the private repository
-    username: ""
+  username: ""
   # -- Password for the private repository
-    password: ""
+  password: ""
   # -- Repository server URL
-    server: "https://index.docker.io/v1/"
+  server: "https://index.docker.io/v1/"
   # -- Email address for user of the private repository
-    email: ""
+  email: ""
