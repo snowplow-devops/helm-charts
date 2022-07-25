@@ -1,22 +1,22 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "job.app.name" . }}
+  name: {{ include "app.fullname" . }}
 spec:
-  schedule: "{{ .Values.job.schedule }}"
-  concurrencyPolicy: "{{ .Values.job.concurrencyPolicy }}"
-  failedJobsHistoryLimit: {{ .Values.job.failedJobsHistoryLimit }}
-  successfulJobsHistoryLimit: {{ .Values.job.successfulJobsHistoryLimit }}
+  schedule: "{{ .Values.schedule }}"
+  concurrencyPolicy: "{{ .Values.concurrencyPolicy }}"
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
 
   jobTemplate:
     spec:
       template:
         metadata:
           labels:
-            app: {{ include "job.app.name" . }}
+            app: {{ include "app.fullname" . }}
           annotations:
-            {{- if .Values.job.configMaps }}
-            {{- range $v := .Values.job.configMaps }}
+            {{- if .Values.configMaps }}
+            {{- range $v := .Values.configMaps }}
             checksum/{{ $v.name }}-{{ $v.key }}: "{{ $v.contentsB64 | sha256sum }}"
             {{- end }}
             {{- end }}
@@ -26,16 +26,16 @@ spec:
           {{- end }}
           automountServiceAccountToken: true
 
-          {{- if not .Values.job.image.isRepositoryPublic }}
+          {{- if not .Values.image.isRepositoryPublic }}
           imagePullSecrets:
           - name: {{ .Values.dockerconfigjson.name }}
           {{- end }}
 
-          restartPolicy: "{{ .Values.job.restartPolicy }}"
+          restartPolicy: "{{ .Values.restartPolicy }}"
 
-          {{- if .Values.job.configMaps }}
+          {{- if .Values.configMaps }}
           volumes:
-          {{- range $v := .Values.job.configMaps }}
+          {{- range $v := .Values.configMaps }}
           - configMap:
               name: {{ $v.name }}
               optional: false
@@ -44,41 +44,41 @@ spec:
           {{- end }}
 
           containers:
-          - name: "{{ include "job.app.name" . }}"
-            image: "{{ .Values.job.image.repository }}:{{ .Values.job.image.tag }}"
+          - name: "{{ include "app.fullname" . }}"
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
             imagePullPolicy: Always
 
-            {{- if .Values.job.config.command  }}
+            {{- if .Values.config.command  }}
             command:
-            {{- range $v := .Values.job.config.command }}
+            {{- range $v := .Values.config.command }}
             - "{{ $v }}"
             {{- end }}
             {{- end }}
 
-            {{- if .Values.job.config.args  }}
+            {{- if .Values.config.args  }}
             args:
-            {{- range $v := .Values.job.config.args }}
+            {{- range $v := .Values.config.args }}
             - "{{ $v }}"
             {{- end }}
             {{- end }}
 
-            {{- if .Values.job.config.env  }}
+            {{- if .Values.config.env  }}
             env:
-            {{- range $k, $v := .Values.job.config.env }}
+            {{- range $k, $v := .Values.config.env }}
             - name: "{{ $k }}"
               value: "{{ $v }}"
             {{- end }}
             {{- end }}
             
-            {{- if .Values.job.config.secrets  }}
+            {{- if .Values.config.secrets  }}
             envFrom:
             - secretRef:
-                name: {{ include "job.app.secret.name" . }}
+                name: {{ include "app.secret.fullname" . }}
             {{- end }}
 
-            {{- if .Values.job.configMaps }}
+            {{- if .Values.configMaps }}
             volumeMounts:
-            {{- range $v := .Values.job.configMaps }}
+            {{- range $v := .Values.configMaps }}
             - mountPath: "{{ $v.mountPath }}"
               {{- if $v.mountPropagation }}
               mountPropagation: {{ $v.mountPropagation }}

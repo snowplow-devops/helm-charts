@@ -38,19 +38,19 @@ helm delete cron-job
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp) |
-| job.schedule | string | `"*/1 * * * *"` |  |
-| job.concurrencyPolicy | string | `"Forbid"` |  |
-| job.restartPolicy | string | `"Never"` |  |
-| job.failedJobsHistoryLimit | int | `1` |  |
-| job.successfulJobsHistoryLimit | int | `1` |  |
-| job.image.repository | string | `"busybox"` |  |
-| job.image.tag | string | `"latest"` |  |
-| job.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
-| job.config.command | list | `[]` |  |
-| job.config.args | list | `[]` |  |
-| job.config.env | object | `{}` | Map of environment variables to use within the job |
-| job.config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
-| job.configMaps | list | `[]` | List of config maps to mount to the deployment |
+| schedule | string | `"*/1 * * * *"` |  |
+| concurrencyPolicy | string | `"Forbid"` |  |
+| restartPolicy | string | `"Never"` |  |
+| failedJobsHistoryLimit | int | `1` |  |
+| successfulJobsHistoryLimit | int | `1` |  |
+| image.repository | string | `"busybox"` |  |
+| image.tag | string | `"latest"` |  |
+| image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| config.command | list | `[]` |  |
+| config.args | list | `[]` |  |
+| config.env | object | `{}` | Map of environment variables to use within the job |
+| config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
+| configMaps | list | `[]` | List of config maps to mount to the deployment |
 | dockerconfigjson.name | string | `"snowplow-cron-job-dockerhub"` | Name of the secret to use for the private repository |
 | dockerconfigjson.username | string | `""` | Username for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |

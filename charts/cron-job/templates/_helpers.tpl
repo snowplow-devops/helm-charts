@@ -1,18 +1,16 @@
 {{/* vim: set filetype=mustache: */}}
-
 {{/*
-Define a common name prefix for all created objects.
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
 */}}
-{{- define "job.prefix" -}}
-{{ .Release.Name }}-job
+{{- define "app.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
-
-{{/*
-Define resource names.
-*/}}
-{{- define "job.app.name" -}}
-{{ include "job.prefix" . }}-app
 {{- end -}}
-{{- define "job.app.secret.name" -}}
-{{ include "job.prefix" . }}-secret
+{{- define "app.secret.fullname" -}}
+{{ include "app.fullname" . }}-secret
 {{- end -}}

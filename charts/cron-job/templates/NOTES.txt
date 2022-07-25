@@ -1,1 +1,7 @@
-{{ .Release.Name }} has been installed or updated.  Your job will now execute on the following schedule "{{ .Values.job.schedule }}".
+CronJob {{ .Release.Name }} has been installed/updated - to get basic information about the pods:
+
+    kubectl describe cronjob {{ .Release.Name }}
+
+Your job will now execute on the following schedule:
+
+    {{ .Values.schedule }}
