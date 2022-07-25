@@ -20,7 +20,7 @@ Install or upgrading the chart with default configuration:
 helm upgrade --install github-actions-runners --namespace github-runners --create-namespace --set runnerDeployment.githubRepo="example/repo" --set runnerDeployment.runnerNamespace="github-runners" snowplow-devops/github-actions-runners
 ```
 
-Note : Certificate Manager and Action Replica Controller must be installed as a pre-requisite
+Note: Certificate Manager and Action Replica Controller must be installed as a prerequisite.
 The default install will use the standard `summerwind/actions-runner` image - should a private image be required this can be enabled via updating the values.yaml
 
 ## Uninstalling the Chart
