@@ -1,6 +1,6 @@
 # Github Repository - Self Hosted Runners
 
-A helm chart for managing self hosted github runners within a repository following [Actions Runner Controller ](https://github.com/actions-runner-controller/actions-runner-controller).
+A helm chart for managing self hosted github runners within a repository following [Actions Runner Controller](https://github.com/actions-runner-controller/actions-runner-controller).
 
 
 Further reading on this system:
