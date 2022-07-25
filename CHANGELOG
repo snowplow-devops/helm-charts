@@ -1,3 +1,7 @@
+Version 0.1.12 (2022-07-25)
+---------------------------
+charts/cron-job: Simplify chart by removing input nesting layer (#35) 
+
 Version 0.1.11 (2022-07-22)
 ---------------------------
 charts/cron-job: Add support for mounting volumes (#32)
