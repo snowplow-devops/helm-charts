@@ -5,7 +5,7 @@ runnerDeployment:
   isRepositoryPrivate: true
   # -- Declare the name of the runner deployment
   runnerDeploymentName: "github-runner-deployment"
-     # -- Select Deploment type - repository / orgainization / enterprise
+  # -- Select Deploment type - repository / orgainization / enterprise
   deploymentType: "repository"
   # -- For use with repository deployment type - Add repo for runner deployment
   repositoryName: "example/repo"
@@ -13,11 +13,9 @@ runnerDeployment:
   organizationName: ""
   # -- For use with enterprise deployment type
   enterpriseName: ""
-
   # -- Declare the minimum and maximum avalible runners
   minimumReplicaCount: "1"
   maximumReplicaCount: "1"
-
   # -- Define the image for the runners to be deployed with.
   image:
     runnerImage: "summerwind/actions-runner"

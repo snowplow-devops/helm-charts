@@ -67,5 +67,3 @@ helm delete github-actions-runners --namespace github-runners
 | runnerDeployment.organizationName | string | `""` | For use with orgainization deployment type |
 | runnerDeployment.repositoryName | string | `"example/repo"` | For use with repository deployment type - Add repo for runner deployment |
 | runnerDeployment.runnerDeploymentName | string | `"githubRunnerDeployment"` | Declare the name of the runner deployment |
-
-
