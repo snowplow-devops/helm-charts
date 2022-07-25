@@ -1,14 +1,14 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "github_actions_runners.name" -}}
+{{- define "githubActionsRunners.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Create a default fully qualified app name
 */}}
-{{- define "github_actions_runners.fullname" -}}
+{{- define "githubActionsRunners.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -21,19 +21,25 @@ Create a default fully qualified app name
 {{- end -}}
 {{- end -}}
 
+{{- define "githubActionsRunners.componentname" -}}
+{{- $global := index . 0 -}}
+{{- $component := index . 1 | trimPrefix "-" -}}
+{{- printf "%s-%s" (include "githubActionsRunners.fullname" $global | trunc (sub 62 (len $component) | int) | trimSuffix "-" ) $component | trimSuffix "-" -}}
+{{- end -}}
+
 {{/*
 Create chart name and version as used by the chart label
 */}}
-{{- define "github_actions_runners.chart" -}}
+{{- define "githubActionsRunners.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Common labels
 */}}
-{{- define "github_actions_runners.labels" -}}
-helm.sh/chart: {{ include "github_actions_runners.chart" . }}
-{{ include "github_actions_runners.selectorLabels" . }}
+{{- define "githubActionsRunners.labels" -}}
+helm.sh/chart: {{ include "githubActionsRunners.chart" . }}
+{{ include "githubActionsRunners.selectorLabels" . }}
 {{- if .Chart.AppVersion -}}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end -}}
@@ -43,7 +49,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "github_actions_runners.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "github_actions_runners.name" . }}
+{{- define "githubActionsRunners.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "githubActionsRunners.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}

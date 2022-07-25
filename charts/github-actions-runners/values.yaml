@@ -1,24 +1,33 @@
+
 runnerDeployment:
   enabled: true
-  isRepositoryPublic: true
+  # -- Declare if the Runner Image is in a private repo
+  isRepositoryPrivate: true
+  # -- Declare the name of the runner deployment
   runnerDeploymentName: "github-runner-deployment"
+     # -- Select Deploment type - repository / orgainization / enterprise
   deploymentType: "repository"
+  # -- For use with repository deployment type - Add repo for runner deployment
   repositoryName: "example/repo"
-  organizationName: "FOR USE WITH  Organization DEPLOYMENT TYPE"
-  enterpriseName: "FOR USE WITH Enterprise DEPLOYMENT TYPE"
+  # -- For use with orgainization deployment type
+  organizationName: ""
+  # -- For use with enterprise deployment type
+  enterpriseName: ""
 
+  # -- Declare the minimum and maximum avalible runners
   minimumReplicaCount: "1"
   maximumReplicaCount: "1"
 
+  # -- Define the image for the runners to be deployed with.
   image:
     runnerImage: "summerwind/actions-runner"
     tag: "latest"
     pullPolicy: IfNotPresent
 
-secrets:
-  docker:
+# -- For use with private hosted images on Dockerhub
+dockerconfigjson:
   # -- Name of the secret to use for the private repository
-    name: "dockerhub"
+    name: "snowplow-github-runner-deployment-dockerhub"
   # -- Username for the private repository
     username: ""
   # -- Password for the private repository

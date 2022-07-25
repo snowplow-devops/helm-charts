@@ -1,5 +1,5 @@
 apiVersion: v2
-name: github_actions_runners
+name: github-actions-runners
 description: A Helm chart for deploying Github Self-hosted Runners
 type: application
 appVersion: "0.1.0"
@@ -15,3 +15,8 @@ maintainers:
 keywords:
   - github-actions
   - actions-runner-controller
+dependencies:
+  - name: dockerconfigjson
+    version: 0.1.0
+    repository: "https://snowplow-devops.github.io/helm-charts"
+    condition: runnerDeployment.isRepositoryPrivate

@@ -3,7 +3,7 @@ kind: RunnerDeployment
 metadata:
   name: {{ $.Values.runnerDeployment.runnerDeploymentName }}
   labels:
-    helm.sh/chart: {{ include "github_actions_runners.chart" . }}
+    helm.sh/chart: {{ include "githubActionsRunners.chart" . }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" }}
@@ -26,7 +26,7 @@ spec:
       imagePullPolicy: {{ $.Values.runnerDeployment.image.pullPolicy }}
       {{- if not .Values.runnerDeployment.isRepositoryPublic }}
       imagePullSecrets:
-      - name: {{ .Values.secrets.docker.name }}
+      - name: {{ .Values.dockerconfigjson.name }}
       {{- end}}
       env:
       - name: RUNNER_FEATURE_FLAG_EPHEMERAL
