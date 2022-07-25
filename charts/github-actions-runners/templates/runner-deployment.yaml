@@ -24,7 +24,7 @@ spec:
       {{- end}}
       image: {{ $.Values.runnerDeployment.image.runnerImage }}
       imagePullPolicy: {{ $.Values.runnerDeployment.image.pullPolicy }}
-      {{- if not .Values.runnerDeployment.isRepositoryPublic }}
+      {{- if .Values.runnerDeployment.isRepositoryPrivate }}
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
       {{- end}}
