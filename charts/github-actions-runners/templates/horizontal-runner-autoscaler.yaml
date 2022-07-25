@@ -1,7 +1,7 @@
 apiVersion: actions.summerwind.dev/v1alpha1
 kind: HorizontalRunnerAutoscaler
 metadata:
-  name: {{ include "githubActionsRunners.componentname" (list . "runnerautoscaler") }}
+  name: {{ include "githubActionsRunners.componentname" (list . "horizontalrunnerautoscaler") }}
   labels:
     helm.sh/chart: {{ include "githubActionsRunners.chart" . }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}

@@ -24,7 +24,7 @@ Create a default fully qualified app name
 {{- define "githubActionsRunners.componentname" -}}
 {{- $global := index . 0 -}}
 {{- $component := index . 1 | trimPrefix "-" -}}
-{{- printf "%s-%s" (include "githubActionsRunners.fullname" $global | trunc (sub 62 (len $component) | int) | trimSuffix "-" ) $component | trimSuffix "-" -}}
+{{- printf "%s-%s" (include "githubActionsRunners.name" $global | trunc (sub 62 (len $component) | int) | trimSuffix "-" ) $component | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
