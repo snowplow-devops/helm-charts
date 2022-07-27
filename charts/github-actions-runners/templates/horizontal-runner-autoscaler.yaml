@@ -12,8 +12,10 @@ metadata:
 spec:
   scaleTargetRef:
     name: {{ $.Values.runnerDeployment.runnerDeploymentName }}
+  scaleDownDelaySecondsAfterScaleOut: {{ $.Values.runnerDeployment.scaleDownDelaySecondsAfterScaleOut }}
   minReplicas: {{ $.Values.runnerDeployment.minimumReplicaCount }}
   maxReplicas: {{ $.Values.runnerDeployment.maximumReplicaCount }}
   scaleUpTriggers:
-  - githubEvent: {}
-    duration: "1m"
+  - githubEvent:
+      workflowJob: {}
+    duration: "30m"

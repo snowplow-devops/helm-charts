@@ -1,0 +1,10 @@
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ $.Values.runnerDeployment.githubwebhookServiceName }}
+  namespace: {{ $.Values.runnerDeployment.runnerControllerNamespace }}
+spec:
+  serviceRef:
+    name:  {{ $.Values.runnerDeployment.githubwebhookServiceName }}
+    port: 80
+  targetGroupARN:  {{ $.Values.runnerDeployment.githubWebhookAlbtargetGroupArn }}

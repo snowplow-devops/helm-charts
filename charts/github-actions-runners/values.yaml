@@ -13,6 +13,8 @@ runnerDeployment:
   # -- For use with enterprise deployment type
   enterpriseName: ""
   # -- Declare the minimum and maximum avalible runners
+  scaleDownDelaySecondsAfterScaleOut: "300"
+  # -- Declare the minimum and maximum avalible runners
   minimumReplicaCount: "1"
   maximumReplicaCount: "1"
   # -- Define the image for the runners to be deployed with.
@@ -21,6 +23,12 @@ runnerDeployment:
     tag: "latest"
     pullPolicy: IfNotPresent
 
+  # -- Declare if github webhook service is deployed for autoscaling.
+  githubWebhookServerEnabled: false
+  # -- Define the image for the runners to be deployed with.
+  githubWebhookAlbtargetGroupArn: ""
+  githubWebhookServiceName: ""
+  runnerControllerNamespace: ""
 # -- For use with private hosted images on Dockerhub
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
