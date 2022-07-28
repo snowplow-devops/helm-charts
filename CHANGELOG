@@ -1,3 +1,9 @@
+Version 0.1.14 (2022-07-28)
+---------------------------
+charts/snowplow-iglu-server: Ensure name stays below 63 characters (#38)
+charts/service-deployment: Ensure we stay below 63 char limit (#39)
+charts/cron-job: Ensure we stay below 63 char limit (#40)
+
 Version 0.1.13 (2022-07-28)
 ---------------------------
 charts/service-deployment: Add chart that can handle generic deployments (#37)
