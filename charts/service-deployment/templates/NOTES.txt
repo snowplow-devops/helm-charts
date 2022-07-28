@@ -1,0 +1,16 @@
+Deployment {{ .Release.Name }} has been installed/updated - to get basic information about the pods:
+
+    kubectl describe pod {{ .Release.Name }}
+
+{{- if .Values.service.deploy }}
+
+The service can be accessed via port {{ .Values.service.port }} on the following DNS names from within your cluster:
+
+    {{ include "app.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+
+To connect to your server from outside the cluster execute the following commands:
+
+    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "app.fullname" . }} 8080:{{ .Values.service.port }}
+
+You can then navigate to your service in your browser at localhost:8080 or issue request with tools like cURL.
+{{- end }}

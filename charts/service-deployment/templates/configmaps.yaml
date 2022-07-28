@@ -1,0 +1,11 @@
+{{- if .Values.configMaps }}
+{{- range $v := .Values.configMaps }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $v.name }}
+binaryData:
+  {{ $v.key }}: "{{ $v.contentsB64 }}"
+---
+{{- end }}
+{{- end }}
