@@ -1,3 +1,7 @@
+Version 0.1.13 (2022-07-28)
+---------------------------
+charts/service-deployment: Add chart that can handle generic deployments (#37)
+
 Version 0.1.12 (2022-07-25)
 ---------------------------
 charts/cron-job: Simplify chart by removing input nesting layer (#35) 
