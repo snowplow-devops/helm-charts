@@ -1,17 +1,22 @@
 {{/* vim: set filetype=mustache: */}}
-
 {{/*
-Define a common name prefix for all created objects.
+Create a default fully qualified app name.
+We truncate at 40 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
 */}}
-{{- define "iglu.prefix" -}}
-{{ .Release.Name }}-iglu
+{{- define "iglu.fullname" -}}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 40 | trimSuffix "-" -}}
+{{- else -}}
+{{- .Release.Name | trunc 40 | trimSuffix "-" -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
 Define resource names for the CloudSQL proxy service.
 */}}
 {{- define "iglu.cloudsqlproxy.name" -}}
-{{ include "iglu.prefix" . }}-cloudsqlproxy
+{{ include "iglu.fullname" . }}-csp
 {{- end -}}
 {{- define "iglu.cloudsqlproxy.host" -}}
 {{ include "iglu.cloudsqlproxy.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
@@ -21,20 +26,20 @@ Define resource names for the CloudSQL proxy service.
 Define the name of the setup hooks.
 */}}
 {{- define "iglu.hooks.name" -}}
-{{ include "iglu.prefix" . }}-hooks
+{{ include "iglu.fullname" . }}-hooks
 {{- end -}}
 
 {{/*
 Define resource names for the Iglu service.
 */}}
 {{- define "iglu.app.name" -}}
-{{ include "iglu.prefix" . }}-app
+{{ include "iglu.fullname" . }}-app
 {{- end -}}
 {{- define "iglu.app.secret.name" -}}
-{{ include "iglu.prefix" . }}-secret
+{{ include "iglu.fullname" . }}-secret
 {{- end -}}
 {{- define "iglu.app.config.name" -}}
-{{ include "iglu.prefix" . }}-config
+{{ include "iglu.fullname" . }}-config
 {{- end -}}
 
 {{/*
