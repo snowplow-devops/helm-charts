@@ -1,10 +1,12 @@
+{{- if $.Values.githubWebhookServer.enabled }}
 apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding
 metadata:
-  name: {{ $.Values.runnerDeployment.githubwebhookServiceName }}
-  namespace: {{ $.Values.runnerDeployment.runnerControllerNamespace }}
+  name: {{ $.Values.githubWebhookServer.serviceName }}
+  namespace: {{ $.Values.githubWebhookServer.runnerControllerNamespace }}
 spec:
   serviceRef:
-    name:  {{ $.Values.runnerDeployment.githubwebhookServiceName }}
+    name:  {{ $.Values.githubWebhookServer.serviceName }}
     port: 80
-  targetGroupARN:  {{ $.Values.runnerDeployment.githubWebhookAlbtargetGroupArn }}
+  targetGroupARN:  {{ $.Values.githubWebhookServer.targetGroupArn }}
+{{- end }}

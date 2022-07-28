@@ -23,12 +23,13 @@ runnerDeployment:
     tag: "latest"
     pullPolicy: IfNotPresent
 
+githubWebhookServer:
   # -- Declare if github webhook service is deployed for autoscaling.
-  githubWebhookServerEnabled: false
+  enabled: false
   # -- Define the image for the runners to be deployed with.
-  githubWebhookAlbtargetGroupArn: ""
-  githubWebhookServiceName: ""
-  runnerControllerNamespace: ""
+  targetGroupArn: "alb_lb_tg_arn"
+  serviceName: "github-webhook-server"
+  runnerControllerNamespace: "actions-controller-namespace"
 # -- For use with private hosted images on Dockerhub
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
