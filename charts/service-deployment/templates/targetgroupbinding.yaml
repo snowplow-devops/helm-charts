@@ -1,0 +1,13 @@
+{{- if .Values.service.deploy }}
+{{- if eq .Values.global.cloud "aws" }}
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ include "app.fullname" . }}
+spec:
+  serviceRef:
+    name: {{ include "app.fullname" . }}
+    port: {{ .Values.service.port }}
+  targetGroupARN: {{ .Values.service.aws.targetGroupARN }}
+{{- end }}
+{{- end }}

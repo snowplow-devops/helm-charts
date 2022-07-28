@@ -1,0 +1,100 @@
+global:
+  # -- Cloud specific bindings (options: aws, gcp)
+  cloud: ""
+
+image:
+  repository: "nginx"
+  tag: "latest"
+  # -- Whether the repository is public
+  isRepositoryPublic: true
+
+config:
+  command: []
+  #  - "/bin/sh"
+  args: []
+  #  - "-c"
+  #  - "echo 'Environment $(hello_env)! Secret $(username).'"
+
+  # -- Map of environment variables to use within the job
+  env:
+  #  hello_env: "world"
+
+  # -- Map of secrets that will be exposed as environment variables within the job
+  secrets: {}
+  #  username: "password"
+
+# -- List of config maps to mount to the deployment
+configMaps: []
+#  - name: "volume-1"
+#    key: "file.cfg"
+#    contentsB64: "" # The file contents which have already been base-64 encoded
+#    mountPath: "/etc/config" # Must be unique
+#    mountPropagation: None # If unset will default to 'None'
+
+# -- Map of resource constraints for the service
+resources: {}
+#  limits:
+#    cpu: 746m
+#    memory: 900Mi
+#  requests:
+#    cpu: 400m
+#    memory: 512Mi
+
+readinessProbe:
+  httpGet:
+    # -- Path for health checks to be performed (note: set to "" to disable)
+    path: ""
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 2
+
+# -- Grace period for termination of the service
+terminationGracePeriodSeconds: 60
+
+hpa:
+  # -- Whether to deploy HPA rules
+  deploy: true
+  # -- Minimum number of pods to deploy
+  minReplicas: 1
+  # -- Maximum number of pods to deploy
+  maxReplicas: 20
+  # -- Average CPU utilization before auto-scaling starts
+  averageCPUUtilization: 75
+
+service:
+  # -- Whether to setup service bindings (note: only NodePort is supported)
+  deploy: true
+  # -- Port to bind and expose the service on
+  port: 80
+  aws:
+    # -- EC2 TargetGroup ARN to bind the service onto
+    targetGroupARN: ""
+  gcp:
+    # -- Name of the Network Endpoint Group to bind onto
+    networkEndpointGroupName: ""
+
+dockerconfigjson:
+  # -- Name of the secret to use for the private repository
+  name: "snowplow-sd-dockerhub"
+  # -- Username for the private repository
+  username: ""
+  # -- Password for the private repository
+  password: ""
+  # -- Repository server URL
+  server: "https://index.docker.io/v1/"
+  # -- Email address for user of the private repository
+  email: ""
+
+cloudserviceaccount:
+  # -- Whether to create a service-account
+  deploy: false
+  # -- Name of the service-account to create
+  name: "snowplow-sd-service-account"
+  aws:
+    # -- IAM Role ARN to bind to the k8s service account
+    roleARN: ""
+  gcp:
+    # -- Service Account email to bind to the k8s service account
+    serviceAccount: ""
