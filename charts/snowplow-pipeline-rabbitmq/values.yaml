@@ -1,0 +1,56 @@
+collector:
+  fullnameOverride: "collector"
+  image:
+    repository: "snowplow/scala-stream-collector-rabbitmq"
+    tag: "2.7.1-rc4-distroless"
+  config:
+    args:
+      - "--config"
+      - "/snowplow/config/collector.hocon"
+    env:
+      JDK_JAVA_OPTIONS: "-Dorg.slf4j.simpleLogger.defaultLogLevel=info"
+  configMaps:
+    - name: "collector"
+      key: "collector.hocon"
+      contentsB64: "Y29sbGVjdG9yIHsKICBpbnRlcmZhY2U6ICIwLjAuMC4wIgogIHBvcnQ6IDgwODAKCiAgc3RyZWFtcyB7CiAgICBnb29kOiAibm90IHVzZWQiCiAgICBiYWQ6ICJub3QgdXNlZCIKCiAgICBzaW5rIHsKICAgICAgaG9zdE5hbWU6ICJybXExLXJhYmJpdG1xLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwiCiAgICAgIHBvcnROdW1iZXI6IDU2NzIKICAgICAgdXNlck5hbWU6ICJhZG1pbiIKICAgICAgcGFzc3dvcmQ6ICJzZWNyZXRwYXNzd29yZCIKICAgICAgdmlydHVhbEhvc3Q6ICIvIgogICAgICBleGNoYW5nZU5hbWU6ICJyYXctcXVldWUiCiAgICAgIHJvdXRpbmdLZXk6ICJyYXctcXVldWUiCiAgICAgIHF1ZXVlTmFtZTogInJhdy1xdWV1ZSIKICAgIH0KICB9Cn0K"
+      mountPath: "/snowplow/config"
+  readinessProbe:
+    httpGet:
+      path: "/health"
+  service:
+    deploy: true
+    port: 8080
+
+enrich:
+  fullnameOverride: "enrich"
+  image:
+    repository: "snowplow/snowplow-enrich-rabbitmq"
+    tag: "latest"
+  config:
+    args:
+      - "--config"
+      - "/snowplow/config/enrich.hocon"
+      - "--iglu-config"
+      - "/snowplow/config_iglu/iglu.json"
+      - "--enrichments"
+      - "/snowplow/enrichments/"
+    env:
+      JDK_JAVA_OPTIONS: "-Dorg.slf4j.simpleLogger.defaultLogLevel=info"
+  configMaps:
+    - name: "enrich"
+      key: "enrich.hocon"
+      contentsB64: "ewogICJpbnB1dCI6IHsKICAgICJob3N0TmFtZSI6ICJybXExLXJhYmJpdG1xLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwiCiAgICAicG9ydE51bWJlciI6IDU2NzIKICAgICJ1c2VyTmFtZSI6ICJhZG1pbiIKICAgICJwYXNzd29yZCI6ICJzZWNyZXRwYXNzd29yZCIKICAgICJ2aXJ0dWFsSG9zdCI6ICIvIgogICAgImV4Y2hhbmdlTmFtZSI6ICJyYXctcXVldWUiCiAgICAicm91dGluZ0tleSI6ICJyYXctcXVldWUiCiAgICAicXVldWVOYW1lIjogInJhdy1xdWV1ZSIKICB9CgogICJvdXRwdXQiOiB7CiAgICAiZ29vZCI6IHsKICAgICAgImhvc3ROYW1lIjogInJtcTEtcmFiYml0bXEuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbCIKICAgICAgInBvcnROdW1iZXIiOiA1NjcyCiAgICAgICJ1c2VyTmFtZSI6ICJhZG1pbiIKICAgICAgInBhc3N3b3JkIjogInNlY3JldHBhc3N3b3JkIgogICAgICAidmlydHVhbEhvc3QiOiAiLyIKICAgICAgImV4Y2hhbmdlTmFtZSI6ICJlbnJpY2hlZC1xdWV1ZSIKICAgICAgInJvdXRpbmdLZXkiOiAiZW5yaWNoZWQtcXVldWUiCiAgICAgICJxdWV1ZU5hbWUiOiAiZW5yaWNoZWQtcXVldWUiCiAgICB9CgogICAgImJhZCI6IHsKICAgICAgImhvc3ROYW1lIjogInJtcTEtcmFiYml0bXEuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbCIKICAgICAgInBvcnROdW1iZXIiOiA1NjcyCiAgICAgICJ1c2VyTmFtZSI6ICJhZG1pbiIKICAgICAgInBhc3N3b3JkIjogInNlY3JldHBhc3N3b3JkIgogICAgICAidmlydHVhbEhvc3QiOiAiLyIKICAgICAgImV4Y2hhbmdlTmFtZSI6ICJiYWQtMS1xdWV1ZSIKICAgICAgInJvdXRpbmdLZXkiOiAiYmFkLTEtcXVldWUiCiAgICAgICJxdWV1ZU5hbWUiOiAiYmFkLTEtcXVldWUiCiAgICB9CiAgfQp9Cg=="
+      mountPath: "/snowplow/config"
+    - name: "iglu"
+      key: "iglu.json"
+      contentsB64: "ewogICJzY2hlbWEiOiAiaWdsdTpjb20uc25vd3Bsb3dhbmFseXRpY3MuaWdsdS9yZXNvbHZlci1jb25maWcvanNvbnNjaGVtYS8xLTAtMSIsCiAgImRhdGEiOiB7CiAgICAiY2FjaGVTaXplIjogNTAwLAogICAgInJlcG9zaXRvcmllcyI6IFsKICAgICAgewogICAgICAgICJuYW1lIjogIklnbHUgQ2VudHJhbCIsCiAgICAgICAgInByaW9yaXR5IjogMCwKICAgICAgICAidmVuZG9yUHJlZml4ZXMiOiBbICJjb20uc25vd3Bsb3dhbmFseXRpY3MiIF0sCiAgICAgICAgImNvbm5lY3Rpb24iOiB7CiAgICAgICAgICAiaHR0cCI6IHsKICAgICAgICAgICAgInVyaSI6ICJodHRwOi8vaWdsdWNlbnRyYWwuY29tIgogICAgICAgICAgfQogICAgICAgIH0KICAgICAgfSwKICAgICAgewogICAgICAgICJuYW1lIjogIklnbHUgQ2VudHJhbCAtIEdDUCBNaXJyb3IiLAogICAgICAgICJwcmlvcml0eSI6IDEsCiAgICAgICAgInZlbmRvclByZWZpeGVzIjogWyAiY29tLnNub3dwbG93YW5hbHl0aWNzIiBdLAogICAgICAgICJjb25uZWN0aW9uIjogewogICAgICAgICAgImh0dHAiOiB7CiAgICAgICAgICAgICJ1cmkiOiAiaHR0cDovL21pcnJvcjAxLmlnbHVjZW50cmFsLmNvbSIKICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0KICAgIF0KICB9Cn0K"
+      mountPath: "/snowplow/config_iglu"
+    - name: "yauaa"
+      key: "yauaa.json"
+      contentsB64: "ewogICAgInNjaGVtYSI6ICJpZ2x1OmNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy5lbnJpY2htZW50cy95YXVhYV9lbnJpY2htZW50X2NvbmZpZy9qc29uc2NoZW1hLzEtMC0wIiwKICAgICJkYXRhIjogewogICAgICAgICJlbmFibGVkIjogdHJ1ZSwKICAgICAgICAidmVuZG9yIjogImNvbS5zbm93cGxvd2FuYWx5dGljcy5zbm93cGxvdy5lbnJpY2htZW50cyIsCiAgICAgICAgIm5hbWUiOiAieWF1YWFfZW5yaWNobWVudF9jb25maWciCiAgICB9Cn0K"
+      mountPath: "/snowplow/enrichments"
+  readinessProbe:
+    httpGet:
+      path: ""
+  service:
+    deploy: false
