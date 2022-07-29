@@ -38,7 +38,7 @@ spec:
       containers:
       - name: {{ include "iglu.app.name" . }}
         image: {{ .Values.service.image.repository}}:{{ .Values.service.image.tag}}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ default "IfNotPresent" .Values.service.image.pullPolicy }}
 
         args:
         - "-Dconfig.override_with_env_vars=true"

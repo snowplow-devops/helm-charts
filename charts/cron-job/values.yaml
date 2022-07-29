@@ -16,6 +16,8 @@ image:
   tag: "latest"
   # -- Whether the repository is public
   isRepositoryPublic: true
+  # -- The image pullPolicy to use
+  pullPolicy: "IfNotPresent"
 
 config:
   command: []

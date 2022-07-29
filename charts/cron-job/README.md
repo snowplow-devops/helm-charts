@@ -47,6 +47,7 @@ helm delete cron-job
 | image.repository | string | `"busybox"` |  |
 | image.tag | string | `"latest"` |  |
 | image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | config.command | list | `[]` |  |
 | config.args | list | `[]` |  |
 | config.env | object | `{}` | Map of environment variables to use within the job |

@@ -139,6 +139,7 @@ You will need to fill these targeted fields:
 | service.image.repository | string | `"snowplow/iglu-server"` |  |
 | service.image.tag | string | `"0.8.5"` |  |
 | service.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| service.image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | service.minReplicas | int | `1` |  |
 | service.maxReplicas | int | `4` |  |
 | service.targetCPUUtilizationPercentage | int | `75` |  |
