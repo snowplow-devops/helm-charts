@@ -38,6 +38,7 @@ helm delete cron-job
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp) |
+| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | schedule | string | `"*/1 * * * *"` |  |
 | concurrencyPolicy | string | `"Forbid"` |  |
 | restartPolicy | string | `"Never"` |  |

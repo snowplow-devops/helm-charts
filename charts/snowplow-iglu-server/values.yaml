@@ -2,6 +2,9 @@ global:
   # -- Cloud specific bindings (options: aws, gcp)
   cloud: ""
 
+# -- Overrides the full-name given to the deployment resources (default: .Release.Name)
+fullnameOverride: ""
+
 service:
   # -- Whether to run the post-deploy setup hooks
   deploySetupHooks: true

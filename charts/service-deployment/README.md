@@ -44,6 +44,7 @@ helm delete service-deployment
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp) |
+| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | image.repository | string | `"nginx"` |  |
 | image.tag | string | `"latest"` |  |
 | image.isRepositoryPublic | bool | `true` | Whether the repository is public |

@@ -133,6 +133,7 @@ You will need to fill these targeted fields:
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp) |
+| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | service.deploySetupHooks | bool | `true` | Whether to run the post-deploy setup hooks |
 | service.port | int | `8080` | Port to bind and expose the service on |
 | service.image.repository | string | `"snowplow/iglu-server"` |  |
