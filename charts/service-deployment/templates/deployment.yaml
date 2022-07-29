@@ -41,7 +41,7 @@ spec:
       containers:
       - name: "{{ include "app.fullname" . }}"
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: Always
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy }}
 
         {{- if .Values.config.command }}
         command:

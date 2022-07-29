@@ -16,6 +16,8 @@ service:
     tag: "0.8.5"
     # -- Whether the repository is public
     isRepositoryPublic: true
+    # -- The image pullPolicy to use
+    pullPolicy: "IfNotPresent"
   minReplicas: 1
   maxReplicas: 4
   targetCPUUtilizationPercentage: 75

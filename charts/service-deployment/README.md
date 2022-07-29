@@ -48,6 +48,7 @@ helm delete service-deployment
 | image.repository | string | `"nginx"` |  |
 | image.tag | string | `"latest"` |  |
 | image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | config.command | list | `[]` |  |
 | config.args | list | `[]` |  |
 | config.env | string | `nil` | Map of environment variables to use within the job |
