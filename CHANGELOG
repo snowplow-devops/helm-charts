@@ -1,3 +1,7 @@
+Version 0.1.16 (2022-07-29)
+---------------------------
+Make imagePullPolicy configurable in all charts (#43)
+
 Version 0.1.15 (2022-07-29)
 ---------------------------
 Add fullnameOverride to documentation output for charts (#42)
