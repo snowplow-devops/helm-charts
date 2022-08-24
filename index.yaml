@@ -130,6 +130,29 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/aws-otel-collector-0.1.0/aws-otel-collector-0.1.0.tgz
     version: 0.1.0
+  aws-target-group-binding:
+  - apiVersion: v2
+    created: "2022-08-24T14:55:55.144516241Z"
+    description: A Helm chart for deploying a TargetGroupBinding for use with the
+      AWS LoadBalancer Controller
+    digest: 75960675a66ab44d890cf4236cf4849c5cf3cc998575b40cd8082c80acec609d
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - kubernetes
+    - loadbalancer
+    - aws
+    maintainers:
+    - email: gthomson31@users.noreply.github.com
+      name: gthomson31
+      url: https://github.com/gthomson31
+    name: aws-target-group-binding
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    type: application
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/aws-target-group-binding-0.1.0/aws-target-group-binding-0.1.0.tgz
+    version: 0.1.0
   cloudserviceaccount:
   - apiVersion: v2
     created: "2022-04-15T09:16:26.555345583Z"
@@ -659,4 +682,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2022-07-29T08:06:03.992321315Z"
+generated: "2022-08-24T14:55:55.144561541Z"
