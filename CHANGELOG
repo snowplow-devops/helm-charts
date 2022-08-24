@@ -1,3 +1,7 @@
+Version 0.1.17 (2022-08-24)
+---------------------------
+charts/aws-target-group-binding: Create chart (#47)
+
 Version 0.1.16 (2022-07-29)
 ---------------------------
 Make imagePullPolicy configurable in all charts (#43)
