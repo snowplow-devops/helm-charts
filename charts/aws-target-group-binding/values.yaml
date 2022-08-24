@@ -1,0 +1,8 @@
+# -- Exact name of the service to add the binding against
+serviceName: "myservicename"
+
+# --  The port the required service is running on
+servicePort: 80
+
+# -- Amazon Resource Name (ARN) for the TargetGroup you want to use.
+targetGroupARN: "arn:1234:5678"
