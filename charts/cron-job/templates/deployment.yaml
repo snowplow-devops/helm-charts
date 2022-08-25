@@ -17,7 +17,13 @@ spec:
           annotations:
             {{- if .Values.configMaps }}
             {{- range $v := .Values.configMaps }}
-            checksum/{{ $v.name }}-{{ $v.key }}: "{{ $v.contentsB64 | sha256sum }}"
+            {{- range $f := $v.files }}
+            {{- if $f.contentsB64 }}
+            checksum/{{ $v.name }}-{{ $f.key }}: "{{ $f.contentsB64 | sha256sum }}"
+            {{- else }}
+            checksum/{{ $v.name }}-{{ $f.key }}: "{{ ($.Files.Get $f.contentsFile) | b64enc | sha256sum }}"
+            {{- end }}
+            {{- end }}
             {{- end }}
             {{- end }}
         spec:
