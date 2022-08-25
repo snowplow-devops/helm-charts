@@ -37,10 +37,12 @@ config:
 # -- List of config maps to mount to the deployment
 configMaps: []
 #  - name: "volume-1"
-#    key: "file.cfg"
-#    contentsB64: "" # The file contents which have already been base-64 encoded
 #    mountPath: "/etc/config" # Must be unique
 #    mountPropagation: None # If unset will default to 'None'
+#    files: []
+#      - key: "file.cfg" # Key must be unique for each file
+#        contentsB64: "" # The file contents which have already been base-64 encoded
+#        contentsFile: "" # The path to a local file (note: contentsB64 will take precedence if not-empty)
 
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
