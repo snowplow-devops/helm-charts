@@ -10,7 +10,7 @@ The service can be accessed via port {{ .Values.service.port }} on the following
 
 To connect to your server from outside the cluster execute the following commands:
 
-    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "app.fullname" . }} 8080:{{ .Values.service.port }}
+    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "app.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
 
-You can then navigate to your service in your browser at localhost:8080 or issue request with tools like cURL.
+You can then navigate to your service in your browser at localhost:{{ .Values.service.port }} or issue request with tools like cURL.
 {{- end }}

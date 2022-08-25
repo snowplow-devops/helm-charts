@@ -67,7 +67,9 @@ helm delete service-deployment
 | hpa.maxReplicas | int | `20` | Maximum number of pods to deploy |
 | hpa.averageCPUUtilization | int | `75` | Average CPU utilization before auto-scaling starts |
 | service.deploy | bool | `true` | Whether to setup service bindings (note: only NodePort is supported) |
-| service.port | int | `80` | Port to bind and expose the service on |
+| service.port | int | `8000` | Port to bind and expose the service on |
+| service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
+| service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
 | dockerconfigjson.name | string | `"snowplow-sd-dockerhub"` | Name of the secret to use for the private repository |

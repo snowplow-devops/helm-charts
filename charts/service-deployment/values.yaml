@@ -74,7 +74,11 @@ service:
   # -- Whether to setup service bindings (note: only NodePort is supported)
   deploy: true
   # -- Port to bind and expose the service on
-  port: 80
+  port: 8000
+  # -- The Target Port that the actual application is being exposed on
+  targetPort: 80
+  # -- Protocol that the service leverages (note: TCP or UDP)
+  protocol: "TCP"
   aws:
     # -- EC2 TargetGroup ARN to bind the service onto
     targetGroupARN: ""
