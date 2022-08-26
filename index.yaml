@@ -177,6 +177,31 @@ entries:
     version: 0.1.0
   cron-job:
   - apiVersion: v2
+    created: "2022-08-26T11:23:25.345787598Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    description: A Helm Chart to deploy an arbitrary container as a cron job.
+    digest: baf6e05ad737082fd5ccb356951b0c977ec59b39146be1ee5ce5c7d65dc135ed
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cron
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: cron-job
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cron-job-0.5.0/cron-job-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
     created: "2022-07-29T08:06:03.702330116Z"
     dependencies:
     - name: dockerconfigjson
@@ -370,6 +395,33 @@ entries:
     - https://github.com/snowplow-devops/helm-charts/releases/download/dockerconfigjson-0.1.0/dockerconfigjson-0.1.0.tgz
     version: 0.1.0
   service-deployment:
+  - apiVersion: v2
+    created: "2022-08-26T11:23:25.476985105Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    description: A Helm Chart to setup a generic deployment with optional service/hpa
+      bindings
+    digest: da8da3472436d6cd7a9bb9108ee7ee65c6a89a31db96495a120b91076e25a69a
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - service
+    - deployment
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: service-deployment
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/service-deployment-0.2.0/service-deployment-0.2.0.tgz
+    version: 0.2.0
   - apiVersion: v2
     created: "2022-07-29T08:06:03.842059302Z"
     dependencies:
@@ -682,4 +734,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2022-08-24T14:55:55.144561541Z"
+generated: "2022-08-26T11:23:25.477381915Z"
