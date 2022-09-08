@@ -1,0 +1,29 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: {{ $.Values.name }}
+  labels:
+    helm.sh/chart: {{ include "githubActionsRunners.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.Version | replace "+" "_" }}
+    app.kubernetes.io/component: RunnerDeployment
+    app.kubernetes.io/part-of: {{ .Chart.Name }}
+spec:
+  replicas: 0
+  template:
+    spec:
+
+      {{- if eq .Values.deploymentType "organization" }}
+      organization: {{ $.Values.organizationName  }}
+      {{- else if eq .Values.deploymentType "enterprise" }}
+      enterprise: {{ $.Values.enterpriseName  }}
+      {{ else }}
+      repository: {{ $.Values.repositoryName }}
+      {{ end }}
+      image: "{{ $.Values.image.runnerImage }}:{{ .Values.image.tag }}"
+      imagePullPolicy: {{ $.Values.image.pullPolicy }}
+      {{- if .Values.image.isRepositoryPrivate }}
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      {{- end}}

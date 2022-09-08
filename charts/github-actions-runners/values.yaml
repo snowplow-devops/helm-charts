@@ -1,0 +1,35 @@
+# -- Declare the name of the runner deployment
+name: "github-runner-deployment"
+# -- Select Deploment type - [ repository / organization / enterprise ]
+deploymentType: "repository"
+# -- For use with repository deployment type - Add repo for runner deployment
+repositoryName: "example/repo"
+# -- For use with organization deployment type
+organizationName: ""
+# -- For use with enterprise deployment type
+enterpriseName: ""
+# Declare the minimum runner scale down time after scale out (Default :  5 minutes).
+scaleDownDelaySecondsAfterScaleOut: "300"
+# -- Declare the minimum and maximum available runners
+minimumReplicaCount: "1"
+maximumReplicaCount: "1"
+# -- Maximum time that a runner should exist after scale up activity without an assigned workflow.
+scaleUpTriggerDuration: "10m"
+# -- Define the image for the runners to be deployed with.
+image:
+  runnerImage: "summerwind/actions-runner"
+  isRepositoryPrivate: false
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+dockerconfigjson:
+  # -- Name of the secret to use for the private repository
+  name: "snowplow-github-runner-deployment-dockerhub"
+  # -- Username for the private repository
+  username: ""
+  # -- Password for the private repository
+  password: ""
+  # -- Repository server URL
+  server: "https://index.docker.io/v1/"
+  # -- Email address for user of the private repository
+  email: ""
