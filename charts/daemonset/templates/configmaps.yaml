@@ -1,0 +1,17 @@
+{{- if .Values.configMaps }}
+{{- range $v := .Values.configMaps }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $v.name }}
+binaryData:
+  {{- range $f := $v.files }}
+  {{- if $f.contentsB64 }}
+  {{ $f.key }}: "{{ $f.contentsB64 }}"
+  {{- else }}
+  {{ $f.key }}: "{{ ($.Files.Get $f.contentsFile) | b64enc }}"
+  {{- end }}
+  {{- end }}
+---
+{{- end }}
+{{- end }}

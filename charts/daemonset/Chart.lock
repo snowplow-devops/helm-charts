@@ -1,0 +1,9 @@
+dependencies:
+- name: dockerconfigjson
+  repository: https://snowplow-devops.github.io/helm-charts
+  version: 0.1.0
+- name: cloudserviceaccount
+  repository: https://snowplow-devops.github.io/helm-charts
+  version: 0.1.0
+digest: sha256:a72e7c9d83384e74e5aca8b6e1681f8ceab29e3d597a3d66a4f48ba6ea2fa6a1
+generated: "2022-08-26T13:33:27.712249+02:00"
