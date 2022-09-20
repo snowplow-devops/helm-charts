@@ -1,8 +1,12 @@
+Version 0.1.19 (2022-09-21)
+---------------------------
+charts/github-actions-runners: Initial Release (#54)
+
 Version 0.1.18 (2022-08-25)
 ---------------------------
 charts/cron-job: Add ability to specify multiple files per config-map (#48)
 charts/service-deployment: Add ability to specify multiple files per config-map (#49)
-charts/service-deployment: Expose targetPort and protocol in service definition (#53) 
+charts/service-deployment: Expose targetPort and protocol in service definition (#53)
 
 Version 0.1.17 (2022-08-24)
 ---------------------------
@@ -28,7 +32,7 @@ charts/service-deployment: Add chart that can handle generic deployments (#37)
 
 Version 0.1.12 (2022-07-25)
 ---------------------------
-charts/cron-job: Simplify chart by removing input nesting layer (#35) 
+charts/cron-job: Simplify chart by removing input nesting layer (#35)
 
 Version 0.1.11 (2022-07-22)
 ---------------------------
