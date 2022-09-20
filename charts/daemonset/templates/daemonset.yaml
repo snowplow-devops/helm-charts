@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "app.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "app.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "app.fullname" . }}
+      annotations:
+        {{- if .Values.configMaps }}
+        {{- range $v := .Values.configMaps }}
+        {{- range $f := $v.files }}
+        {{- if $f.contentsB64 }}
+        checksum/{{ $v.name }}-{{ $f.key }}: "{{ $f.contentsB64 | sha256sum }}"
+        {{- else }}
+        checksum/{{ $v.name }}-{{ $f.key }}: "{{ ($.Files.Get $f.contentsFile) | b64enc | sha256sum }}"
+        {{- end }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
+    spec:
+      enableServiceLinks: false
+
+      {{- if .Values.cloudserviceaccount.deploy }}
+      serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+      {{- end }}
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+
+      {{- if not .Values.image.isRepositoryPublic }}
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      {{- end }}
+
+      volumes:
+      {{- range $v := .Values.configMaps }}
+      - configMap:
+          name: {{ $v.name }}
+          optional: false
+        name: {{ $v.name }}
+      {{- end }}
+      {{- range $v := .Values.hostPaths }}
+      - name: {{ $v.name }}
+        hostPath:
+          path: {{ $v.path }}
+          type: {{ $v.type }}
+      {{- end }}
+
+      containers:
+      - name: "{{ include "app.fullname" . }}"
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy }}
+
+        {{- if .Values.config.command }}
+        command:
+        {{- range $v := .Values.config.command }}
+        - "{{ $v }}"
+        {{- end }}
+        {{- end }}
+
+        {{- if .Values.config.args }}
+        args:
+        {{- range $v := .Values.config.args }}
+        - "{{ $v }}"
+        {{- end }}
+        {{- end }}
+
+        {{- if .Values.config.env }}
+        env:
+        {{- range $k, $v := .Values.config.env }}
+        - name: "{{ $k }}"
+          value: "{{ $v }}"
+        {{- end }}
+        {{- end }}
+        
+        {{- if .Values.config.secrets  }}
+        envFrom:
+        - secretRef:
+            name: {{ include "app.secret.fullname" . }}
+        {{- end }}
+
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+
+        volumeMounts:
+        {{- range $v := .Values.configMaps }}
+        - mountPath: "{{ $v.mountPath }}"
+          {{- if $v.mountPropagation }}
+          mountPropagation: {{ $v.mountPropagation }}
+          {{- else }}
+          mountPropagation: None
+          {{- end }}
+          name: {{ $v.name }}
+        {{- end }}
+        {{- range $v := .Values.hostPaths }}
+        - mountPath: "{{ $v.mountPath }}"
+          name: {{ $v.name }}
+          readOnly: true
+        {{- end }}
+

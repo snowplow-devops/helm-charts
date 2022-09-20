@@ -1,0 +1,15 @@
+{{- if .Values.service.deploy }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "app.fullname" . }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ include "app.fullname" . }}
+  ports:
+  - name: http-port
+    port: {{ .Values.service.port }}
+    protocol: {{ .Values.service.protocol }}
+    targetPort: {{ .Values.service.targetPort }}
+{{- end }}
