@@ -1,3 +1,7 @@
+Version 0.1.20 (2022-09-21)
+---------------------------
+charts/daemonset: Add opinionated chart for deploying a daemonset (#51)
+
 Version 0.1.19 (2022-09-21)
 ---------------------------
 charts/github-actions-runners: Initial Release (#54)
