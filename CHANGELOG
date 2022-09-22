@@ -1,3 +1,7 @@
+Version 0.1.21 (2022-09-22)
+---------------------------
+charts/service-deployment: Add support for 'exec' readiness probes in deployment (#56)
+
 Version 0.1.20 (2022-09-21)
 ---------------------------
 charts/daemonset: Add opinionated chart for deploying a daemonset (#51)

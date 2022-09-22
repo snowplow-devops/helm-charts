@@ -47,10 +47,14 @@ resources: {}
 #    cpu: 400m
 #    memory: 512Mi
 
+# -- readinessProbe is enabled if httpGet.path or exec.command are present
 readinessProbe:
   httpGet:
-    # -- Path for health checks to be performed (note: set to "" to disable)
+    # -- Path for health checks to be performed to determine readiness
     path: ""
+  exec:
+    # -- Command/arguments to execute to determine readiness
+    command: []
   initialDelaySeconds: 5
   periodSeconds: 5
   timeoutSeconds: 5
