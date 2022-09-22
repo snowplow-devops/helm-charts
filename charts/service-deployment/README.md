@@ -55,7 +55,8 @@ helm delete service-deployment
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
 | resources | object | `{}` | Map of resource constraints for the service |
-| readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed (note: set to "" to disable) |
+| readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |
+| readinessProbe.command.exec | list | `[]` | Command/arguments to execute to determine readiness |
 | readinessProbe.initialDelaySeconds | int | `5` |  |
 | readinessProbe.periodSeconds | int | `5` |  |
 | readinessProbe.timeoutSeconds | int | `5` |  |

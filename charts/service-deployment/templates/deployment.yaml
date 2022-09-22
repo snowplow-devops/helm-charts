@@ -80,12 +80,21 @@ spec:
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
 
-        {{- if ne .Values.readinessProbe.httpGet.path "" }}
+        {{- if or (ne .Values.readinessProbe.httpGet.path "") (.Values.readinessProbe.exec.command) }}
         readinessProbe:
-          httpGet:
-            path: {{ .Values.readinessProbe.httpGet.path }}
-            port: {{ .Values.service.port }}
-            scheme: HTTP
+          {{- if ne .Values.readinessProbe.httpGet.path "" }}
+            httpGet:
+              path: {{ .Values.readinessProbe.httpGet.path }}
+              port: {{ .Values.service.port }}
+              scheme: HTTP
+          {{- end }}
+          {{- if gt (len .Values.readinessProbe.exec.command) 0 }}
+          exec:
+            command:
+          {{- range $v := .Values.readinessProbe.exec.command }}
+            - {{ $v }}
+          {{- end }}
+          {{- end }}
           initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
