@@ -90,3 +90,9 @@ cloudserviceaccount:
   gcp:
     # -- Service Account email to bind to the k8s service account
     serviceAccount: ""
+
+clusterrole:
+  # -- Whether to create a cluster role
+  deploy: false
+  # -- List of PolicyRules to attach to cluster role
+  rules: []
