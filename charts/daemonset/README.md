@@ -61,6 +61,7 @@ helm delete daemonset
 | config.env | string | `nil` | Map of environment variables to use within the job |
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
+| daemonsetAnnotations | object | `{}` | Annotations to be applied to the daemonset |
 | hostPaths | list | `[]` | List of host paths to mount to the deployment |
 | resources | object | `{}` | Map of resource constraints for the service |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
