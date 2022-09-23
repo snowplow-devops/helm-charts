@@ -27,6 +27,9 @@ spec:
         {{- end }}
     spec:
       enableServiceLinks: false
+      hostPID: {{ .Values.config.hostPIDAccess | default "false" }}
+      hostNetwork: {{ .Values.config.hostNetworkAccess | default "false" }}
+      dnsPolicy: {{ .Values.config.dnsPolicy | default "Default" }}
 
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}
@@ -94,6 +97,11 @@ spec:
         - secretRef:
             name: {{ include "app.secret.fullname" . }}
         {{- end }}
+
+        {{- if .Values.config.securityContext  }}
+        securityContext:
+          {{- toYaml $.Values.config.securityContext | nindent 10 }}
+        {{- end  }}
 
         resources:
           {{- toYaml .Values.resources | nindent 10 }}
