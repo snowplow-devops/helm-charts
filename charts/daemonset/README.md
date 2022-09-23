@@ -69,7 +69,9 @@ helm delete daemonset
 | hostPaths | list | `[]` | List of host paths to mount to the deployment |
 | resources | object | `{}` | Map of resource constraints for the service |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
-| service.deploy | bool | `true` | Whether to setup service bindings (note: only NodePort is supported) |
+| service.deploy | bool | `true` | Whether to setup service bindings |
+| service.type | string | `"NodePort"` | Configures ServiceType for this service |
+| service.name | string | `"http"` | Prefix of port name for service (appended with '-port') |
 | service.port | int | `8000` | Port to bind and expose the service on |
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
