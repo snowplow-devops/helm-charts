@@ -45,9 +45,18 @@ spec:
       {{- end }}
       {{- range $v := .Values.hostPaths }}
       - name: {{ $v.name }}
+        {{- if $v.secretName }}
+        secret:
+          secretName: {{ $v.secretName }}
+          {{- if $v.secretDefaultMode }}
+          defaultMode: {{ $v.secretDefaultMode }}
+          {{- end }}
+        {{- end }}
+        {{- if $v.path }}
         hostPath:
           path: {{ $v.path }}
-          type: {{ $v.type }}
+          {{- if $v.type }}type: {{ $v.type }}{{- end }}
+        {{- end }}
       {{- end }}
 
       containers:
@@ -99,6 +108,6 @@ spec:
         {{- range $v := .Values.hostPaths }}
         - mountPath: "{{ $v.mountPath }}"
           name: {{ $v.name }}
-          readOnly: true
+          readOnly: {{ $v.readOnly }}
         {{- end }}
 

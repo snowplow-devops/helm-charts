@@ -38,12 +38,15 @@ configMaps: []
 #        contentsB64: "" # The file contents which have already been base-64 encoded
 #        contentsFile: "" # The path to a local file (note: contentsB64 will take precedence if not-empty)
 
-# -- List of host paths to mount to the deployment (note: only allows read-only mounts)
+# -- List of host paths to mount to the deployment
 hostPaths: []
-#  - name: "rootfs"
-#    path: "/"
-#    type: "Directory"
-#    mountPath: "/rootfs"
+ # - name: "rootfs"
+ #   path: "/"
+ #   type: "Directory"
+ #   mountPath: "/rootfs"
+ #   readOnly: true
+ #   secret-name: "secret-name"
+ #   secret-defaultMode: 256
 
 # -- Map of resource constraints for the service
 resources: {}
