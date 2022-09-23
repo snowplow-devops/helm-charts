@@ -11,6 +11,9 @@ spec:
       labels:
         app: {{ include "app.fullname" . }}
       annotations:
+        {{- with .Values.daemonsetAnnotations }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         {{- if .Values.configMaps }}
         {{- range $v := .Values.configMaps }}
         {{- range $f := $v.files }}

@@ -38,6 +38,9 @@ configMaps: []
 #        contentsB64: "" # The file contents which have already been base-64 encoded
 #        contentsFile: "" # The path to a local file (note: contentsB64 will take precedence if not-empty)
 
+# -- Annotations to be applied to the daemonset
+daemonsetAnnotations: {}
+
 # -- List of host paths to mount to the deployment
 hostPaths: []
 #  - name: "rootfs" - required
