@@ -8,3 +8,5 @@ aws:
 gcp:
   # -- Service Account email to bind to the k8s service account
   serviceAccount: ""
+  # -- List of secrets allowed to be used by pods running using this ServiceAccount
+secrets: []
