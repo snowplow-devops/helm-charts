@@ -28,6 +28,23 @@ config:
   secrets: {}
   #  username: "password"
 
+  # -- Map of securityContext object applied to pods (https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  securityContext: {}
+  #  readOnlyRootFilesystem: true
+  #  privileged: false
+  #  capabilities:
+  #    add:
+  #    - NET_ADMIN
+
+  # -- Allow pods access to host proccess information
+  hostPIDAccess: false
+
+  # -- Allow pods access to host network ()
+  hostNetworkAccess: false
+
+  # -- DNS Policy for pods (https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
+  dnsPolicy: Default
+
 # -- List of config maps to mount to the deployment
 configMaps: []
 #  - name: "volume-1"
