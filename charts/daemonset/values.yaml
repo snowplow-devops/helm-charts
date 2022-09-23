@@ -81,8 +81,11 @@ resources: {}
 terminationGracePeriodSeconds: 60
 
 service:
-  # -- Whether to setup service bindings (note: only NodePort is supported)
   deploy: true
+  # -- Whether to setup service bindings
+  type: NodePort
+  # -- Name of service
+  name: "http"
   # -- Port to bind and expose the service on
   port: 8000
   # -- The Target Port that the actual application is being exposed on
