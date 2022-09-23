@@ -56,6 +56,7 @@ helm delete daemonset
 | image.tag | string | `"latest"` |  |
 | image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
+| annotations | object | `{}` | Annotations to be applied to the daemonset |
 | config.command | list | `[]` |  |
 | config.args | list | `[]` |  |
 | config.env | string | `nil` | Map of environment variables to use within the job |

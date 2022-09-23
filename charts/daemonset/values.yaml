@@ -13,6 +13,9 @@ image:
   # -- The image pullPolicy to use
   pullPolicy: "IfNotPresent"
 
+# -- Annotations to be applied to the daemonset
+annotations: {}
+
 config:
   command: []
   #  - "/bin/sh"
