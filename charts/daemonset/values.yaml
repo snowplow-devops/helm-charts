@@ -31,6 +31,18 @@ config:
   secrets: {}
   #  username: "password"
 
+  # -- Map of securityContext object applied to pods
+  securityContext: {}
+  
+  # -- Allow pods access to host proccess information
+  hostPID: false
+
+  # -- Allow pods access to host network
+  hostNetwork: false
+
+  # -- DNS Policy for pods
+  dnsPolicy: Default
+
 # -- List of config maps to mount to the deployment
 configMaps: []
 #  - name: "volume-1"

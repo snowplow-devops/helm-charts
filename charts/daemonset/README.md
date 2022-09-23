@@ -61,6 +61,10 @@ helm delete daemonset
 | config.args | list | `[]` |  |
 | config.env | string | `nil` | Map of environment variables to use within the job |
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
+| config.securityContext | object | `{}` | Map of securityContext object applied to pods |
+| config.hostPID | bool | `false` | Allow pods access to host process information |
+| config.hostNetwork | bool | `false` | Allow pods access to host network |
+| config.dnsPolicy | object | `"Default"` | DNS Policy for pods |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
 | hostPaths | list | `[]` | List of host paths to mount to the deployment |
 | resources | object | `{}` | Map of resource constraints for the service |
