@@ -77,3 +77,5 @@ helm delete daemonset
 | cloudserviceaccount.name | string | `"snowplow-sd-service-account"` | Name of the service-account to create |
 | cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
 | cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
+| clusterrole.deploy | bool | `false` | Whether to create a cluster role |
+| clusterole.rules | list | `[]`  | List of PolicyRules to attach to cluster role |
