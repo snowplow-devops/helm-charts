@@ -1,3 +1,7 @@
+Version 0.1.21 (2022-09-23)
+---------------------------
+charts/cloudserviceaccount: Add support for ServiceAccount secrets (#58)
+
 Version 0.1.20 (2022-09-21)
 ---------------------------
 charts/daemonset: Add opinionated chart for deploying a daemonset (#51)
