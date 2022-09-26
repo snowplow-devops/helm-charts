@@ -1,3 +1,11 @@
+Version 0.1.23 (2022-09-23)
+---------------------------
+charts/daemonset: Increase configurability for Service in daemonset chart (#63)
+charts/daemonset: Add additional security options to daemonset chart (#62)
+charts/daemonset: Add annotations support to daemonset chart (#61)
+charts/daemonset: Allow additional volume configurations for daemonset (#60)
+charts/daemonset: Add support for ClusterRoles in daemonset chart (#59)
+
 Version 0.1.22 (2022-09-23)
 ---------------------------
 charts/cloudserviceaccount: Add support for ServiceAccount secrets (#58)
