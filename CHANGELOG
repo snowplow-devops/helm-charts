@@ -1,3 +1,7 @@
+Version 0.1.22 (2022-09-23)
+---------------------------
+charts/cloudserviceaccount: Add support for ServiceAccount secrets (#58)
+
 Version 0.1.21 (2022-09-22)
 ---------------------------
 charts/service-deployment: Add support for 'exec' readiness probes in deployment (#56)

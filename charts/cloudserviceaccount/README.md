@@ -39,3 +39,4 @@ helm delete cloudserviceaccount
 | name | string | `"my-service-account"` | Name of the service-account to create |
 | aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
 | gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
+| secrets | list | `[]` | List of secrets allowed to be used by pods running using this ServiceAccount |
