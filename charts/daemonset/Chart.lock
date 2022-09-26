@@ -4,6 +4,6 @@ dependencies:
   version: 0.1.0
 - name: cloudserviceaccount
   repository: https://snowplow-devops.github.io/helm-charts
-  version: 0.1.0
-digest: sha256:a72e7c9d83384e74e5aca8b6e1681f8ceab29e3d597a3d66a4f48ba6ea2fa6a1
-generated: "2022-08-26T13:33:27.712249+02:00"
+  version: 0.2.0
+digest: sha256:d01c3a86be457bde482b86cbe6dc131a1a32097005e306421cac1ff818c2196d
+generated: "2022-09-26T16:35:02.135781-04:00"
