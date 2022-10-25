@@ -10,8 +10,8 @@ spec:
     metadata:
       labels:
         app: {{ include "transformer.app.name" . }}
-        environment: "TODO:environment"
-        supplier: "TODO:snowplow"
+        environment: "environment"
+        supplier: "snowplow"
       annotations:
         checksum/config: "{{ include "transformer.service.config.checksum" . }}"
         {{- if ne .Values.service.config.hoconBase64 "" }}
