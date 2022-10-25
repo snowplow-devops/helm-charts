@@ -24,20 +24,6 @@ spec:
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}
       {{- end }}
-      progressDeadlineSeconds: 600
-      replicas: 1
-      revisionHistoryLimit: 10
-      
-      selector:
-        matchLabels:
-          app: transformer
-      
-      strategy:
-        rollingUpdate:
-          maxSurge: 25%
-          maxUnavailable: 25%
-        type: RollingUpdate
-      
       automountServiceAccountToken: true
       terminationGracePeriodSeconds: {{ .Values.service.terminationGracePeriodSeconds }}
 
