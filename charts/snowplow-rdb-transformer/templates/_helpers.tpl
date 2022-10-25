@@ -30,7 +30,7 @@ Define the name of the setup hooks.
 {{- end -}}
 
 {{/*
-Define resource names for the Iglu service.
+Define resource names for the Transformer service.
 */}}
 {{- define "transformer.app.name" -}}
 {{ include "transformer.fullname" . }}-app
@@ -48,9 +48,6 @@ Define default values for required values.
 {{- define "transformer.service.config.superApiKey" -}}
 {{- default uuidv4 .Values.service.config.secrets.superApiKey | lower -}}
 {{- end -}}
-{{- define "transformer.service.config.database.type" -}}
-{{- default "dummy" .Values.service.config.database.type | lower -}}
-{{- end -}}
 {{- define "transformer.service.targetCPUUtilizationPercentage" -}}
 {{- mul .Values.service.targetCPUUtilizationPercentage .Values.service.minReplicas }}
 {{- end -}}
@@ -58,5 +55,5 @@ Define default values for required values.
 {{- default .Release.Name .Values.service.gcp.networkEndpointGroupName -}}
 {{- end -}}
 {{- define "transformer.service.config.checksum" -}}
-{{- printf "%s-%s-%s" (include "transformer.service.config.superApiKey" .) .Values.service.config.database.secrets.password .Values.service.config.database.secrets.username | sha256sum -}}
+{{- printf "%s-%s-%s" (include "transformer.service.config.superApiKey" .) | sha256sum -}}
 {{- end -}}

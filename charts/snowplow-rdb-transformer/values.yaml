@@ -45,25 +45,15 @@ service:
     repoServer:
       maxConnections: 16384
       idleTimeout: "65 seconds"
-    database:
-      # -- Can be either 'dummy' (in-memory) or 'postgres'
-      type: "dummy"
-      # -- Postgres database host
-      host: ""
-      # -- Postgres database port
-      port: 5432
-      # -- Postgres database name
-      dbname: ""
-      secrets:
-        username: ""
-        password: ""
     # -- Whether to allow schema patching
     patchesAllowed: false
 
     # -- Optional Base64 encoded config HOCON (note: will not override above settings)
     hoconBase64: ""
+    # -- Optional Base64 encoded config HOCON (note: will not override above settings)
+    igluResolverBase64: ""
     # -- Optional JAVA_OPTS inputs for the deployed service
-    javaOpts: ""
+    javaOpts: "-Xms256m -Xmx2g -Dorg.slf4j.simpleLogger.defaultLogLevel=info"
 
   aws:
     # -- EC2 TargetGroup ARN to bind the service onto
@@ -93,17 +83,17 @@ service:
 
       resources:
         limits:
-          cpu: 100m
-          memory: 256Mi
+          cpu: 400m
+          memory: 2048Mi
         requests:
-          cpu: 50m
-          memory: 128Mi
+          cpu: 200m
+          memory: 1024Mi
 
 cloudserviceaccount:
   # -- Whether to create a service-account
   deploy: false
   # -- Name of the service-account to create
-  name: "snowplow-iglu-server-service-account"
+  name: "snowplow-rdb-transformer-service-account"
   aws:
     # -- IAM Role ARN to bind to the k8s service account
     roleARN: ""
@@ -113,7 +103,7 @@ cloudserviceaccount:
 
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
-  name: "snowplow-iglu-server-dockerhub"
+  name: "snowplow-rdb-transformer-dockerhub"
   # -- Username for the private repository
   username: ""
   # -- Password for the private repository

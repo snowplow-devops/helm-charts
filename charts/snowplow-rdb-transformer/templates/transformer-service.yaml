@@ -5,7 +5,7 @@ metadata:
   {{- if eq .Values.global.cloud "gcp" }}
   annotations:
     cloud.google.com/app-protocols:  '{"http-port": "HTTP"}'
-    cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.service.port }}":{"name": "{{ include "iglu.service.gcp.networkEndpointGroupName" . }}"}}}'
+    cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.service.port }}":{"name": "{{ include "transformer.service.gcp.networkEndpointGroupName" . }}"}}}'
   {{- end }}
 spec:
   type: NodePort
