@@ -12,7 +12,7 @@ service:
   # -- Port to bind and expose the service on
   port: 8080
   image:
-    repository: "snowplow/snowplow-rdb-loader"
+    repository: "snowplow/transformer-pubsub"
     tag: "5.0.0"
     # -- Whether the repository is public
     isRepositoryPublic: true
