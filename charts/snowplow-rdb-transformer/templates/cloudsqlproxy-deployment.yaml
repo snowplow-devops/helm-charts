@@ -2,15 +2,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "iglu.cloudsqlproxy.name" . }}
+  name: {{ include "transformer.cloudsqlproxy.name" . }}
 spec:
   selector:
     matchLabels:
-      app: {{ include "iglu.cloudsqlproxy.name" . }}
+      app: {{ include "transformer.cloudsqlproxy.name" . }}
   template:
     metadata:
       labels:
-        app: {{ include "iglu.cloudsqlproxy.name" . }}
+        app: {{ include "transformer.cloudsqlproxy.name" . }}
     spec:
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}
@@ -24,7 +24,7 @@ spec:
       {{- end }}
 
       containers:
-      - name: {{ include "iglu.cloudsqlproxy.name" . }}
+      - name: {{ include "transformer.cloudsqlproxy.name" . }}
         image: {{ .Values.service.gcp.proxy.image.repository}}:{{ .Values.service.gcp.proxy.image.tag}}
         imagePullPolicy: Always
 
