@@ -1,0 +1,124 @@
+global:
+  # -- Cloud specific bindings (options: aws, gcp)
+  cloud: ""
+
+# -- Overrides the full-name given to the deployment resources (default: .Release.Name)
+fullnameOverride: ""
+
+service:
+  # -- Whether to run the post-deploy setup hooks
+  deploySetupHooks: true
+
+  # -- Port to bind and expose the service on
+  port: 8080
+  image:
+    repository: "snowplow/snowplow-rdb-loader"
+    tag: "5.0.0"
+    # -- Whether the repository is public
+    isRepositoryPublic: true
+    # -- The image pullPolicy to use
+    pullPolicy: "IfNotPresent"
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 75
+  terminationGracePeriodSeconds: 630
+
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 2
+
+  resources:
+    limits:
+      cpu: 746m
+      memory: 900Mi
+    requests:
+      cpu: 400m
+      memory: 512Mi
+
+  config:
+    secrets:
+      # -- Lowercase uuidv4 to use as admin apikey of the service (default: auto-generated)
+      superApiKey: ""
+    repoServer:
+      maxConnections: 16384
+      idleTimeout: "65 seconds"
+    database:
+      # -- Can be either 'dummy' (in-memory) or 'postgres'
+      type: "dummy"
+      # -- Postgres database host
+      host: ""
+      # -- Postgres database port
+      port: 5432
+      # -- Postgres database name
+      dbname: ""
+      secrets:
+        username: ""
+        password: ""
+    # -- Whether to allow schema patching
+    patchesAllowed: false
+
+    # -- Optional Base64 encoded config HOCON (note: will not override above settings)
+    hoconBase64: ""
+    # -- Optional JAVA_OPTS inputs for the deployed service
+    javaOpts: ""
+
+  aws:
+    # -- EC2 TargetGroup ARN to bind the service onto
+    targetGroupARN: ""
+
+  gcp:
+    # -- Name of the Network Endpoint Group to bind onto
+    networkEndpointGroupName: ""
+
+    # -- Whether to use CloudSQL Proxy (note: requires GCP service account to be attached)
+    deployProxy: false
+
+    proxy:
+      # -- Port to bind proxy onto
+      port: 38000
+      # -- Project where CloudSQL instance is deployed
+      project: ""
+      # -- Region where CloudSQL instance is deployed
+      region: ""
+      # -- Name of the CloudSQL instance
+      instanceName: ""
+      image:
+        repository: "gcr.io/cloudsql-docker/gce-proxy"
+        tag: "1.11"
+        # -- Whether the repository is public
+        isRepositoryPublic: true
+
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 50m
+          memory: 128Mi
+
+cloudserviceaccount:
+  # -- Whether to create a service-account
+  deploy: false
+  # -- Name of the service-account to create
+  name: "snowplow-iglu-server-service-account"
+  aws:
+    # -- IAM Role ARN to bind to the k8s service account
+    roleARN: ""
+  gcp:
+    # -- Service Account email to bind to the k8s service account
+    serviceAccount: ""
+
+dockerconfigjson:
+  # -- Name of the secret to use for the private repository
+  name: "snowplow-iglu-server-dockerhub"
+  # -- Username for the private repository
+  username: ""
+  # -- Password for the private repository
+  password: ""
+  # -- Repository server URL
+  server: "https://index.docker.io/v1/"
+  # -- Email address for user of the private repository
+  email: ""

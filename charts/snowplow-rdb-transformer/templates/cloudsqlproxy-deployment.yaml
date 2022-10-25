@@ -1,0 +1,37 @@
+{{- if .Values.service.gcp.deployProxy }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "iglu.cloudsqlproxy.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "iglu.cloudsqlproxy.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "iglu.cloudsqlproxy.name" . }}
+    spec:
+      {{- if .Values.cloudserviceaccount.deploy }}
+      serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+      {{- end }}
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: {{ .Values.service.terminationGracePeriodSeconds }}
+
+      {{- if not .Values.service.gcp.proxy.image.isRepositoryPublic }}
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      {{- end }}
+
+      containers:
+      - name: {{ include "iglu.cloudsqlproxy.name" . }}
+        image: {{ .Values.service.gcp.proxy.image.repository}}:{{ .Values.service.gcp.proxy.image.tag}}
+        imagePullPolicy: Always
+
+        command:
+        - "/cloud_sql_proxy"
+        - "-instances={{ .Values.service.gcp.proxy.project }}:{{ .Values.service.gcp.proxy.region }}:{{ .Values.service.gcp.proxy.instanceName }}=tcp:0.0.0.0:{{ .Values.service.config.database.port }}"
+
+        resources:
+          {{- toYaml .Values.service.gcp.proxy.resources | nindent 10 }}
+{{- end }}

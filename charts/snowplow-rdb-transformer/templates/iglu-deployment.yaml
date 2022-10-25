@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "transformer.app.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "transformer.app.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "transformer.app.name" . }}
+      annotations:
+        checksum/config: "{{ include "iglu.service.config.checksum" . }}"
+        {{- if ne .Values.service.config.hoconBase64 "" }}
+        checksum/config.hocon: "{{ .Values.service.config.hoconBase64 | sha256sum}}"
+        {{- end }}
+    spec:
+      {{- if .Values.cloudserviceaccount.deploy }}
+      serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+      {{- end }}
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: {{ .Values.service.terminationGracePeriodSeconds }}
+
+      {{- if not .Values.service.image.isRepositoryPublic }}
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      {{- end }}
+
+      volumes:
+      {{- if ne .Values.service.config.hoconBase64 "" }}
+      - configMap:
+          name: {{ include "iglu.app.config.name" . }}
+          optional: false
+        name: {{ include "iglu.app.config.name" . }}-volume
+      {{- end }}
+
+      containers:
+      - name: {{ include "transformer.app.name" . }}
+        image: {{ .Values.service.image.repository}}:{{ .Values.service.image.tag}}
+        imagePullPolicy: {{ default "IfNotPresent" .Values.service.image.pullPolicy }}
+
+        args:
+        - "-Dconfig.override_with_env_vars=true"
+        {{- if ne .Values.service.config.hoconBase64 "" }}
+        - "--config"
+        - "/etc/config/config.hocon"
+        {{- end }}
+
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          protocol: TCP
+
+        env:
+        - name : "CONFIG_FORCE_iglu_repoServer_port"
+          value: "{{ .Values.service.port }}"
+        - name : "CONFIG_FORCE_iglu_repoServer_maxConnections"
+          value: "{{ .Values.service.config.repoServer.maxConnections }}"
+        - name : "CONFIG_FORCE_iglu_repoServer_idleTimeout"
+          value: "{{ .Values.service.config.repoServer.idleTimeout }}"
+        - name : "CONFIG_FORCE_iglu_database_type"
+          value: "{{ include "iglu.service.config.database.type" . }}"
+        {{- if .Values.service.gcp.deployProxy }}
+        - name : "CONFIG_FORCE_iglu_database_host"
+          value: {{ include "iglu.cloudsqlproxy.host" . }}
+        - name : "CONFIG_FORCE_iglu_database_port"
+          value: "{{ .Values.service.gcp.proxy.port }}"
+        {{- else }}
+        - name : "CONFIG_FORCE_iglu_database_host"
+          value: "{{ .Values.service.config.database.host }}"
+        - name : "CONFIG_FORCE_iglu_database_port"
+          value: "{{ .Values.service.config.database.port }}"
+        {{- end }}
+        - name : "CONFIG_FORCE_iglu_database_dbname"
+          value: "{{ .Values.service.config.database.dbname }}"
+        - name : "CONFIG_FORCE_iglu_patchesAllowed"
+          value: "{{ .Values.service.config.patchesAllowed }}"
+        {{- if not (empty .Values.service.config.javaOpts) }}
+        - name : "JAVA_OPTS"
+          value: "{{ .Values.service.config.javaOpts }}"
+        {{- end }}
+
+        envFrom:
+        - secretRef:
+            name: {{ include "iglu.app.secret.name" . }}
+
+        readinessProbe:
+          httpGet:
+            path: /api/meta/health
+            port: {{ .Values.service.port }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.service.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.service.readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.service.readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.service.readinessProbe.failureThreshold }}
+          successThreshold: {{ .Values.service.readinessProbe.successThreshold }}
+
+        resources:
+          {{- toYaml .Values.service.resources | nindent 10 }}
+
+        volumeMounts:
+        {{- if ne .Values.service.config.hoconBase64 "" }}
+        - mountPath: /etc/config
+          mountPropagation: None
+          name: {{ include "iglu.app.config.name" . }}-volume
+        {{- end }}

@@ -1,0 +1,27 @@
+apiVersion: v1
+name: snowplow-rdb-transformer
+description: A Helm Chart to deploy Snowplow RDB-Loader Transformer
+version: 0.1.0
+appVersion: "5.0.0"
+icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+home: https://github.com/snowplow-devops/helm-charts
+sources:
+  - https://github.com/snowplow-devops/helm-charts
+  - hhttps://github.com/snowplow/snowplow-rdb-loader
+maintainers:
+  - name: jbeemster
+    url: https://github.com/jbeemster
+    email: jbeemster@users.noreply.github.com
+keywords:
+  - snowplow
+  - rdb
+  - rdb-loader
+  - transformer
+  - shredder
+dependencies:
+  - name: dockerconfigjson
+    version: 0.1.0
+    repository: "https://snowplow-devops.github.io/helm-charts"
+  - name: cloudserviceaccount
+    version: 0.1.0
+    repository: "https://snowplow-devops.github.io/helm-charts"

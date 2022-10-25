@@ -1,0 +1,22 @@
+{{- if eq (include "iglu.service.config.database.type" .) "dummy" }}
+----------------------------------------------------------------------------------------------------------------------------------------------------
+WARNING: Your Iglu Server is running with a "dummy" in-memory backend - this means data is ephemeral and your min/max number of pods is locked to 1.
+         Change to "postgres" to run in a production setting.
+----------------------------------------------------------------------------------------------------------------------------------------------------
+{{- end }}
+
+The Iglu Server can be accessed via port {{ .Values.service.port }} on the following DNS names from within your cluster:
+
+    {{ include "transformer.app.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+
+To connect to your server from outside the cluster execute the following commands:
+
+    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "transformer.app.name" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+You can test the API options direction by visiting the Swagger URL in your browser at:
+
+    http://localhost:{{ .Values.service.port }}/static/swagger-ui/index.html
+
+To get the Super API Key run (if you did not set one yourself):
+
+    export IGLU_SUPER_API_KEY=$(kubectl get secret --namespace {{ .Release.Namespace }} {{ include "iglu.app.secret.name" . }} -o jsonpath="{.data.CONFIG_FORCE_iglu_superApiKey}" | base64 --decode)
