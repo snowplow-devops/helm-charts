@@ -1,3 +1,7 @@
+Version 0.1.25 (2022-11-01)
+---------------------------
+charts/service-deployment: Use cloudserviceaccount v0.2.0 (#72)
+
 Version 0.1.24 (2022-11-01)
 ---------------------------
 charts/snowplow-iglu-server: Update application to v0.8.6 (#70)
