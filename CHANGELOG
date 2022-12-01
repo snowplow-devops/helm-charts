@@ -1,3 +1,7 @@
+Version 0.1.26 (2022-12-01)
+---------------------------
+charts/service-deployment: Fix indent on readinessProbe for HTTP (#76)
+
 Version 0.1.25 (2022-11-01)
 ---------------------------
 charts/service-deployment: Use cloudserviceaccount v0.2.0 (#72)
