@@ -1,3 +1,7 @@
+Version 0.1.27 (2022-12-05)
+---------------------------
+charts/snowplow-iglu-server: Update application to v0.8.7 (#77)
+
 Version 0.1.26 (2022-12-01)
 ---------------------------
 charts/service-deployment: Fix indent on readinessProbe for HTTP (#76)
