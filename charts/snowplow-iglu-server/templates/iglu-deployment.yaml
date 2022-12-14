@@ -41,11 +41,8 @@ spec:
         imagePullPolicy: {{ default "IfNotPresent" .Values.service.image.pullPolicy }}
 
         args:
-        - "-Dconfig.override_with_env_vars=true"
-        {{- if ne .Values.service.config.hoconBase64 "" }}
         - "--config"
-        - "/etc/config/config.hocon"
-        {{- end }}
+        - {{if ne .Values.service.config.hoconBase64 "" }} "/etc/config/config.hocon" {{ else }} "/dev/null" {{ end }}
 
         ports:
         - containerPort: {{ .Values.service.port }}
@@ -75,10 +72,8 @@ spec:
           value: "{{ .Values.service.config.database.dbname }}"
         - name : "CONFIG_FORCE_iglu_patchesAllowed"
           value: "{{ .Values.service.config.patchesAllowed }}"
-        {{- if not (empty .Values.service.config.javaOpts) }}
-        - name : "JAVA_OPTS"
-          value: "{{ .Values.service.config.javaOpts }}"
-        {{- end }}
+        - name : "JDK_JAVA_OPTIONS"
+          value: "-Dconfig.override_with_env_vars=true {{ .Values.service.config.javaOpts }}"
 
         envFrom:
         - secretRef:
