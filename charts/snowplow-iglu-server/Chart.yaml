@@ -1,7 +1,7 @@
 apiVersion: v2
 name: snowplow-iglu-server
 description: A Helm Chart to deploy the Snowplow Iglu Server project
-version: 0.1.8
+version: 0.1.9
 appVersion: "0.8.7"
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts

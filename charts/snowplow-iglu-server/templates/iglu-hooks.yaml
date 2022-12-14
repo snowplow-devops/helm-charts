@@ -19,10 +19,11 @@ spec:
         imagePullPolicy: Always
 
         args:
-        - "-Dconfig.override_with_env_vars=true"
         - "setup"
 
         env:
+        - name: "JDK_JAVA_OPTIONS"
+          value: "-Dconfig.override_with_env_vars=true"
         {{- if .Values.service.gcp.deployProxy }}
         - name : "CONFIG_FORCE_iglu_database_host"
           value: {{ include "iglu.cloudsqlproxy.host" . }}
