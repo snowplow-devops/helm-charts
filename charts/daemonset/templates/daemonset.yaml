@@ -61,7 +61,9 @@ spec:
         {{- if $v.path }}
         hostPath:
           path: {{ $v.path }}
-          {{- if $v.type }}type: {{ $v.type }}{{- end }}
+          {{- if $v.type }}
+          type: {{ $v.type }}
+          {{- end }}
         {{- end }}
       {{- end }}
 
