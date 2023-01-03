@@ -1,3 +1,7 @@
+Version 0.1.28 (2023-01-03)
+---------------------------
+charts/snowplow-iglu-server: support distroless docker images (#79)
+
 Version 0.1.27 (2022-12-05)
 ---------------------------
 charts/snowplow-iglu-server: Update application to v0.8.7 (#77)
