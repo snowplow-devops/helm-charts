@@ -83,8 +83,8 @@ resource "google_service_account" "snowplow_iglu_server" {
 resource "google_service_account_iam_binding" "snowplow_iglu_server_sa_wiu_binding" {
   role = "roles/iam.workloadIdentityUser"
   members = [
-    "serviceAccount:<project>.svc.id.goog[<namespace>/<release_name>-iglu-app]",
-    "serviceAccount:<project>.svc.id.goog[<namespace>/<release_name>-iglu-cloudsqlproxy]"
+    "serviceAccount:<project>.svc.id.goog[<namespace>/<release_name>]",
+    "serviceAccount:<project>.svc.id.goog[<namespace>/<release_name>-csp]"
   ]
   service_account_id = google_service_account.snowplow_iglu_server.id
 }
@@ -137,7 +137,7 @@ You will need to fill these targeted fields:
 | service.deploySetupHooks | bool | `true` | Whether to run the post-deploy setup hooks |
 | service.port | int | `8080` | Port to bind and expose the service on |
 | service.image.repository | string | `"snowplow/iglu-server"` |  |
-| service.image.tag | string | `"0.8.7"` |  |
+| service.image.tag | string | `"0.8.7-distroless"` |  |
 | service.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | service.image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | service.minReplicas | int | `1` |  |
@@ -173,7 +173,7 @@ You will need to fill these targeted fields:
 | service.gcp.proxy.region | string | `""` | Region where CloudSQL instance is deployed |
 | service.gcp.proxy.instanceName | string | `""` | Name of the CloudSQL instance |
 | service.gcp.proxy.image.repository | string | `"gcr.io/cloudsql-docker/gce-proxy"` |  |
-| service.gcp.proxy.image.tag | string | `"1.11"` |  |
+| service.gcp.proxy.image.tag | string | `"1.31.2"` |  |
 | service.gcp.proxy.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | service.gcp.proxy.resources.limits.cpu | string | `"100m"` |  |
 | service.gcp.proxy.resources.limits.memory | string | `"256Mi"` |  |
