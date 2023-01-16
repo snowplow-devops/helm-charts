@@ -1,5 +1,9 @@
+Version 0.1.30 (2023-01-16)
+---------------------------
+charts/snowplow-iglu-server: Bump gce-proxy to latest version (#83)
+
 Version 0.1.29 (2023-01-03)
---------------------------
+---------------------------
 charts/daemonset: Fix removed newline (#81)
 
 Version 0.1.28 (2023-01-03)
