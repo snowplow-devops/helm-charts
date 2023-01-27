@@ -1,7 +1,8 @@
 # github-actions-runners
 
-A helm chart for managing self hosted github runners utilising [Actions Runner Controller](https://github.com/actions-runner-controller/actions-runner-controller).
+![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
+A helm chart for managing self hosted github runners utilising [Actions Runner Controller](https://github.com/actions-runner-controller/actions-runner-controller).
 
 Further reading on this system: [Actions Runner Controller - Github Pages](https://actions-runner-controller.github.io/actions-runner-controller/)
 
@@ -11,9 +12,9 @@ Certificate Manager and Action Replica Controller must be installed as a pre-req
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.jetstack.io | cert-manager | v1.8.2 |
-| https://actions-runner-controller.github.io/actions-runner-controller| actions-runner-controller | 0.20.2 |
-
+| <https://charts.jetstack.io> | cert-manager | v1..2 |
+| <https://github.com/actions/actions-runner-controller/tree/master/charts/actions-runner-controller> | actions-runner-controller | 0.22.0 |
+| <https://snowplow-devops.github.io/helm-charts> | dockerconfigjson | 0.1.0 |
 
 ## Installing the Chart
 
@@ -43,7 +44,7 @@ helm delete github-actions-runners --namespace github-runners
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://snowplow-devops.github.io/helm-charts | dockerconfigjson | 0.1.0 |
+| <https://snowplow-devops.github.io/helm-charts> | dockerconfigjson | 0.1.0 |
 
 ## Configuration
 
@@ -57,6 +58,7 @@ helm delete github-actions-runners --namespace github-runners
 | repositoryName | string | `"example/repo"` | For use with repository deployment type - Add repo for runner deployment |
 | organizationName | string | `""` | For use with organization deployment type |
 | enterpriseName | string | `""` | For use with enterprise deployment type |
+| runnerLabel | string | `"custom-label"` | Declare the label attached to the runner deployment |
 | scaleDownDelaySecondsAfterScaleOut | string | `"300"` |  |
 | minimumReplicaCount | string | `"1"` | Declare the minimum and maximum available runners |
 | maximumReplicaCount | string | `"1"` |  |
@@ -65,4 +67,4 @@ helm delete github-actions-runners --namespace github-runners
 | dockerconfigjson.username | string | `""` | Username for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |
 | dockerconfigjson.server | string | `"https://index.docker.io/v1/"` | Repository server URL |
-| dockerconfigjson.email | string | `""` | Email address for user of the private repository |
+| dockerconfigjson.email | string | `""` | Email address for user of the private repository
