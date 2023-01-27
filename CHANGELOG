@@ -1,3 +1,7 @@
+Version 0.1.31 (2023-01-27)
+---------------------------
+charts/github-actions-runners: Enable Labelling of runners within a deployment (#85)
+
 Version 0.1.30 (2023-01-16)
 ---------------------------
 charts/snowplow-iglu-server: Bump gce-proxy to latest version (#83)
