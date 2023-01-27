@@ -10,7 +10,6 @@ metadata:
     app.kubernetes.io/component: RunnerDeployment
     app.kubernetes.io/part-of: {{ .Chart.Name }}
 spec:
-  replicas: 0
   template:
     spec:
       {{- if eq .Values.deploymentType "organization" }}
@@ -20,9 +19,12 @@ spec:
       {{ else }}
       repository: {{ $.Values.repositoryName }}
       {{ end }}
+      labels:
+      - {{ $.Values.runnerLabel }}
       image: "{{ $.Values.image.runnerImage }}:{{ .Values.image.tag }}"
       imagePullPolicy: {{ $.Values.image.pullPolicy }}
       {{- if .Values.image.isRepositoryPrivate }}
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
       {{- end}}
+

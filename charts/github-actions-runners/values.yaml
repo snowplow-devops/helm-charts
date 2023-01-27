@@ -18,6 +18,8 @@ repositoryName: "example/repo"
 organizationName: ""
 # -- For use with enterprise deployment type
 enterpriseName: ""
+# -- Declare the label attached to the runner deployment
+runnerLabel: ""
 # Runners in the targeted RunnerDeployment won't be scaled down for x minutes (Default 5).
 scaleDownDelaySecondsAfterScaleOut: "300"
 # -- Declare the minimum and maximum available runners
