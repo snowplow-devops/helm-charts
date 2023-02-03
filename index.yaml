@@ -496,6 +496,31 @@ entries:
     version: 0.1.0
   github-actions-runners:
   - apiVersion: v2
+    created: "2023-02-03T14:36:50.731164721Z"
+    dependencies:
+    - condition: image.isRepositoryPrivate
+      name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    description: A helm chart for deploying Github Self-hosted Runners
+    digest: 5c074d288383991d268f08ac92d9a59728b66640330b9a3298e9608048238746
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - github-actions
+    - actions-runner-controller
+    maintainers:
+    - email: gthomson31@users.noreply.github.com
+      name: gthomson31
+      url: https://github.com/gthomson31
+    name: github-actions-runners
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    type: application
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/github-actions-runners-0.1.2/github-actions-runners-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     created: "2023-01-27T11:53:58.202450228Z"
     dependencies:
     - condition: image.isRepositoryPrivate
@@ -1082,4 +1107,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-27T11:53:58.202522928Z"
+generated: "2023-02-03T14:36:50.731321524Z"
