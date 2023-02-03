@@ -2,7 +2,7 @@
 image:
   runnerImage: "summerwind/actions-runner"
   isRepositoryPrivate: false
-  tag: "latest"
+  tag: "ubuntu-22.04"
   pullPolicy: IfNotPresent
 # -- Overrides the name given to the deployment (default: .Release.Name)
 nameOverride: ""
