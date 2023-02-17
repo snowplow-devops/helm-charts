@@ -1,0 +1,39 @@
+
+image:
+  repository: apache/spark
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+service:
+  type: ClusterIP
+  port: 10015
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+spark:
+  k8sApiServerHost: kubernetes.default
+  k8sApiServerPort: 443
+  deltaVersion: 2.2.0
+
+  enableDelta: false
+  enableWebUi: true
