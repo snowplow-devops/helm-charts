@@ -32,6 +32,7 @@ data:
               - pod_cpu_utilization
               - pod_memory_utilization
               - pod_number_of_running_containers
+              - pod_number_of_container_restarts
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
