@@ -74,6 +74,26 @@ entries:
   aws-otel-collector:
   - apiVersion: v1
     appVersion: v0.17.0
+    created: "2023-03-27T19:35:56.403712078Z"
+    description: A Helm chart to deploy aws-otel-collector project
+    digest: 4b160f237a633a157ee9ef5674cab5d01c71bd1b8b2e13365dee3351fb07977c
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - eks
+    - telemetry
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: aws-otel-collector
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/aws-otel-collector-0.1.3/aws-otel-collector-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v1
+    appVersion: v0.17.0
     created: "2022-04-07T19:46:48.904906082Z"
     description: A Helm chart to deploy aws-otel-collector project
     digest: 5c1fe3507586bd5dc8c88c9b56efe1f918be8b2b4b6961cb802cbc34ffb09b96
@@ -1107,4 +1127,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2023-02-03T14:36:50.731321524Z"
+generated: "2023-03-27T19:35:56.403791078Z"
