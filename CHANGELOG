@@ -1,3 +1,6 @@
+Version 0.1.33 (2023-03-27)
+charts/aws-otel-collector: Add additional metrics (#90)
+
 Version 0.1.32 (2023-02-03)
 ---------------------------
 charts/github-actions-runners: Changing default image tag from latests to ubuntu-22.04 (#87)
