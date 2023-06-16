@@ -13,7 +13,7 @@ service:
   port: 8080
   image:
     repository: "snowplow/iglu-server"
-    tag: "0.8.7-distroless"
+    tag: "0.10.0-distroless"
     # -- Whether the repository is public
     isRepositoryPublic: true
     # -- The image pullPolicy to use
