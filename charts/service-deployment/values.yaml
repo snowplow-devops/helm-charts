@@ -114,3 +114,7 @@ cloudserviceaccount:
   gcp:
     # -- Service Account email to bind to the k8s service account
     serviceAccount: ""
+
+deployment:
+  # -- When enabled, disables the HPA and scales the deployment to zero replicas
+  scaleToZero: false

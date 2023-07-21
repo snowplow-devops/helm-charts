@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: {{ include "app.fullname" . }}
 spec:
+  {{- if .Values.deployment.scaleToZero }}
+  replicas: 0
+  {{- end }}
   selector:
     matchLabels:
       app: {{ include "app.fullname" . }}
