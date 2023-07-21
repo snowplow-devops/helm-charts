@@ -1,4 +1,4 @@
-{{- if .Values.hpa.deploy }}
+{{- if and .Values.hpa.deploy (not .Values.deployment.scaleToZero) }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
