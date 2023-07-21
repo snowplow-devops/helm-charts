@@ -1,5 +1,5 @@
 {{- if .Values.hpa.deploy }}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "app.fullname" . }}
@@ -11,4 +11,6 @@ spec:
   minReplicas: {{ .Values.hpa.minReplicas }}
   maxReplicas: {{ .Values.hpa.maxReplicas }}
   targetCPUUtilizationPercentage: {{ .Values.hpa.averageCPUUtilization }}
+  behavior:
+    {{- toYaml .Values.hpa.behavior | nindent 4 }}
 {{- end }}

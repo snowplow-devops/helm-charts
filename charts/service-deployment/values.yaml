@@ -73,6 +73,7 @@ hpa:
   maxReplicas: 20
   # -- Average CPU utilization before auto-scaling starts
   averageCPUUtilization: 75
+  behavior: {}
 
 service:
   # -- Whether to setup service bindings (note: only NodePort is supported)
