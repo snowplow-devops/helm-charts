@@ -1,0 +1,49 @@
+{{- if .Values.keda.deploy }}
+{{- if eq .Values.global.cloud "gcp" }}
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: {{ include "app.fullname" . }}
+spec:
+  podIdentity:
+    provider: gcp
+---
+{{- end }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "app.fullname" . }}
+  {{- if .Values.keda.pauseDeployment }}
+  annotations:
+    autoscaling.keda.sh/paused-replicas: "0"
+  {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "app.fullname" . }}
+  minReplicaCount: {{ .Values.keda.minReplicas }}
+  maxReplicaCount: {{ .Values.keda.maxReplicas }}
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          {{- toYaml .Values.keda.scaleDownBehavior | nindent 10 }}
+        scaleUp:
+          {{- toYaml .Values.keda.scaleUpBehavior | nindent 10 }}
+  triggers:
+  {{- range $v := .Values.kedaStackdriver.triggers }}
+  - type: gcp-stackdriver
+    authenticationRef:
+      name: {{ include "app.fullname" $ }}
+      type: TriggerAuthentication
+    metadata:
+      projectId: {{ $.Values.kedaStackdriver.projectId }}
+      filter: {{ $v.filter }}
+      targetValue: "{{ $v.targetValue }}"
+      alignmentPeriodSeconds: "{{ default "60" $v.alignmentPeriodSeconds }}"
+      alignmentAligner: {{ $v.aligner }}
+      alignmentReducer: {{ $v.reducer }}
+  {{- end }}
+
+{{- end }}

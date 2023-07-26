@@ -66,6 +66,7 @@ terminationGracePeriodSeconds: 60
 
 hpa:
   # -- Whether to deploy HPA rules
+  # -- Should be false if HPA is controlled by KEDA
   deploy: true
   # -- Minimum number of pods to deploy
   minReplicas: 1
@@ -73,6 +74,30 @@ hpa:
   maxReplicas: 20
   # -- Average CPU utilization before auto-scaling starts
   averageCPUUtilization: 75
+
+keda:
+  # -- Whether to create a KEDA ScaledObject to control a HPA
+  deploy: false
+  # -- Minimum number of pods to deploy
+  minReplicas: 1
+  # -- Maximum number of pods to deploy
+  maxReplicas: 20
+  # -- Whether to pause the deployment by scaling to zero replicas
+  pauseDeployment: false
+  # -- Override the HPA's default scale down behavior config
+  scaleDownBehavior: {}
+  # -- Override the HPA's default scale up behavior config
+  scaleUpBehavior: {}
+
+kedaStackdriver:
+  # -- If using stackdriver scalers, this is the GCP project id from which to fetch metrics
+  projectId: ""
+  triggers: []
+# - filter: xyz
+#   targetValue: 80
+#   alignmentPeriodSeconds: 120 # If unset defaults to 60
+#   aligner: mean
+#   reducer: mean
 
 service:
   # -- Whether to setup service bindings (note: only NodePort is supported)
