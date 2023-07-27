@@ -3,6 +3,30 @@ entries:
   aws-load-balancer-controller-crds:
   - apiVersion: v1
     appVersion: v2.3.1
+    created: "2023-07-27T07:54:41.204347331Z"
+    description: AWS Load Balancer Controller CRDs Helm chart for Kubernetes
+    digest: 6398fbfbc01cf9d7c98c35d206737f63ff44889ce11aac863713f887c2f302c3
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - eks
+    - alb
+    - load balancer
+    - ingress
+    - nlb
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: aws-load-balancer-controller-crds
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/crds/crds.yaml
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/aws-load-balancer-controller-crds-0.1.3/aws-load-balancer-controller-crds-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v1
+    appVersion: v2.3.1
     created: "2022-04-07T19:46:48.754982578Z"
     description: AWS Load Balancer Controller CRDs Helm chart for Kubernetes
     digest: 2d3449a0dd7ebee513d6ec9a2e6f50bffd938c552d7ca8f2ba71d699ff570733
@@ -1176,4 +1200,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2023-06-23T03:00:59.732008901Z"
+generated: "2023-07-27T07:54:41.204513732Z"
