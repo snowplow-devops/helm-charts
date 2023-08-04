@@ -1,0 +1,18 @@
+role:
+  # -- The name to assign to the role
+  name: "isolated-admin-role"
+  # -- APIGroups is the name of the APIGroup that contains the resources
+  apiGroups:
+    - "*"
+  # -- Resources is a list of resources this rule applies to
+  resources:
+    - "*"
+  # -- Verbs is a list of Verbs that apply to ALL the ResourceKinds contained in this rule
+  verbs:
+    - "*"
+
+roleBinding:
+  # -- The name to assign to the role-binding
+  name: "isolated-admin-rolebinding"
+  # -- The name of the group which the role-binding is assigned to
+  groupName: "isolated-group"
