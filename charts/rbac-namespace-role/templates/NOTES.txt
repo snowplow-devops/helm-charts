@@ -1,0 +1,3 @@
+Role {{ .Values.role.name }} has been created and has access to the namespace {{ .Release.Namespace }}.
+
+A Group has been bound to this role called {{ .Values.roleBinding.groupName }} - to leverage this role you should bind users to to this group
