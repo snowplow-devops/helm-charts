@@ -1,0 +1,19 @@
+# -- Overrides the full-name given to the deployment resources (default: .Release.Name)
+fullnameOverride: ""
+
+image:
+  repository: "registry.k8s.io/pause"
+  tag: "3.9"
+  # -- Whether the repository is public
+  isRepositoryPublic: true
+  # -- The image pullPolicy to use
+  pullPolicy: "IfNotPresent"
+
+# -- Map of resource constraints for the warm pods (should be set to a sufficiently high number to trigger scaling)
+resources: {}
+#  requests:
+#    cpu: 400m
+
+hpa:
+  # -- Number of replicas to setup to manage how many warm nodes are created
+  replicas: 1
