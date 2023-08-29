@@ -1,3 +1,11 @@
+Version 0.1.37 (2023-08-30)
+---------------------------
+charts/cluster-warmer: Create chart (#101)
+
+Version 0.1.36 (2023-07-27)
+---------------------------
+Adding new crds (#96)
+
 Version 0.1.35 (2023-06-23)
 ---------------------------
 charts/aws-otel-collector: bump version to 0.1.4
