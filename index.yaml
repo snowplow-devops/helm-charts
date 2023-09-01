@@ -260,6 +260,26 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/cloudserviceaccount-0.1.0/cloudserviceaccount-0.1.0.tgz
     version: 0.1.0
+  cluster-warmer:
+  - apiVersion: v2
+    created: "2023-09-01T03:05:48.162218323Z"
+    description: A Helm Chart to deploy pods to force scaling in a node-pool to keep
+      it warm
+    digest: 0cdb253ddbfef1ea06fb216c7c68d0a02140a0f69516a934fed0d3c6682c09e7
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cluster-autoscaler
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: cluster-warmer
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cluster-warmer-0.1.0/cluster-warmer-0.1.0.tgz
+    version: 0.1.0
   cron-job:
   - apiVersion: v2
     created: "2022-08-26T11:23:25.345787598Z"
@@ -1200,4 +1220,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-27T07:54:41.204513732Z"
+generated: "2023-09-01T03:05:48.162317128Z"
