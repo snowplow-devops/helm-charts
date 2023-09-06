@@ -10,7 +10,13 @@ spec:
     name: {{ include "app.fullname" . }}
   minReplicas: {{ .Values.hpa.minReplicas }}
   maxReplicas: {{ .Values.hpa.maxReplicas }}
-  targetCPUUtilizationPercentage: {{ .Values.hpa.averageCPUUtilization }}
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.hpa.averageCPUUtilization }}
   behavior:
     {{- toYaml .Values.hpa.behavior | nindent 4 }}
 {{- end }}
