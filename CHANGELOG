@@ -1,3 +1,7 @@
+Version 0.1.39 (2023-09-07)
+---------------------------
+charts/cert-manager-crds: Add cert-manager-crds Helm Chart (#103)
+
 Version 0.1.38 (2023-09-06)
 ---------------------------
 charts/service-deployment: Scaling down to zero replicas (#106)
