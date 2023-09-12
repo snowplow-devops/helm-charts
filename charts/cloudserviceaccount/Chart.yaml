@@ -1,7 +1,7 @@
 apiVersion: v2
 name: cloudserviceaccount
 description: A helm chart which can create a ServiceAccount with cloud specific bindings
-version: 0.2.0
+version: 0.3.0
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts
 sources:
