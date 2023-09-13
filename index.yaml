@@ -525,6 +525,32 @@ entries:
     version: 0.1.0
   daemonset:
   - apiVersion: v2
+    created: "2023-09-13T10:56:04.051089278Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - condition: cloudserviceaccount.deploy
+      name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to deploy an arbitrary container as a daemonset.
+    digest: 78a6933c987d9192b25d353106b2201f9daaf082c0adab7659a87147abdcecf9
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - daemonset
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: daemonset
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/daemonset-0.3.0/daemonset-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     created: "2023-01-04T21:02:03.488428384Z"
     dependencies:
     - name: dockerconfigjson
@@ -1292,4 +1318,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2023-09-12T15:30:00.473606541Z"
+generated: "2023-09-13T10:56:04.051366292Z"
