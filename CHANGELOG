@@ -1,3 +1,7 @@
+Version 0.1.41 (2023-09-13)
+---------------------------
+charts/daemonset: Add support for Azure managed identity (#112)
+
 Version 0.1.40 (2023-09-12)
 ---------------------------
 charts/cloudserviceaccount: Add support for Azure managed identity (#109)
