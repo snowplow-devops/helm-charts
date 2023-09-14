@@ -10,6 +10,9 @@ spec:
     metadata:
       labels:
         app: {{ include "app.fullname" . }}
+        {{- if eq .Values.global.cloud "azure" }}
+        azure.workload.identity/use: "true"
+        {{- end }}
       annotations:
         {{- with .Values.daemonsetAnnotations }}
           {{- toYaml . | nindent 10 }}

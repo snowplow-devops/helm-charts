@@ -1,3 +1,7 @@
+Version 0.1.42 (2023-09-14)
+---------------------------
+charts/daemonset: Add azure workload identity label (#114)
+
 Version 0.1.41 (2023-09-13)
 ---------------------------
 charts/daemonset: Add support for Azure managed identity (#112)
