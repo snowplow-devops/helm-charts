@@ -13,6 +13,9 @@ spec:
     metadata:
       labels:
         app: {{ include "app.fullname" . }}
+        {{- if eq .Values.global.cloud "azure" }}
+        azure.workload.identity/use: "true"
+        {{- end }}
       annotations:
         {{- if .Values.configMaps }}
         {{- range $v := .Values.configMaps }}
