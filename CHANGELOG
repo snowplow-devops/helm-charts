@@ -1,3 +1,7 @@
+Version 0.1.44 (2023-09-20)
+---------------------------
+charts/daemonset: Update Default dnsPolicy to the true default "ClusterFirst" (#117)
+
 Version 0.1.43 (2023-09-14)
 ---------------------------
 charts/service-deployment: Add support for Azure managed identity (#111)
