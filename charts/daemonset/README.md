@@ -43,10 +43,10 @@ helm delete daemonset
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://snowplow-devops.github.io/helm-charts | cloudserviceaccount | 0.1.0 |
+| https://snowplow-devops.github.io/helm-charts | cloudserviceaccount | 0.3.0 |
 | https://snowplow-devops.github.io/helm-charts | dockerconfigjson | 0.1.0 |
 
-## Configuration
+## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -60,18 +60,18 @@ helm delete daemonset
 | config.args | list | `[]` |  |
 | config.env | string | `nil` | Map of environment variables to use within the job |
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
-| config.securityContext | object | `{}` | Map of securityContext object applied to pods |
-| config.hostPIDAccess | bool | `false` | Allow pods access to host process information |
-| config.hostNetworkAccess | bool | `false` | Allow pods access to host network |
-| config.dnsPolicy | object | `"Default"` | DNS Policy for pods |
+| config.securityContext | object | `{}` | Map of securityContext object applied to pods (https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
+| config.hostPIDAccess | bool | `false` | Allow pods access to host proccess information |
+| config.hostNetworkAccess | bool | `false` | Allow pods access to host network () |
+| config.dnsPolicy | string | `"ClusterFirst"` | DNS Policy for pods (https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/) |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
 | daemonsetAnnotations | object | `{}` | Annotations to be applied to the daemonset |
 | hostPaths | list | `[]` | List of host paths to mount to the deployment |
 | resources | object | `{}` | Map of resource constraints for the service |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
-| service.deploy | bool | `true` | Whether to setup service bindings |
-| service.type | string | `"NodePort"` | Configures ServiceType for this service |
-| service.name | string | `"http"` | Prefix of port name for service (appended with '-port') |
+| service.deploy | bool | `true` |  |
+| service.type | string | `"NodePort"` | Whether to setup service bindings |
+| service.name | string | `"http"` | Name of service |
 | service.port | int | `8000` | Port to bind and expose the service on |
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
@@ -86,4 +86,4 @@ helm delete daemonset
 | cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
 | cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
 | clusterrole.deploy | bool | `false` | Whether to create a cluster role |
-| clusterole.rules | list | `[]`  | List of PolicyRules to attach to cluster role |
+| clusterrole.rules | list | `[]` | List of PolicyRules to attach to cluster role |
