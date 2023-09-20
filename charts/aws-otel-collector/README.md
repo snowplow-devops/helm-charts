@@ -39,15 +39,15 @@ helm delete aws-otel-collector --namespace kube-system
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"amazon/aws-otel-collector"` | Image to use for deploying |
-| image.tag | string | `"v0.17.0"` |  |
 | nameOverride | string | `""` | Overrides the name given to the deployment (default: .Release.Name) |
+| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
+| image.repository | string | `"public.ecr.aws/aws-observability/aws-otel-collector"` | Image to use for deploying |
+| image.tag | string | `"v0.33.1"` |  |
+| image.pullPolicy | string | `"IfNotPresent"` |  |
 | resources.limits.cpu | string | `"200m"` |  |
 | resources.limits.memory | string | `"200Mi"` |  |
 | resources.requests.cpu | string | `"200m"` |  |
 | resources.requests.memory | string | `"200Mi"` |  |
-| serviceAccount.annotations | object | `{}` | Optional annotations to be applied to service account |
 | serviceAccount.create | bool | `true` | Whether to create a service account or not |
 | serviceAccount.name | string | `""` | The name of the service account to create or use |
+| serviceAccount.annotations | object | `{}` | Optional annotations to be applied to service account |
