@@ -1,7 +1,7 @@
 apiVersion: v2
 name: daemonset
 description: A Helm Chart to deploy an arbitrary container as a daemonset.
-version: 0.3.1
+version: 0.3.2
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts
 sources:

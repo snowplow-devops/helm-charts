@@ -43,7 +43,7 @@ config:
   hostNetworkAccess: false
 
   # -- DNS Policy for pods (https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/)
-  dnsPolicy: Default
+  dnsPolicy: ClusterFirst
 
 # -- List of config maps to mount to the deployment
 configMaps: []
