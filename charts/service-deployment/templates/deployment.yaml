@@ -23,7 +23,7 @@ spec:
         {{- if $f.contentsB64 }}
         checksum/{{ $v.name }}-{{ $f.key }}: "{{ $f.contentsB64 | sha256sum }}"
         {{- else }}
-        checksum/{{ $v.name }}-{{ $f.key }}: "{{ $f.contentsFile) | sha256sum }}"
+        checksum/{{ $v.name }}-{{ $f.key }}: "{{ $f.contentsFile | sha256sum }}"
         {{- end }}
         {{- end }}
         {{- end }}
