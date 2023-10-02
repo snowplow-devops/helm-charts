@@ -1,5 +1,6 @@
 global:
   cloud: "azure"
+  deployTraefikIngress: true
 
 service:
   deploySetupHooks: true
@@ -27,12 +28,6 @@ service:
         password: "<password>"
     patchesAllowed: false
 
-  azure:
+  traefik:
     hostname: "iglu-server.example.com"
-    traefikEntrypoint: "websecure"
-
-cloudserviceaccount:
-  deploy: true
-  name: "snowplow-iglu-server"
-  gcp:
-    serviceAccount: "<service-account-email>"
+    entrypoint: "websecure"
