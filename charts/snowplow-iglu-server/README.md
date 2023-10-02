@@ -115,6 +115,22 @@ You will need to fill these targeted fields:
 
 *Note*: As the iglu deployment and setup hooks depend on this service it is normal to expect a few initial failures to occur - they should automatically resolve without intervention.
 
+
+### Azure (AKS) settings
+
+#### Ingress routes
+
+For iglu server ingress routes are managed by Traefik.
+
+You will need to fill these targeted fields:
+
+- `global.cloud: "azure"`
+- `cloudserviceaccount.deploy: true`
+- `service.azure.hostname: <iglu server hostname>`
+- `service.azure.traefikEntrypoint: <Traefik ingressClass route entry point>`
+- `cloudserviceaccount.name: <unique_name>`
+- `cloudserviceaccount.azure.managedIdentityId: <Workload managed identity id to bind to the k8s service account>`
+
 ### AWS (EKS) settings
 
 #### TargetGroup binding

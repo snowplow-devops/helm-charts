@@ -10,6 +10,9 @@ spec:
     metadata:
       labels:
         app: {{ include "iglu.app.name" . }}
+        {{- if eq .Values.global.cloud "azure" }}
+        azure.workload.identity/use: "true"
+        {{- end }}
       annotations:
         checksum/config: "{{ include "iglu.service.config.checksum" . }}"
         {{- if ne .Values.service.config.hoconBase64 "" }}
