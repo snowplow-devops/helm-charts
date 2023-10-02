@@ -125,11 +125,9 @@ For iglu server ingress routes are managed by Traefik.
 You will need to fill these targeted fields:
 
 - `global.cloud: "azure"`
-- `cloudserviceaccount.deploy: true`
-- `service.azure.hostname: <iglu server hostname>`
-- `service.azure.traefikEntrypoint: <Traefik ingressClass route entry point>`
-- `cloudserviceaccount.name: <unique_name>`
-- `cloudserviceaccount.azure.managedIdentityId: <Workload managed identity id to bind to the k8s service account>`
+- `global.deployTraefikIngress: true`
+- `service.traefik.hostname: <iglu server hostname>`
+- `service.traefik.entrypoint: <Traefik ingressClass route entry point>`
 
 ### AWS (EKS) settings
 

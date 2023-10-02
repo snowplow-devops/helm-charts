@@ -1,6 +1,8 @@
 global:
   # -- Cloud specific bindings (options: aws, gcp, azure)
   cloud: ""
+  # -- Weather to enable Traefik ingress route
+  deployTraefikIngress: false
 
 # -- Overrides the full-name given to the deployment resources (default: .Release.Name)
 fullnameOverride: ""
@@ -98,11 +100,11 @@ service:
         requests:
           cpu: 50m
           memory: 128Mi
-  azure:
+  traefik:
     # -- Ingress hostname
     hostname: "iglu-server.example.com"
     # -- Entrypoint for traefik ingressClass
-    traefikEntrypoint: "websecure"
+    entrypoint: "websecure"
 
 cloudserviceaccount:
   # -- Whether to create a service-account
@@ -115,9 +117,6 @@ cloudserviceaccount:
   gcp:
     # -- Service Account email to bind to the k8s service account
     serviceAccount: ""
-  azure:
-    # -- Workload managed identity id to bind to the k8s service account
-    managedIdentityId: ""
 
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
