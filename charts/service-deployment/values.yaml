@@ -1,6 +1,8 @@
 global:
   # -- Cloud specific bindings (options: aws, gcp , azure)
   cloud: ""
+  # -- Weather to enable Traefik ingress route
+  deployTraefikIngress: false
 
 # -- Overrides the full-name given to the deployment resources (default: .Release.Name)
 fullnameOverride: ""
@@ -90,6 +92,11 @@ service:
   gcp:
     # -- Name of the Network Endpoint Group to bind onto
     networkEndpointGroupName: ""
+  traefik:
+    # -- Ingress hostname
+    hostname: "collector.example.com"
+    # -- Entrypoint for traefik ingressClass
+    entrypoint: "websecure"
 
 dockerconfigjson:
   # -- Name of the secret to use for the private repository

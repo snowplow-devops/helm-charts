@@ -1,0 +1,21 @@
+{{- if .Values.global.deployTraefikIngress }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "iglu.app.name" . }}
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.service.traefik.entrypoint }}
+
+spec:
+  rules:
+    - host: {{ .Values.service.traefik.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name:  {{ include "iglu.app.name" . }}
+                port:
+                  number: {{ .Values.service.port }}
+{{- end }}

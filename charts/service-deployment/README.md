@@ -44,6 +44,7 @@ helm delete service-deployment
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
+| global.deployTraefikIngress | string | `""` | Whether to enable traefik ingress |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | image.repository | string | `"nginx"` |  |
 | image.tag | string | `"latest"` |  |
@@ -73,6 +74,8 @@ helm delete service-deployment
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
+| service.traefik.hostname | string | `""` | Ingress fully qualified domain name |
+| service.traefik.entrypoint | string | `""` | Traefik ingress entrypoint (eg: websecure) |
 | dockerconfigjson.name | string | `"snowplow-sd-dockerhub"` | Name of the secret to use for the private repository |
 | dockerconfigjson.username | string | `""` | Username for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |
