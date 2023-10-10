@@ -1,5 +1,5 @@
 {{- if .Values.service.deploy }}
-{{- if eq .Values.global.cloud "aws" }}
+{{- if and (eq .Values.global.cloud "aws") (not .Values.global.deployTraefikIngress) }}
 apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding
 metadata:
