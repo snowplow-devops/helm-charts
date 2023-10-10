@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "iglu.app.name" . }}
+  name: {{ include "app.fullname" . }}
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.service.traefik.entrypoint }}
 
@@ -15,7 +15,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name:  {{ include "iglu.app.name" . }}
+                name:  {{ include "app.fullname" . }}
                 port:
                   number: {{ .Values.service.port }}
 {{- end }}
