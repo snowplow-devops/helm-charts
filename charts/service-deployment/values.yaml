@@ -61,6 +61,21 @@ readinessProbe:
   failureThreshold: 3
   successThreshold: 2
 
+# -- livenessProbe is enabled if httpGet.path or exec.command are present
+livenessProbe:
+  httpGet:
+    # -- Path for health checks to be performed to determine liveness
+    path: ""
+    port: ""
+  exec:
+    # -- Command/arguments to execute to determine liveness
+    command: []
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 5
+  failureThreshold: 3
+  successThreshold: 2
+
 # -- Grace period for termination of the service
 terminationGracePeriodSeconds: 60
 
