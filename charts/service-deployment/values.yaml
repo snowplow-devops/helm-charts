@@ -27,6 +27,8 @@ config:
   # -- Map of secrets that will be exposed as environment variables within the job
   secrets: {}
   #  username: "password"
+  secretsB64: {}
+  #  username: "cGFzc3dvcmQK"
 
 # -- List of config maps to mount to the deployment
 configMaps: []

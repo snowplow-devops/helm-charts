@@ -77,7 +77,7 @@ spec:
         {{- end }}
         {{- end }}
         
-        {{- if .Values.config.secrets  }}
+        {{- if or .Values.config.secrets .Values.config.secretsB64 }}
         envFrom:
         - secretRef:
             name: {{ include "app.secret.fullname" . }}
