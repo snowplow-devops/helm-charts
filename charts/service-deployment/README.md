@@ -70,6 +70,9 @@ helm delete service-deployment
 | image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | image.repository | string | `"nginx"` |  |
 | image.tag | string | `"latest"` |  |
+| livenessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":"","port":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | livenessProbe is enabled if httpGet.path or exec.command are present |
+| livenessProbe.exec.command | list | `[]` | Command/arguments to execute to determine liveness |
+| livenessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine liveness |
 | readinessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | readinessProbe is enabled if httpGet.path or exec.command are present |
 | readinessProbe.exec.command | list | `[]` | Command/arguments to execute to determine readiness |
 | readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |

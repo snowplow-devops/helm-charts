@@ -108,6 +108,28 @@ spec:
           successThreshold: {{ .Values.readinessProbe.successThreshold }}
         {{- end }}
 
+        {{- if or (ne .Values.livenessProbe.httpGet.path "") (.Values.livenessProbe.exec.command) }}
+        livenessProbe:
+          {{- if ne .Values.livenessProbe.httpGet.path "" }}
+          httpGet:
+            path: {{ .Values.livenessProbe.httpGet.path }}
+            port: {{ .Values.livenessProbe.httpGet.port }}
+            scheme: HTTP
+          {{- end }}
+          {{- if gt (len .Values.livenessProbe.exec.command) 0 }}
+          exec:
+            command:
+          {{- range $v := .Values.livenessProbe.exec.command }}
+            - {{ $v }}
+          {{- end }}
+          {{- end }}
+          initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          successThreshold: {{ .Values.livenessProbe.successThreshold }}
+        {{- end }}
+
         {{- if .Values.configMaps }}
         volumeMounts:
         {{- range $v := .Values.configMaps }}
