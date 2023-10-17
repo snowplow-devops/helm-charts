@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: {{if eq .Values.issuerType "namespace"}}Issuer{{else if eq .Values.issuerType "cluster"}}ClusterIssuer{{end}}
+metadata:
+  name: {{ include "app.fullname" . }}
+spec:
+  {{- if .Values.acme.enabled}}
+  acme:
+    email: {{ .Values.acme.email }}
+    {{- if .Values.acme.accountPrivateKeyData}}
+    disableAccountKeyGeneration: true
+    {{- end }}
+    server: {{ include "acme.server" . }}
+    privateKeySecretRef:
+        name: {{ include "app.fullname" . }}-account-key
+    solvers:
+    {{- if eq .Values.acme.solver "http01"}}
+    - http01:
+        ingress:
+          class: {{ $.Values.acme.httpSolverIngressClass }}
+    {{- end}}
+  {{- end}}
