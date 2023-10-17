@@ -1,0 +1,6 @@
+dependencies:
+- name: cert-manager-crds
+  repository: https://snowplow-devops.github.io/helm-charts
+  version: 0.1.0
+digest: sha256:210597b039bc002fc20ec5908bce2dc1f74482edfbae7158f1e64c46ee2ddc70
+generated: "2023-10-17T16:01:40.362986-04:00"
