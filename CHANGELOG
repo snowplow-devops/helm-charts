@@ -1,3 +1,6 @@
+Version 0.1.49 (2023-10-17)
+---------------------------
+charts/cert-manager-issuer: Add helper chart for creating ClusterIssuers and Issuers.
 Version 0.1.48 (2023-10-10)
 ---------------------------
 charts/service-deployment: Add traefik ingress support.
