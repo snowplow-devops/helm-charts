@@ -17,3 +17,7 @@ keywords:
   - clusterissuer
   - ingress
   - nlb
+dependencies:
+  - name: cert-manager-crds
+    version: 0.1.0
+    repository: "https://snowplow-devops.github.io/helm-charts"
