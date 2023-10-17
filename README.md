@@ -1,4 +1,4 @@
-[![License][license-image]][license] [![Artifact Hub][artifact-hub-image]][artifact-hub] 
+[![License][license-image]][license] [![Artifact Hub][artifact-hub-image]][artifact-hub]
 
 # helm-charts
 
@@ -18,7 +18,7 @@ If you had already added this repo earlier, run `helm repo update` to retrieve t
 
 # Copyright and license
 
-The Snowplow Helm Charts project is Copyright 2022-2022 Snowplow Analytics Ltd.
+The Snowplow Helm Charts project is Copyright 2022-2023 Snowplow Analytics Ltd.
 
 Licensed under the [Apache License, Version 2.0][license] (the "License");
 you may not use this software except in compliance with the License.
