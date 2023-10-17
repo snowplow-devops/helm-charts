@@ -1,0 +1,20 @@
+global:
+  # -- Cloud specific bindings (options: aws, gcp, azure. Only used for dns01 type)
+  cloud: ""
+
+# -- The type of issuer to create (options: cluster, namespace)
+issuerType: "cluster"
+
+acme:
+  # -- Whether to enable the ACME protocol
+  enabled: true
+  # -- The ACME server to use (options: letsencrypt, letsencrypt-staging)
+  environment: letsencrypt-staging
+  # -- The email address to use for registration
+  email: "firstname.lastname@example.com"
+  # -- A private key to use for registration (if not provided, one will be generated)
+  accountPrivateKeyData: ""
+  # -- The type of challenge to use (options: http01, dns01)
+  solver: "http01"
+  # -- The name of the ingress class to setup the HTTP-01 challenge solver on
+  httpSolverIngressClass: "traefik"

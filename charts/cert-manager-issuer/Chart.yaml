@@ -1,0 +1,19 @@
+apiVersion: v2
+name: cert-manager-issuer
+description: A helm chart that creates an Issuer or ClusterIssuer for cert-manager
+version: 0.1.0
+type: application
+home: https://github.com/snowplow-devops/helm-charts
+icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+sources:
+  - https://github.com/snowplow-devops/helm-charts
+maintainers:
+  - name: jparavisini
+    url: https://github.com/jparavisini
+    email: jparavisini@users.noreply.github.com
+keywords:
+  - cert-manager
+  - issuer
+  - clusterissuer
+  - ingress
+  - nlb
