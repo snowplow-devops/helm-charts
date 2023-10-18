@@ -260,6 +260,34 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/cert-manager-crds-0.1.0/cert-manager-crds-0.1.0.tgz
     version: 0.1.0
+  cert-manager-issuer:
+  - apiVersion: v2
+    created: "2023-10-18T19:19:57.907438272Z"
+    dependencies:
+    - name: cert-manager-crds
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    description: A helm chart that creates an Issuer or ClusterIssuer for cert-manager
+    digest: 538d615b425e67d43acd7689585d6b8dbe174dd5a6d5d54ccbac3f10c059478b
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cert-manager
+    - issuer
+    - clusterissuer
+    - ingress
+    - nlb
+    maintainers:
+    - email: jparavisini@users.noreply.github.com
+      name: jparavisini
+      url: https://github.com/jparavisini
+    name: cert-manager-issuer
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    type: application
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cert-manager-issuer-0.1.0/cert-manager-issuer-0.1.0.tgz
+    version: 0.1.0
   cloudserviceaccount:
   - apiVersion: v2
     created: "2023-09-12T15:30:00.473160737Z"
@@ -1500,4 +1528,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2023-10-11T13:12:32.539898516Z"
+generated: "2023-10-18T19:19:57.907570772Z"
