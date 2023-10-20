@@ -9,6 +9,8 @@ spec:
   selector:
     matchLabels:
       app: {{ include "app.fullname" . }}
+  strategy:
+    type: {{ .Values.deployment.strategy.type }}
   template:
     metadata:
       labels:

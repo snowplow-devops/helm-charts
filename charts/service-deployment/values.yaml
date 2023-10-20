@@ -148,3 +148,7 @@ cloudserviceaccount:
 deployment:
   # -- When enabled, disables the HPA and scales the deployment to zero replicas
   scaleToZero: false
+  # -- How to replace existing pods with new ones
+  strategy:
+    # -- Change to "Recreate" if all pods should be killed before new ones are created
+    type: "RollingUpdate"
