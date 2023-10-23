@@ -1,8 +1,6 @@
 global:
   # -- Cloud specific bindings (options: aws, gcp , azure)
   cloud: ""
-  # -- Weather to enable Traefik ingress route
-  deployTraefikIngress: false
 
 # -- Overrides the full-name given to the deployment resources (default: .Release.Name)
 fullnameOverride: ""
@@ -92,11 +90,16 @@ service:
   gcp:
     # -- Name of the Network Endpoint Group to bind onto
     networkEndpointGroupName: ""
-  traefik:
-    # -- Ingress hostname
-    hostname: "collector.example.com"
-    # -- Entrypoint for traefik ingressClass
-    entrypoint: "websecure"
+  # -- A map of ingress rules to deploy
+  ingress: {}
+    # ingress-0001:
+    #   hostname: example-01.com
+    # ingress-0002:
+    #   hostname: example-02.com # -- Hostname to map Ingress to
+    #   certificateCreate: false # -- Create a Certificate resource for this Ingress (default: true)
+    #   certificateIssuerName: cloudflare # -- What issuer to use for the Certificate (default: letsencrypt-staging)
+    #   certificateIssuerKind: Issuer # -- Kind of issuer (default: ClusterIssuer)
+    #   enableTraefik: false # -- Enables traefik annotations and set ingressClassName. (default: true)
 
 dockerconfigjson:
   # -- Name of the secret to use for the private repository

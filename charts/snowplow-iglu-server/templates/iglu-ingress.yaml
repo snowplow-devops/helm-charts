@@ -1,21 +1,30 @@
-{{- if .Values.global.deployTraefikIngress }}
+{{- range .Values.service.ingress }}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "iglu.app.name" . }}
+  name: {{ include "iglu.app.name" $ }}
+  {{- if $.Values.service.ingress.enableTraefik | default "true" }}
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.service.traefik.entrypoint }}
-
+    traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
+  {{- end}}
 spec:
+  {{- if $.Values.service.ingress.enableTraefik | default "true" }}
+  ingressClassName: traefik
+  {{- end}}
+  tls:
+  - hosts:
+      - "{{ .hostname }}"
+    secretName: {{ .hostname }}-tls
   rules:
-    - host: {{ .Values.service.traefik.hostname }}
+    - host: "{{ required "A valid hostname is required!" .hostname }}"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name:  {{ include "iglu.app.name" . }}
+                name:  {{ include "iglu.app.name" $ }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ $.Values.service.port }}
 {{- end }}
