@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "app.fullname" . }}
-  {{- if and (eq .Values.global.cloud "gcp") (not .Values.global.deployTraefikIngress) }}
+  {{- if and (eq .Values.global.cloud "gcp") (not .Values.service.ingress.enableTraefik) }}
   annotations:
     cloud.google.com/app-protocols:  '{"http-port": "HTTP"}'
     cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.service.port }}":{"name": "{{ include "service.gcp.networkEndpointGroupName" . }}"}}}'

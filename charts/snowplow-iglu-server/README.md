@@ -118,17 +118,6 @@ You will need to fill these targeted fields:
 
 ### Azure (AKS) settings
 
-#### Ingress routes
-
-For iglu server ingress routes are managed by Traefik.
-
-You will need to fill these targeted fields:
-
-- `global.cloud: "azure"`
-- `global.deployTraefikIngress: true`
-- `service.traefik.hostname: <iglu server hostname>`
-- `service.traefik.entrypoint: <Traefik ingressClass route entry point>`
-
 ### AWS (EKS) settings
 
 #### TargetGroup binding
@@ -146,59 +135,61 @@ You will need to fill these targeted fields:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp) |
+| cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
+| cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |
+| cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
+| cloudserviceaccount.name | string | `"snowplow-iglu-server-service-account"` | Name of the service-account to create |
+| dockerconfigjson.email | string | `""` | Email address for user of the private repository |
+| dockerconfigjson.name | string | `"snowplow-iglu-server-dockerhub"` | Name of the secret to use for the private repository |
+| dockerconfigjson.password | string | `""` | Password for the private repository |
+| dockerconfigjson.server | string | `"https://index.docker.io/v1/"` | Repository server URL |
+| dockerconfigjson.username | string | `""` | Username for the private repository |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
-| service.deploySetupHooks | bool | `true` | Whether to run the post-deploy setup hooks |
-| service.port | int | `8080` | Port to bind and expose the service on |
-| service.image.repository | string | `"snowplow/iglu-server"` |  |
-| service.image.tag | string | `"0.10.0-distroless"` |  |
-| service.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
-| service.image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
-| service.minReplicas | int | `1` |  |
-| service.maxReplicas | int | `4` |  |
-| service.targetCPUUtilizationPercentage | int | `75` |  |
-| service.terminationGracePeriodSeconds | int | `630` |  |
-| service.readinessProbe.initialDelaySeconds | int | `5` |  |
-| service.readinessProbe.periodSeconds | int | `5` |  |
-| service.readinessProbe.timeoutSeconds | int | `5` |  |
-| service.readinessProbe.failureThreshold | int | `3` |  |
-| service.readinessProbe.successThreshold | int | `2` |  |
-| service.resources.limits.cpu | string | `"746m"` |  |
-| service.resources.limits.memory | string | `"900Mi"` |  |
-| service.resources.requests.cpu | string | `"400m"` |  |
-| service.resources.requests.memory | string | `"512Mi"` |  |
-| service.config.secrets.superApiKey | string | `""` | Lowercase uuidv4 to use as admin apikey of the service (default: auto-generated) |
-| service.config.repoServer.maxConnections | int | `16384` |  |
-| service.config.repoServer.idleTimeout | string | `"65 seconds"` |  |
-| service.config.database.type | string | `"dummy"` | Can be either 'dummy' (in-memory) or 'postgres' |
+| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
+| service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
+| service.config.database.dbname | string | `""` | Postgres database name |
 | service.config.database.host | string | `""` | Postgres database host |
 | service.config.database.port | int | `5432` | Postgres database port |
-| service.config.database.dbname | string | `""` | Postgres database name |
-| service.config.database.secrets.username | string | `""` |  |
 | service.config.database.secrets.password | string | `""` |  |
-| service.config.patchesAllowed | bool | `false` | Whether to allow schema patching |
+| service.config.database.secrets.username | string | `""` |  |
+| service.config.database.type | string | `"dummy"` | Can be either 'dummy' (in-memory) or 'postgres' |
 | service.config.hoconBase64 | string | `""` | Optional Base64 encoded config HOCON (note: will not override above settings) |
 | service.config.javaOpts | string | `""` | Optional JAVA_OPTS inputs for the deployed service |
-| service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
-| service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
+| service.config.patchesAllowed | bool | `false` | Whether to allow schema patching |
+| service.config.repoServer.idleTimeout | string | `"65 seconds"` |  |
+| service.config.repoServer.maxConnections | int | `16384` |  |
+| service.config.secrets.superApiKey | string | `""` | Lowercase uuidv4 to use as admin apikey of the service (default: auto-generated) |
+| service.deploySetupHooks | bool | `true` | Whether to run the post-deploy setup hooks |
 | service.gcp.deployProxy | bool | `false` | Whether to use CloudSQL Proxy (note: requires GCP service account to be attached) |
+| service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
+| service.gcp.proxy.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| service.gcp.proxy.image.repository | string | `"gcr.io/cloudsql-docker/gce-proxy"` |  |
+| service.gcp.proxy.image.tag | string | `"1.31.2"` |  |
+| service.gcp.proxy.instanceName | string | `""` | Name of the CloudSQL instance |
 | service.gcp.proxy.port | int | `38000` | Port to bind proxy onto |
 | service.gcp.proxy.project | string | `""` | Project where CloudSQL instance is deployed |
 | service.gcp.proxy.region | string | `""` | Region where CloudSQL instance is deployed |
-| service.gcp.proxy.instanceName | string | `""` | Name of the CloudSQL instance |
-| service.gcp.proxy.image.repository | string | `"gcr.io/cloudsql-docker/gce-proxy"` |  |
-| service.gcp.proxy.image.tag | string | `"1.31.2"` |  |
-| service.gcp.proxy.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | service.gcp.proxy.resources.limits.cpu | string | `"100m"` |  |
 | service.gcp.proxy.resources.limits.memory | string | `"256Mi"` |  |
 | service.gcp.proxy.resources.requests.cpu | string | `"50m"` |  |
 | service.gcp.proxy.resources.requests.memory | string | `"128Mi"` |  |
-| cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |
-| cloudserviceaccount.name | string | `"snowplow-iglu-server-service-account"` | Name of the service-account to create |
-| cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
-| cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
-| dockerconfigjson.name | string | `"snowplow-iglu-server-dockerhub"` | Name of the secret to use for the private repository |
-| dockerconfigjson.username | string | `""` | Username for the private repository |
-| dockerconfigjson.password | string | `""` | Password for the private repository |
-| dockerconfigjson.server | string | `"https://index.docker.io/v1/"` | Repository server URL |
-| dockerconfigjson.email | string | `""` | Email address for user of the private repository |
+| service.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| service.image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
+| service.image.repository | string | `"snowplow/iglu-server"` |  |
+| service.image.tag | string | `"0.10.0-distroless"` |  |
+| service.ingress | object | `{}` | A map of ingress rules to deploy |
+| service.maxReplicas | int | `4` |  |
+| service.minReplicas | int | `1` |  |
+| service.port | int | `8080` | Port to bind and expose the service on |
+| service.readinessProbe.failureThreshold | int | `3` |  |
+| service.readinessProbe.initialDelaySeconds | int | `5` |  |
+| service.readinessProbe.periodSeconds | int | `5` |  |
+| service.readinessProbe.successThreshold | int | `2` |  |
+| service.readinessProbe.timeoutSeconds | int | `5` |  |
+| service.resources.limits.cpu | string | `"746m"` |  |
+| service.resources.limits.memory | string | `"900Mi"` |  |
+| service.resources.requests.cpu | string | `"400m"` |  |
+| service.resources.requests.memory | string | `"512Mi"` |  |
+| service.targetCPUUtilizationPercentage | int | `75` |  |
+| service.terminationGracePeriodSeconds | int | `630` |  |
+

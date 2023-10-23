@@ -43,46 +43,43 @@ helm delete service-deployment
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
-| global.deployTraefikIngress | string | `""` | Whether to enable traefik ingress |
-| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
-| image.repository | string | `"nginx"` |  |
-| image.tag | string | `"latest"` |  |
-| image.isRepositoryPublic | bool | `true` | Whether the repository is public |
-| image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
-| config.command | list | `[]` |  |
+| cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
+| cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
+| cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |
+| cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
+| cloudserviceaccount.name | string | `"snowplow-sd-service-account"` | Name of the service-account to create |
 | config.args | list | `[]` |  |
+| config.command | list | `[]` |  |
 | config.env | string | `nil` | Map of environment variables to use within the job |
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
-| resources | object | `{}` | Map of resource constraints for the service |
-| readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |
-| readinessProbe.command.exec | list | `[]` | Command/arguments to execute to determine readiness |
-| readinessProbe.initialDelaySeconds | int | `5` |  |
-| readinessProbe.periodSeconds | int | `5` |  |
-| readinessProbe.timeoutSeconds | int | `5` |  |
-| readinessProbe.failureThreshold | int | `3` |  |
-| readinessProbe.successThreshold | int | `2` |  |
-| terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
-| hpa.deploy | bool | `true` | Whether to deploy HPA rules |
-| hpa.minReplicas | int | `1` | Minimum number of pods to deploy |
-| hpa.maxReplicas | int | `20` | Maximum number of pods to deploy |
-| hpa.averageCPUUtilization | int | `75` | Average CPU utilization before auto-scaling starts |
-| service.deploy | bool | `true` | Whether to setup service bindings (note: only NodePort is supported) |
-| service.port | int | `8000` | Port to bind and expose the service on |
-| service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
-| service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
-| service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
-| service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
-| service.traefik.hostname | string | `""` | Ingress fully qualified domain name |
-| service.traefik.entrypoint | string | `""` | Traefik ingress entrypoint (eg: websecure) |
+| deployment.scaleToZero | bool | `false` | When enabled, disables the HPA and scales the deployment to zero replicas |
+| dockerconfigjson.email | string | `""` | Email address for user of the private repository |
 | dockerconfigjson.name | string | `"snowplow-sd-dockerhub"` | Name of the secret to use for the private repository |
-| dockerconfigjson.username | string | `""` | Username for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |
 | dockerconfigjson.server | string | `"https://index.docker.io/v1/"` | Repository server URL |
-| dockerconfigjson.email | string | `""` | Email address for user of the private repository |
-| cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |
-| cloudserviceaccount.name | string | `"snowplow-sd-service-account"` | Name of the service-account to create |
-| cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
-| cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
-| cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
+| dockerconfigjson.username | string | `""` | Username for the private repository |
+| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
+| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp , azure) |
+| hpa.averageCPUUtilization | int | `75` | Average CPU utilization before auto-scaling starts |
+| hpa.behavior | object | `{}` |  |
+| hpa.deploy | bool | `true` | Whether to deploy HPA rules |
+| hpa.maxReplicas | int | `20` | Maximum number of pods to deploy |
+| hpa.minReplicas | int | `1` | Minimum number of pods to deploy |
+| image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
+| image.repository | string | `"nginx"` |  |
+| image.tag | string | `"latest"` |  |
+| readinessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | readinessProbe is enabled if httpGet.path or exec.command are present |
+| readinessProbe.exec.command | list | `[]` | Command/arguments to execute to determine readiness |
+| readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |
+| resources | object | `{}` | Map of resource constraints for the service |
+| service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
+| service.deploy | bool | `true` | Whether to setup service bindings (note: only NodePort is supported) |
+| service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
+| service.ingress | object | `{}` | A map of ingress rules to deploy |
+| service.port | int | `8000` | Port to bind and expose the service on |
+| service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
+| service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
+| terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
+

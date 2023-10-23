@@ -1,21 +1,30 @@
-{{- if .Values.global.deployTraefikIngress }}
+{{- range .Values.service.ingress }}
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "app.fullname" . }}
+  name: {{ required "A valid hostname is required!" .hostname }}
+  {{- if .enableTraefik | default "true" }}
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: {{ .Values.service.traefik.entrypoint }}
-
+    traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
+  {{- end}}
 spec:
+  {{- if .enableTraefik | default "true" }}
+  ingressClassName: traefik
+  {{- end}}
+  tls:
+  - hosts:
+      - "{{ .hostname }}"
+    secretName: {{ .hostname }}-tls
   rules:
-    - host: {{ .Values.service.traefik.hostname }}
+    - host: "{{ required "A valid hostname is required!" .hostname }}"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name:  {{ include "app.fullname" . }}
+                name:  {{ include "app.fullname" $ }}
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ $.Values.service.port }}
 {{- end }}

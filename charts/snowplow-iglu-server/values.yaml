@@ -1,8 +1,6 @@
 global:
   # -- Cloud specific bindings (options: aws, gcp, azure)
   cloud: ""
-  # -- Weather to enable Traefik ingress route
-  deployTraefikIngress: false
 
 # -- Overrides the full-name given to the deployment resources (default: .Release.Name)
 fullnameOverride: ""
@@ -100,11 +98,15 @@ service:
         requests:
           cpu: 50m
           memory: 128Mi
-  traefik:
-    # -- Ingress hostname
-    hostname: "iglu-server.example.com"
-    # -- Entrypoint for traefik ingressClass
-    entrypoint: "websecure"
+
+  # -- A map of ingress rules to deploy
+  ingress: {}
+    # enableTraefik: false # -- Enables traefik annotations and set ingressClassName. (default: true)
+    # ingress-01:
+    #   hostname: "iglu-server.example.com"
+    #   certificateCreate: false # -- Create a Certificate resource for this Ingress (default: true)
+    #   certificateIssuerName: cloudflare # -- What issuer to use for the Certificate (default: letsencrypt)
+    #   certificateIssuerKind: Issuer # -- Kind of issuer (default: ClusterIssuer)
 
 cloudserviceaccount:
   # -- Whether to create a service-account
