@@ -1,3 +1,8 @@
+Version 0.1.50 (2023-10-24)
+---------------------------
+charts/service-deployment: Refactored Traefik support. Added Certificate handling with cert-manager.
+charts/snowplow-iglu-server: Refactored Traefik support. Added Certificate handling with cert-manager.
+
 Version 0.1.49 (2023-10-17)
 ---------------------------
 charts/cert-manager-issuer: Add helper chart for creating ClusterIssuers and Issuers.
