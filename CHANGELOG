@@ -1,3 +1,9 @@
+Version 0.1.51 (2023-10-26)
+---------------------------
+charts/service-deployment configurable strategy type (#132)
+charts/service-deployment Allow base64-encoded secrets (#130)
+charts/service-deployment Add liveness probe (#128)
+
 Version 0.1.50 (2023-10-24)
 ---------------------------
 charts/service-deployment: Refactored Traefik support. Added Certificate handling with cert-manager.
