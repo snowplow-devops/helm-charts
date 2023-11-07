@@ -1,3 +1,7 @@
+Version 0.1.52 (2023-11-07)
+---------------------------
+charts/cron-job Add azure workload identity support (#134)
+
 Version 0.1.51 (2023-10-26)
 ---------------------------
 charts/service-deployment configurable strategy type (#132)
