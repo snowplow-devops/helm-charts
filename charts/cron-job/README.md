@@ -37,7 +37,7 @@ helm delete cron-job
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp) |
+| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | schedule | string | `"*/1 * * * *"` |  |
 | concurrencyPolicy | string | `"Forbid"` |  |
@@ -62,3 +62,4 @@ helm delete cron-job
 | cloudserviceaccount.name | string | `"snowplow-cron-job-service-account"` | Name of the service-account to create |
 | cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
 | cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
+| cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
