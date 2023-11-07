@@ -1,7 +1,7 @@
 apiVersion: v2
 name: cron-job
 description: A Helm Chart to deploy an arbitrary container as a cron job.
-version: 0.5.0
+version: 0.6.0
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts
 sources:
@@ -17,5 +17,5 @@ dependencies:
     version: 0.1.0
     repository: "https://snowplow-devops.github.io/helm-charts"
   - name: cloudserviceaccount
-    version: 0.1.0
+    version: 0.3.0
     repository: "https://snowplow-devops.github.io/helm-charts"
