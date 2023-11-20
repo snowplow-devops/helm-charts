@@ -76,7 +76,7 @@ livenessProbe:
   periodSeconds: 5
   timeoutSeconds: 5
   failureThreshold: 3
-  successThreshold: 2
+  successThreshold: 1
 
 # -- Grace period for termination of the service
 terminationGracePeriodSeconds: 60
