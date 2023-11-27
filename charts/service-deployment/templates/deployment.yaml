@@ -37,6 +37,10 @@ spec:
       automountServiceAccountToken: true
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 
+      {{- if .Values.priorityClassName }}
+      priorityClassName: {{ .Values.priorityClassName }}
+      {{- end }}
+
       {{- if not .Values.image.isRepositoryPublic }}
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
