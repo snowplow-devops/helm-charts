@@ -1,3 +1,7 @@
+Version 0.1.55 (2023-11-27)
+---------------------------
+charts/service-deployment: Add support for priority class (#121)
+
 Version 0.1.54 (2023-11-20)
 ---------------------------
 charts/service-deployment: Fix livenessProbe successThreshold error (#138)
