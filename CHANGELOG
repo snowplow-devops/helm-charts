@@ -1,3 +1,7 @@
+Version 0.1.56 (2023-11-30)
+---------------------------
+charts/priority-class: Add priority class chart (#140)
+
 Version 0.1.55 (2023-11-27)
 ---------------------------
 charts/service-deployment: Add support for priority class (#121)
