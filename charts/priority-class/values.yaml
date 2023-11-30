@@ -1,0 +1,26 @@
+# -- Overrides the name given to the deployment (default: .Release.Name)
+nameOverride: ""
+# -- Overrides the full-name given to the deployment resources (default: .Release.Name)
+fullnameOverride: ""
+
+priorityClasses:
+  - name: critical
+    description: "Critical priority pods that preempt all other priority classes."
+    globalDefault: false
+    preemptionPolicy: PreemptLowerPriority
+    value: 1000000
+  - name: high
+    description: "High priority pods that preempt medium and low tier priority classes."
+    globalDefault: false
+    preemptionPolicy: PreemptLowerPriority
+    value: 900000
+  - name: medium
+    description: "Medium priority pods that preempt low tier priority classes. The default for services."
+    globalDefault: true
+    preemptionPolicy: PreemptLowerPriority
+    value: 500000
+  - name: low
+    description: "Low priority pods."
+    globalDefault: false
+    preemptionPolicy: Never
+    value: 100000
