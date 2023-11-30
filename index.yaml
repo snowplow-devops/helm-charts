@@ -850,6 +850,26 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/github-actions-runners-0.1.0/github-actions-runners-0.1.0.tgz
     version: 0.1.0
+  priority-class:
+  - apiVersion: v2
+    created: "2023-11-30T21:00:13.524581491Z"
+    description: A Helm Chart to setup priority classes for all tiers
+    digest: a9a89236891b707f5afdc6a9c3a09eb81ed73c95b9b92e2eb9597fe13ead7f0e
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - priority-class
+    - priority-classes
+    maintainers:
+    - email: ianarsenault@users.noreply.github.com
+      name: ianarsenault
+      url: https://github.com/ianarsenault
+    name: priority-class
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/priority-class-0.1.0/priority-class-0.1.0.tgz
+    version: 0.1.0
   service-deployment:
   - apiVersion: v2
     created: "2023-11-27T20:47:03.157657934Z"
@@ -1690,4 +1710,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2023-11-27T20:47:03.157854881Z"
+generated: "2023-11-30T21:00:13.524767436Z"
