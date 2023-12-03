@@ -55,7 +55,9 @@ helm delete service-deployment
 | config.secretsB64 | object | `{}` | Map of base64-encoded secrets that will be exposed as environment variables within the job |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
 | deployment.scaleToZero | bool | `false` | When enabled, disables the HPA and scales the deployment to zero replicas |
-| deployment.strategy | string | `RollingUpdate` | Specifies how to replace old pods by new ones |
+| deployment.strategy.type | string | `RollingUpdate` | Specifies how to replace old pods by new ones |
+| deployment.strategy.rollingUpdate.maxUnavailable | string | `25%` | Specifies the maximum number of pods that can be unavailable during the rolling update |
+| deployment.strategy.rollingUpdate.maxSurge | string | `25%` | Specifies the maximum number of pods that can be created in addition to the current number of pods during the rolling update |
 | dockerconfigjson.email | string | `""` | Email address for user of the private repository |
 | dockerconfigjson.name | string | `"snowplow-sd-dockerhub"` | Name of the secret to use for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |
