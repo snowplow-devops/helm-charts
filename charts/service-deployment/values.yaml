@@ -152,5 +152,10 @@ deployment:
   strategy:
     # -- Change to "Recreate" if all pods should be killed before new ones are created
     type: "RollingUpdate"
+    rollingUpdate:
+      # -- The max number or percent of pods that can be unavailable during rolling update. Can be set as number "3" for 3 pods unavailable
+      maxUnavailable: "25%"
+      # -- The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number "5" for 5 additional pods
+      maxSurge: "25%"
 
 priorityClassName: ""
