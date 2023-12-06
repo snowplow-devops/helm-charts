@@ -36,7 +36,7 @@ Define resource names for the Iglu service.
 {{ include "iglu.fullname" . }}-app
 {{- end -}}
 {{- define "iglu.app.secret.name" -}}
-{{ include "iglu.fullname" . }}-secret
+{{- default .Values.existingSecretName (include "iglu.fullname" .) }}-secret
 {{- end -}}
 {{- define "iglu.app.config.name" -}}
 {{ include "iglu.fullname" . }}-config
