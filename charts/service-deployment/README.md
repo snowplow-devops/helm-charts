@@ -90,3 +90,4 @@ helm delete service-deployment
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
 | priorityClassName | string | `""` | `priorityClassName` for pods |
+| affinity | object | `{}` | Map of affinity constraints that will be used when scheduling pods |
