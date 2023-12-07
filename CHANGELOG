@@ -1,3 +1,7 @@
+Version 0.1.57 (2023-12-07)
+---------------------------
+charts/service-deployment: Add affinity settings (#142 and #145)
+
 Version 0.1.56 (2023-11-30)
 ---------------------------
 charts/service-deployment: Add rollingUpdate settings (#144)
