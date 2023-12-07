@@ -159,3 +159,34 @@ deployment:
       maxSurge: "25%"
 
 priorityClassName: ""
+
+# -- Affinity supports podAffinity, podAntiAffinity, or nodeAffinity
+affinity: {}
+# podAffinity:
+#    requiredDuringSchedulingIgnoredDuringExecution:
+#    - labelSelector:
+#        matchExpressions:
+#        - key: security
+#          operator: In
+#          values:
+#          - S1
+#      topologyKey: topology.kubernetes.io/zone
+# podAntiAffinity:
+#   preferredDuringSchedulingIgnoredDuringExecution:
+#   - weight: 100
+#     podAffinityTerm:
+#       labelSelector:
+#         matchExpressions:
+#         - key: app.kubernetes.io/name
+#           operator: In
+#           values:
+#           - collector
+#       topologyKey: topology.kubernetes.io/hostname
+# nodeAffinity:
+#    requiredDuringSchedulingIgnoredDuringExecution:
+#      nodeSelectorTerms:
+#      - matchExpressions:
+#        - key: kubernetes.io/os
+#          operator: In
+#          values:
+#          - linux
