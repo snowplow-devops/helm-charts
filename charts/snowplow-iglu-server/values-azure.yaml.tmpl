@@ -1,6 +1,5 @@
 global:
   cloud: "azure"
-  deployTraefikIngress: true
 
 service:
   deploySetupHooks: true
@@ -28,6 +27,6 @@ service:
         password: "<password>"
     patchesAllowed: false
 
-  traefik:
-    hostname: "iglu-server.example.com"
-    entrypoint: "websecure"
+  ingress: 
+    ingress-01:
+      hostname: "iglu-server.example.com"

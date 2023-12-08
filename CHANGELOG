@@ -1,3 +1,8 @@
+Version 0.1.58 (2023-12-08)
+---------------------------
+charts/service-deployment: Update conditional logic for NEGs and Targetgroup bindings (#148)
+charts/snowplow-iglu-server: Update conditional logic for NEGs and Targetgroup bindings (#148)
+
 Version 0.1.57 (2023-12-07)
 ---------------------------
 charts/service-deployment: Add affinity settings (#142 and #145)
