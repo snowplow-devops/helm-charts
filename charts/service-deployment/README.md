@@ -43,6 +43,7 @@ helm delete service-deployment
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| affinity | object | `{}` | Affinity supports podAffinity, podAntiAffinity, or nodeAffinity |
 | cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
 | cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
 | cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |
@@ -55,9 +56,10 @@ helm delete service-deployment
 | config.secretsB64 | object | `{}` | Map of base64-encoded secrets that will be exposed as environment variables within the job |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
 | deployment.scaleToZero | bool | `false` | When enabled, disables the HPA and scales the deployment to zero replicas |
-| deployment.strategy.type | string | `RollingUpdate` | Specifies how to replace old pods by new ones |
-| deployment.strategy.rollingUpdate.maxUnavailable | string | `25%` | Specifies the maximum number of pods that can be unavailable during the rolling update |
-| deployment.strategy.rollingUpdate.maxSurge | string | `25%` | Specifies the maximum number of pods that can be created in addition to the current number of pods during the rolling update |
+| deployment.strategy | object | `{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"}` | How to replace existing pods with new ones |
+| deployment.strategy.rollingUpdate.maxSurge | string | `"25%"` | The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number "5" for 5 additional pods |
+| deployment.strategy.rollingUpdate.maxUnavailable | string | `"25%"` | The max number or percent of pods that can be unavailable during rolling update. Can be set as number "3" for 3 pods unavailable |
+| deployment.strategy.type | string | `"RollingUpdate"` | Change to "Recreate" if all pods should be killed before new ones are created |
 | dockerconfigjson.email | string | `""` | Email address for user of the private repository |
 | dockerconfigjson.name | string | `"snowplow-sd-dockerhub"` | Name of the secret to use for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |
@@ -74,9 +76,17 @@ helm delete service-deployment
 | image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | image.repository | string | `"nginx"` |  |
 | image.tag | string | `"latest"` |  |
-| livenessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":"","port":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | livenessProbe is enabled if httpGet.path or exec.command are present |
+| livenessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":"","port":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":5}` | livenessProbe is enabled if httpGet.path or exec.command are present |
 | livenessProbe.exec.command | list | `[]` | Command/arguments to execute to determine liveness |
 | livenessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine liveness |
+| persistentVolume.accessModes | list | `["ReadWriteOnce"]` | Access modes to allow (note: this will impact HPA rules if the volume cannot be bound to all containers) |
+| persistentVolume.annotations | object | `{}` | Persistent Volume annotations |
+| persistentVolume.enabled | bool | `false` | Whether to deploy a persistent-volume |
+| persistentVolume.labels | object | `{}` | Persistent Volume labels |
+| persistentVolume.mountPath | string | `"/data"` | Persistent Volume mount root path |
+| persistentVolume.size | string | `"8Gi"` | Persistent Volume size |
+| persistentVolume.subPath | string | `""` | Subdirectory of Persistent Volume to mount |
+| priorityClassName | string | `""` | PriorityClassName for pods |
 | readinessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | readinessProbe is enabled if httpGet.path or exec.command are present |
 | readinessProbe.exec.command | list | `[]` | Command/arguments to execute to determine readiness |
 | readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |
@@ -89,5 +99,3 @@ helm delete service-deployment
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
-| priorityClassName | string | `""` | `priorityClassName` for pods |
-| affinity | object | `{}` | Map of affinity constraints that will be used when scheduling pods |
