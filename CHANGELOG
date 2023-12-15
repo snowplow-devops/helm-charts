@@ -1,3 +1,7 @@
+Version 0.1.59 (2023-12-15)
+---------------------------
+charts/service-deployment: Add support for PersistentVolumeClaim (#150)
+
 Version 0.1.58 (2023-12-08)
 ---------------------------
 charts/service-deployment: Update conditional logic for NEGs and Targetgroup bindings (#148)
