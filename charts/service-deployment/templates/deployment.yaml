@@ -51,7 +51,6 @@ spec:
       - name: {{ .Values.dockerconfigjson.name }}
       {{- end }}
 
-      {{- if .Values.configMaps }}
       volumes:
       {{- range $v := .Values.configMaps }}
       - configMap:
@@ -59,6 +58,10 @@ spec:
           optional: false
         name: {{ $v.name }}
       {{- end }}
+      {{- if .Values.persistentVolume.enabled }}
+      - name: storage-volume
+        persistentVolumeClaim:
+          claimName: {{ include "app.fullname" . }}
       {{- end }}
 
       {{- if .Values.affinity }}
@@ -146,7 +149,6 @@ spec:
           successThreshold: {{ .Values.livenessProbe.successThreshold }}
         {{- end }}
 
-        {{- if .Values.configMaps }}
         volumeMounts:
         {{- range $v := .Values.configMaps }}
         - mountPath: "{{ $v.mountPath }}"
@@ -157,4 +159,8 @@ spec:
           {{- end }}
           name: {{ $v.name }}
         {{- end }}
+        {{- if .Values.persistentVolume.enabled }}
+        - name: storage-volume
+          mountPath: {{ .Values.persistentVolume.mountPath }}
+          subPath: "{{ .Values.persistentVolume.subPath }}"
         {{- end }}

@@ -27,6 +27,7 @@ config:
   # -- Map of secrets that will be exposed as environment variables within the job
   secrets: {}
   #  username: "password"
+  # -- Map of base64-encoded secrets that will be exposed as environment variables within the job
   secretsB64: {}
   #  username: "cGFzc3dvcmQK"
 
@@ -158,6 +159,7 @@ deployment:
       # -- The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number "5" for 5 additional pods
       maxSurge: "25%"
 
+# -- PriorityClassName for pods
 priorityClassName: ""
 
 # -- Affinity supports podAffinity, podAntiAffinity, or nodeAffinity
@@ -190,3 +192,22 @@ affinity: {}
 #          operator: In
 #          values:
 #          - linux
+
+persistentVolume:
+  # -- Whether to deploy a persistent-volume
+  enabled: false
+  # -- Access modes to allow (note: this will impact HPA rules if the volume cannot be bound to all containers)
+  accessModes:
+    - ReadWriteOnce
+  # -- Persistent Volume labels
+  labels: {}
+  # -- Persistent Volume annotations
+  annotations: {}
+  # -- Persistent Volume mount root path
+  mountPath: /data
+  # -- Persistent Volume size
+  size: 8Gi
+  # -- Subdirectory of Persistent Volume to mount
+  subPath: ""
+  # -- Set to "-" or "" to disable dynamic provisioning, if undefined uses the default provisioner
+  # storageClass: "-"
