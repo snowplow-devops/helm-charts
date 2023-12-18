@@ -37,7 +37,11 @@ spec:
         {{- end }}
     spec:
       {{- if .Values.cloudserviceaccount.deploy }}
+      serviceAccount: {{ .Values.cloudserviceaccount.name }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+      {{- else }}
+      serviceAccount: ""
+      serviceAccountName: ""
       {{- end }}
       automountServiceAccountToken: true
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
