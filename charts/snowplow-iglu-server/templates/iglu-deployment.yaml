@@ -55,6 +55,8 @@ spec:
           value: "{{ .Values.service.config.repoServer.maxConnections }}"
         - name : "CONFIG_FORCE_iglu_repoServer_idleTimeout"
           value: "{{ .Values.service.config.repoServer.idleTimeout }}"
+        - name : "CONFIG_FORCE_iglu_repoServer_hsts_enable"
+          value: "{{ .Values.service.config.repoServer.hsts.enable }}"
         - name : "CONFIG_FORCE_iglu_database_type"
           value: "{{ include "iglu.service.config.database.type" . }}"
         {{- if .Values.service.gcp.deployProxy }}

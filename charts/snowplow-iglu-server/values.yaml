@@ -16,7 +16,7 @@ service:
   port: 8080
   image:
     repository: "snowplow/iglu-server"
-    tag: "0.10.0-distroless"
+    tag: "0.12.0-distroless"
     # -- Whether the repository is public
     isRepositoryPublic: true
     # -- The image pullPolicy to use
@@ -48,6 +48,8 @@ service:
     repoServer:
       maxConnections: 16384
       idleTimeout: "65 seconds"
+      hsts:
+        enable: true
     database:
       # -- Can be either 'dummy' (in-memory) or 'postgres'
       type: "dummy"
