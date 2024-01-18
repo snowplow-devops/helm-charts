@@ -159,6 +159,7 @@ You will need to fill these targeted fields:
 | service.config.patchesAllowed | bool | `false` | Whether to allow schema patching |
 | service.config.repoServer.idleTimeout | string | `"65 seconds"` |  |
 | service.config.repoServer.maxConnections | int | `16384` |  |
+| service.config.repoServer.hsts.enable | bool | `true` | Whether to enable sending HSTS headers (>=0.12.0) |
 | service.config.secrets.superApiKey | string | `""` | Lowercase uuidv4 to use as admin apikey of the service (default: auto-generated) |
 | service.deploySetupHooks | bool | `true` | Whether to run the post-deploy setup hooks |
 | service.gcp.deployProxy | bool | `false` | Whether to use CloudSQL Proxy (note: requires GCP service account to be attached) |

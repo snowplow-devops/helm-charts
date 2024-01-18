@@ -18,6 +18,8 @@ service:
     repoServer:
       maxConnections: 16384
       idleTimeout: "65 seconds"
+      hsts:
+        enable: true
     database:
       type: "postgres"
       port: 5432
