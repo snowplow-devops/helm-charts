@@ -22,6 +22,10 @@ spec:
         - "setup"
 
         env:
+        {{- range $k, $v := .Values.service.config.env }}
+        - name: "{{ $k }}"
+          value: "{{ $v }}"
+        {{- end }}
         - name: "JDK_JAVA_OPTIONS"
           value: "-Dconfig.override_with_env_vars=true"
         {{- if .Values.service.gcp.deployProxy }}

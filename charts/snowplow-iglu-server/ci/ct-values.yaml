@@ -1,0 +1,4 @@
+service:
+  config:
+    env:
+      ACCEPT_LIMITED_USE_LICENSE: "yes"
