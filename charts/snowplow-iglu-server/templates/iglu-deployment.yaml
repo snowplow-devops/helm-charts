@@ -49,6 +49,10 @@ spec:
           protocol: TCP
 
         env:
+        {{- range $k, $v := .Values.service.config.env }}
+        - name: "{{ $k }}"
+          value: "{{ $v }}"
+        {{- end }}
         - name : "CONFIG_FORCE_iglu_repoServer_port"
           value: "{{ .Values.service.port }}"
         - name : "CONFIG_FORCE_iglu_repoServer_maxConnections"

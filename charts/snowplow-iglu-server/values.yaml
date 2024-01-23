@@ -42,6 +42,9 @@ service:
       memory: 512Mi
 
   config:
+    # -- Map of additional environment variables to use within the deployment
+    env:
+      ACCEPT_LIMITED_USE_LICENSE: "no"
     secrets:
       # -- Lowercase uuidv4 to use as admin apikey of the service (default: auto-generated)
       superApiKey: ""
