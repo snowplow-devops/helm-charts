@@ -1,3 +1,9 @@
+Version 0.1.61 (2024-01-24)
+---------------------------
+charts/service-deployment: Add support for setting annotations on service and ingress (#157)
+charts/service-deployment: Add support for setting labels on pods in deployment (#158)
+charts/snowplow-iglu-server: Add support for setting annotations on service and ingress (#157)
+
 Version 0.1.60 (2023-12-18)
 ---------------------------
 charts/service-deployment: Allow disabling SA once bound (#152)
