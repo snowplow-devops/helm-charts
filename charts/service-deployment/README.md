@@ -60,6 +60,7 @@ helm delete service-deployment
 | deployment.strategy.rollingUpdate.maxSurge | string | `"25%"` | The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number "5" for 5 additional pods |
 | deployment.strategy.rollingUpdate.maxUnavailable | string | `"25%"` | The max number or percent of pods that can be unavailable during rolling update. Can be set as number "3" for 3 pods unavailable |
 | deployment.strategy.type | string | `"RollingUpdate"` | Change to "Recreate" if all pods should be killed before new ones are created |
+| deployment.podLabels | object | `{}` | Map of labels that will be added to each pod in the deployment |
 | dockerconfigjson.email | string | `""` | Email address for user of the private repository |
 | dockerconfigjson.name | string | `"snowplow-sd-dockerhub"` | Name of the secret to use for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |

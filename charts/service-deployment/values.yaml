@@ -161,6 +161,10 @@ deployment:
       maxUnavailable: "25%"
       # -- The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number "5" for 5 additional pods
       maxSurge: "25%"
+  # -- Map of labels that will be added to each pod in the deployment
+  podLabels: {}
+    # env: prod2
+    # dept: engineering
 
 # -- PriorityClassName for pods
 priorityClassName: ""
