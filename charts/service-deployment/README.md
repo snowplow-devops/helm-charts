@@ -98,4 +98,5 @@ helm delete service-deployment
 | service.port | int | `8000` | Port to bind and expose the service on |
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
+| service.annotations | object | `{}` | Map of annotations to add to the service | 
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
