@@ -4,8 +4,11 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "iglu.app.name" $ }}
-  {{- if $.Values.service.ingress.enableTraefik | default "true" }}
   annotations:
+  {{- if .annotations }}
+    {{- toYaml .annotations | nindent 4 }}
+  {{- end}}
+  {{- if $.Values.service.ingress.enableTraefik | default "true" }}
     traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
   {{- end}}
 spec:
