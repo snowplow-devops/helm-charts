@@ -108,6 +108,8 @@ service:
   gcp:
     # -- Name of the Network Endpoint Group to bind onto
     networkEndpointGroupName: ""
+  # -- Map of annotations to add to the service.
+  annotations: {}
   # -- A map of ingress rules to deploy
   ingress: {}
     # ingress-0001:
@@ -118,6 +120,7 @@ service:
     #   certificateIssuerName: cloudflare # -- What issuer to use for the Certificate (default: letsencrypt-staging)
     #   certificateIssuerKind: Issuer # -- Kind of issuer (default: ClusterIssuer)
     #   enableTraefik: false # -- Enables traefik annotations and set ingressClassName. (default: true)
+    #   annotations: {} # -- Map of annotations to add to the ingress.
 
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
