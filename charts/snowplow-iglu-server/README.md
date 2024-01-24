@@ -147,6 +147,7 @@ You will need to fill these targeted fields:
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
+| service.annotations | object | `{}` | Map of annotations to add to the service |
 | service.config.database.dbname | string | `""` | Postgres database name |
 | service.config.database.host | string | `""` | Postgres database host |
 | service.config.database.port | int | `5432` | Postgres database port |

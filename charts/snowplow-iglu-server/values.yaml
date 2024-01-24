@@ -9,6 +9,9 @@ service:
   # -- Whether to run the post-deploy setup hooks
   deploySetupHooks: true
 
+  # -- Map of annotations to add to the service.
+  annotations: {}
+
   # -- Port to bind and expose the service on
   port: 8080
   image:
@@ -107,6 +110,7 @@ service:
     #   certificateCreate: false # -- Create a Certificate resource for this Ingress (default: true)
     #   certificateIssuerName: cloudflare # -- What issuer to use for the Certificate (default: letsencrypt)
     #   certificateIssuerKind: Issuer # -- Kind of issuer (default: ClusterIssuer)
+    #   annotations: {} # -- Map of annotations to add to the ingress.
 
 cloudserviceaccount:
   # -- Whether to create a service-account
