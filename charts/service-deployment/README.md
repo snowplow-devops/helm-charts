@@ -55,12 +55,12 @@ helm delete service-deployment
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
 | config.secretsB64 | object | `{}` | Map of base64-encoded secrets that will be exposed as environment variables within the job |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
+| deployment.podLabels | object | `{}` | Map of labels that will be added to each pod in the deployment |
 | deployment.scaleToZero | bool | `false` | When enabled, disables the HPA and scales the deployment to zero replicas |
 | deployment.strategy | object | `{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"}` | How to replace existing pods with new ones |
 | deployment.strategy.rollingUpdate.maxSurge | string | `"25%"` | The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number "5" for 5 additional pods |
 | deployment.strategy.rollingUpdate.maxUnavailable | string | `"25%"` | The max number or percent of pods that can be unavailable during rolling update. Can be set as number "3" for 3 pods unavailable |
 | deployment.strategy.type | string | `"RollingUpdate"` | Change to "Recreate" if all pods should be killed before new ones are created |
-| deployment.podLabels | object | `{}` | Map of labels that will be added to each pod in the deployment |
 | dockerconfigjson.email | string | `""` | Email address for user of the private repository |
 | dockerconfigjson.name | string | `"snowplow-sd-dockerhub"` | Name of the secret to use for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |
@@ -92,6 +92,7 @@ helm delete service-deployment
 | readinessProbe.exec.command | list | `[]` | Command/arguments to execute to determine readiness |
 | readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |
 | resources | object | `{}` | Map of resource constraints for the service |
+| service.annotations | object | `{}` | Map of annotations to add to the service |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
 | service.deploy | bool | `true` | Whether to setup service bindings (note: only NodePort is supported) |
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
@@ -99,5 +100,4 @@ helm delete service-deployment
 | service.port | int | `8000` | Port to bind and expose the service on |
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
-| service.annotations | object | `{}` | Map of annotations to add to the service | 
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
