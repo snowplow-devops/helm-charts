@@ -12,6 +12,10 @@ spec:
         app: {{ include "app.fullname" . }}
     spec:
       priorityClassName: {{ include "app.fullname" . }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
       terminationGracePeriodSeconds: 0
       containers:
       - name: "{{ include "app.fullname" . }}"

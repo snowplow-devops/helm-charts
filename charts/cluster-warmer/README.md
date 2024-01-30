@@ -1,6 +1,6 @@
 # cluster-warmer
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square)
 
 A Helm Chart to deploy pods to force scaling in a node-pool to keep it warm
 
@@ -26,6 +26,7 @@ A Helm Chart to deploy pods to force scaling in a node-pool to keep it warm
 | image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | image.repository | string | `"registry.k8s.io/pause"` |  |
 | image.tag | string | `"3.9"` |  |
+| nodeSelector | object | `{}` | nodeSelector configuration |
 | resources | object | `{}` | Map of resource constraints for the warm pods (should be set to a sufficiently high number to trigger scaling) |
 
 ----------------------------------------------
