@@ -1,3 +1,7 @@
+Version 0.1.63 (2024-01-30)
+---------------------------
+charts/cluster-warmer: add nodeSelector for scheduling (#161)
+
 Version 0.1.62 (2024-01-25)
 ---------------------------
 charts/snowplow-iglu-server: Add support for sending HSTS headers (#154)
