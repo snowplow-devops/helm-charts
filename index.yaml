@@ -355,6 +355,25 @@ entries:
     version: 0.1.0
   cluster-warmer:
   - apiVersion: v2
+    created: "2024-01-30T21:20:24.416691766Z"
+    description: A Helm Chart to deploy pods to force scaling in a node-pool to keep
+      it warm
+    digest: b9de401581a312d214f0219d54de8077097b77e3004fd14c44e4cb125d710cdf
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cluster-autoscaler
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: cluster-warmer
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cluster-warmer-0.2.0/cluster-warmer-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     created: "2023-09-01T03:05:48.162218323Z"
     description: A Helm Chart to deploy pods to force scaling in a node-pool to keep
       it warm
@@ -1959,4 +1978,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-25T20:45:15.818132917Z"
+generated: "2024-01-30T21:20:24.416891772Z"
