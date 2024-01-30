@@ -17,3 +17,6 @@ resources: {}
 hpa:
   # -- Number of replicas to setup to manage how many warm nodes are created
   replicas: 1
+
+# --  Node labels for pod assignment.
+nodeSelector: {}
