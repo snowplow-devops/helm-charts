@@ -1,0 +1,15 @@
+{{- if eq .Values.cloud "aws" }}
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  serviceRef:
+    name: {{ .Release.Name }}
+    {{- if .Values.service.ssl.enable }}
+    port: {{ .Values.service.ssl.port }}
+    {{- else }}
+    port: {{ .Values.service.port }}
+    {{- end }}
+  targetGroupARN: {{ .Values.service.aws.targetGroupARN }}
+{{- end }}
