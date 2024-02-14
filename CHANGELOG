@@ -1,3 +1,7 @@
+Version 0.1.64 (2024-02-14)
+---------------------------
+charts/service-deployment: Updating secrets does not trigger deployment updates (#163)
+
 Version 0.1.63 (2024-01-30)
 ---------------------------
 charts/cluster-warmer: add nodeSelector for scheduling (#161)
