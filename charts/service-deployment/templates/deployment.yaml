@@ -38,6 +38,12 @@ spec:
         {{- end }}
         {{- end }}
         {{- end }}
+        {{- if .Values.config.secrets }}
+        checksum/secrets: "{{ toJson .Values.config.secrets | sha256sum }}"
+        {{- end }}
+        {{- if .Values.config.secretsB64 }}
+        checksum/secretsB64: "{{ toJson .Values.config.secretsB64 | sha256sum }}"
+        {{- end }}
     spec:
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccount: {{ .Values.cloudserviceaccount.name }}
