@@ -11,6 +11,9 @@ metadata:
   {{- if $.Values.service.ingress.enableTraefik | default "true" }}
     traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
   {{- end}}
+  {{- if $.Values.service.ingressIPAllowlist }}
+    traefik.ingress.kubernetes.io/router.middlewares: {{ $.Release.Namespace}}-{{ include "iglu.app.name" $ }}-ipallowlist@kubernetescrd
+  {{- end }}
 spec:
   {{- if $.Values.service.ingress.enableTraefik | default "true" }}
   ingressClassName: traefik
