@@ -109,13 +109,15 @@ service:
 
   # -- A map of ingress rules to deploy
   ingress: {}
-    # enableTraefik: false # -- Enables traefik annotations and set ingressClassName. (default: true)
     # ingress-01:
+    #   enableTraefik: false # -- Enables traefik annotations and set ingressClassName. (default: true)
     #   hostname: "iglu-server.example.com"
     #   certificateCreate: false # -- Create a Certificate resource for this Ingress (default: true)
     #   certificateIssuerName: cloudflare # -- What issuer to use for the Certificate (default: letsencrypt)
     #   certificateIssuerKind: Issuer # -- Kind of issuer (default: ClusterIssuer)
     #   annotations: {} # -- Map of annotations to add to the ingress.
+  # -- List of IP addresses to restrict ingress traffic to
+  ingressIPAllowlist: []
 
 cloudserviceaccount:
   # -- Whether to create a service-account
