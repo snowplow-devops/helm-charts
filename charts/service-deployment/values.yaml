@@ -108,7 +108,7 @@ service:
   gcp:
     # -- Name of the Network Endpoint Group to bind onto
     networkEndpointGroupName: ""
-  # -- Map of annotations to add to the service.
+  # -- Map of annotations to add to the service
   annotations: {}
   # -- A map of ingress rules to deploy
   ingress: {}
@@ -152,6 +152,8 @@ cloudserviceaccount:
     managedIdentityId: ""
 
 deployment:
+  # -- Can be either a "Deployment" or "StatefulSet"
+  kind: "Deployment"
   # -- When enabled, disables the HPA and scales the deployment to zero replicas
   scaleToZero: false
   # -- How to replace existing pods with new ones
@@ -203,11 +205,17 @@ affinity: {}
 #          - linux
 
 persistentVolume:
-  # -- Whether to deploy a persistent-volume
+  # -- Whether to deploy a persistent-volume (note: when deployment.kind is "StatefulSet" one volume will be created per replica)
   enabled: false
-  # -- Access modes to allow (note: this will impact HPA rules if the volume cannot be bound to all containers)
+  # -- Access modes to allow (note: this will impact HPA rules if the volume cannot be bound to all containers when deployment.kind is "Deployment")
   accessModes:
     - ReadWriteOnce
+  # -- Sets the retention policies for the volumes created in "StatefulSet" mode
+  statefulSetRetentionPolicy:
+    # -- What to do with volumes when the StatefulSet is deleted
+    whenDeleted: "Retain"
+    # -- What to do with volumes when scaling occurs
+    whenScaled: "Delete"
   # -- Persistent Volume labels
   labels: {}
   # -- Persistent Volume annotations
