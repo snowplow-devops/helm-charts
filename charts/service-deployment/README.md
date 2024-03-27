@@ -18,6 +18,7 @@ This chart attempts to take care of all the most common requirements of launchin
 - Mounting config volumes
 - Configuring secrets
 - Binding service-accounts with cloud specific IAM policies
+- Setting up persistent-volumes and binding them
 
 _Note_: This should be a long running process - if you are looking for cron-based execution see our `cron-job` chart.
 
@@ -55,6 +56,7 @@ helm delete service-deployment
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
 | config.secretsB64 | object | `{}` | Map of base64-encoded secrets that will be exposed as environment variables within the job |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
+| deployment.kind | string | `"Deployment"` | Can be either a "Deployment" or "StatefulSet" |
 | deployment.podLabels | object | `{}` | Map of labels that will be added to each pod in the deployment |
 | deployment.scaleToZero | bool | `false` | When enabled, disables the HPA and scales the deployment to zero replicas |
 | deployment.strategy | object | `{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"}` | How to replace existing pods with new ones |
@@ -80,12 +82,15 @@ helm delete service-deployment
 | livenessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":"","port":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":5}` | livenessProbe is enabled if httpGet.path or exec.command are present |
 | livenessProbe.exec.command | list | `[]` | Command/arguments to execute to determine liveness |
 | livenessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine liveness |
-| persistentVolume.accessModes | list | `["ReadWriteOnce"]` | Access modes to allow (note: this will impact HPA rules if the volume cannot be bound to all containers) |
+| persistentVolume.accessModes | list | `["ReadWriteOnce"]` | Access modes to allow (note: this will impact HPA rules if the volume cannot be bound to all containers when deployment.kind is "Deployment") |
 | persistentVolume.annotations | object | `{}` | Persistent Volume annotations |
-| persistentVolume.enabled | bool | `false` | Whether to deploy a persistent-volume |
+| persistentVolume.enabled | bool | `false` | Whether to deploy a persistent-volume (note: when deployment.kind is "StatefulSet" one volume will be created per replica) |
 | persistentVolume.labels | object | `{}` | Persistent Volume labels |
 | persistentVolume.mountPath | string | `"/data"` | Persistent Volume mount root path |
 | persistentVolume.size | string | `"8Gi"` | Persistent Volume size |
+| persistentVolume.statefulSetRetentionPolicy | object | `{"whenDeleted":"Retain","whenScaled":"Delete"}` | Sets the retention policies for the volumes created in "StatefulSet" mode |
+| persistentVolume.statefulSetRetentionPolicy.whenDeleted | string | `"Retain"` | What to do with volumes when the StatefulSet is deleted |
+| persistentVolume.statefulSetRetentionPolicy.whenScaled | string | `"Delete"` | What to do with volumes when scaling occurs |
 | persistentVolume.subPath | string | `""` | Subdirectory of Persistent Volume to mount |
 | priorityClassName | string | `""` | PriorityClassName for pods |
 | readinessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | readinessProbe is enabled if httpGet.path or exec.command are present |

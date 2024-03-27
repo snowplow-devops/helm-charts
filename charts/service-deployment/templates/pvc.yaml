@@ -1,4 +1,4 @@
-{{- if .Values.persistentVolume.enabled -}}
+{{- if and (.Values.persistentVolume.enabled) (eq .Values.deployment.kind "Deployment") }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:

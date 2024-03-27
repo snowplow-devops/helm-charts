@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: {{ .Values.deployment.kind }}
 metadata:
   name: {{ include "app.fullname" . }}
 spec:
@@ -71,7 +71,7 @@ spec:
           optional: false
         name: {{ $v.name }}
       {{- end }}
-      {{- if .Values.persistentVolume.enabled }}
+      {{- if and (.Values.persistentVolume.enabled) (eq .Values.deployment.kind "Deployment") }}
       - name: storage-volume
         persistentVolumeClaim:
           claimName: {{ include "app.fullname" . }}
@@ -172,8 +172,42 @@ spec:
           {{- end }}
           name: {{ $v.name }}
         {{- end }}
-        {{- if .Values.persistentVolume.enabled }}
+        {{- if and (.Values.persistentVolume.enabled) (eq .Values.deployment.kind "Deployment") }}
         - name: storage-volume
           mountPath: {{ .Values.persistentVolume.mountPath }}
           subPath: "{{ .Values.persistentVolume.subPath }}"
         {{- end }}
+        {{- if and (.Values.persistentVolume.enabled) (eq .Values.deployment.kind "StatefulSet") }}
+        - name: {{ include "app.fullname" . }}
+          mountPath: {{ .Values.persistentVolume.mountPath }}
+          subPath: "{{ .Values.persistentVolume.subPath }}"
+        {{- end }}
+  {{- if and (.Values.persistentVolume.enabled) (eq .Values.deployment.kind "StatefulSet") }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: {{ .Values.persistentVolume.statefulSetRetentionPolicy.whenDeleted }}
+    whenScaled: {{ .Values.persistentVolume.statefulSetRetentionPolicy.whenScaled }}
+  volumeClaimTemplates:
+  - metadata:
+      annotations:
+        {{- with .Values.persistentVolume.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- with .Values.persistentVolume.labels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      name: {{ include "app.fullname" . }}
+    spec:
+      accessModes:
+{{ toYaml .Values.persistentVolume.accessModes | indent 6 }}
+    {{- if .Values.persistentVolume.storageClass }}
+    {{- if (eq "-" .Values.persistentVolume.storageClass) }}
+      storageClassName: ""
+    {{- else }}
+      storageClassName: "{{ .Values.persistentVolume.storageClass }}"
+    {{- end }}
+    {{- end }}
+      resources:
+        requests:
+          storage: "{{ .Values.persistentVolume.size }}"
+  {{- end }}
