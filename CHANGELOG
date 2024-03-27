@@ -1,3 +1,7 @@
+Version 0.1.66 2024-03-27)
+---------------------------
+charts/service-deployment: Add support for StatefulSet in deployment.Kind (#170)
+
 Version 0.1.65 (2024-03-26)
 ---------------------------
 charts/service-deployment: Add support for IP allowlists on ingress (#167)
