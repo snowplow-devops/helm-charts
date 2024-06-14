@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "spark-thrift-server.fullname" . }}
+  labels:
+    {{- include "spark-thrift-server.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "spark-thrift-server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "spark-thrift-server.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "spark-thrift-server.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+
+          {{/*
+          securityContext:
+            runAsUser: 0
+          */}}
+
+          args:
+          - "/scripts/run.sh"
+          env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: thrift
+              containerPort: 10000
+              protocol: TCP
+          {{- if .Values.spark.enableWebUi }}
+            - name: ui
+              containerPort: 4040
+              protocol: TCP
+          {{- end }}
+          livenessProbe:
+            tcpSocket:
+              port: thrift
+          readinessProbe:
+            tcpSocket:
+              port: thrift
+          startupProbe:
+            tcpSocket:
+              port: thrift
+            periodSeconds: 10
+            failureThreshold: 18 # 3 minutes
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: scripts
+            mountPath: /scripts/run.sh
+            subPath: run.sh
+      volumes:
+      - name: scripts
+        configMap:
+          name: {{ include "spark-thrift-server.fullname" . }}
+          defaultMode: 0755
