@@ -37,6 +37,11 @@ data:
             metric_name_selectors:
               - pod_cpu_utilization
               - pod_memory_utilization
+          - dimensions: [[ClusterName]]
+            metric_name_selectors:
+              - cluster_node_count
+              - node_cpu_utilization
+              - node_memory_utilization
 
     service:
       pipelines:

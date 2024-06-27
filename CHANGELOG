@@ -1,4 +1,8 @@
-Version 0.1.66 2024-03-27)
+Version 0.1.67 (2024-06-27)
+---------------------------
+charts/aws-otel-collector: Update otel-agent-config with new dimension 'ClusterName' and additional metrics (#173)
+
+Version 0.1.66 (2024-03-27)
 ---------------------------
 charts/service-deployment: Add support for StatefulSet in deployment.Kind (#170)
 
