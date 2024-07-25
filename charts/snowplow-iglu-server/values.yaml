@@ -26,6 +26,12 @@ service:
   targetCPUUtilizationPercentage: 75
   terminationGracePeriodSeconds: 630
 
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
   readinessProbe:
     initialDelaySeconds: 5
     periodSeconds: 5
