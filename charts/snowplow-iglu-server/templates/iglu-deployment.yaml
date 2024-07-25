@@ -85,6 +85,16 @@ spec:
         - secretRef:
             name: {{ include "iglu.app.secret.name" . }}
 
+        livenessProbe:
+          httpGet:
+            path: /api/meta/health
+            port: {{ .Values.service.port }}
+            scheme: HTTP
+          initialDelaySeconds: {{ .Values.service.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.service.livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .Values.service.livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .Values.service.livenessProbe.failureThreshold }}
+
         readinessProbe:
           httpGet:
             path: /api/meta/health
@@ -94,7 +104,7 @@ spec:
           periodSeconds: {{ .Values.service.readinessProbe.periodSeconds }}
           timeoutSeconds: {{ .Values.service.readinessProbe.timeoutSeconds }}
           failureThreshold: {{ .Values.service.readinessProbe.failureThreshold }}
-          successThreshold: {{ .Values.service.readinessProbe.successThreshold }}
+          successThreshold: {{ .Values.service.readinessProbe.successThreshold }} 
 
         resources:
           {{- toYaml .Values.service.resources | nindent 10 }}

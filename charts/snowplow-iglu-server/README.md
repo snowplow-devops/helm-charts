@@ -183,6 +183,10 @@ You will need to fill these targeted fields:
 | service.maxReplicas | int | `4` |  |
 | service.minReplicas | int | `1` |  |
 | service.port | int | `8080` | Port to bind and expose the service on |
+| service.livenessProbe.failureThreshold | int | `3` |  |
+| service.livenessProbe.initialDelaySeconds | int | `30` |  |
+| service.livenessProbe.periodSeconds | int | `5` |  |
+| service.livenessProbe.timeoutSeconds | int | `5` |  |
 | service.readinessProbe.failureThreshold | int | `3` |  |
 | service.readinessProbe.initialDelaySeconds | int | `5` |  |
 | service.readinessProbe.periodSeconds | int | `5` |  |
@@ -194,4 +198,3 @@ You will need to fill these targeted fields:
 | service.resources.requests.memory | string | `"512Mi"` |  |
 | service.targetCPUUtilizationPercentage | int | `75` |  |
 | service.terminationGracePeriodSeconds | int | `630` |  |
-
