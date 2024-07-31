@@ -1,3 +1,7 @@
+Version 0.1.68 (2024-07-30)
+---------------------------
+charts/service-deployment: Add support for global labels applied to resources deployed by the chart (#177)
+
 Version 0.1.67 (2024-06-27)
 ---------------------------
 charts/aws-otel-collector: Update otel-agent-config with new dimension 'ClusterName' and additional metrics (#173)
