@@ -3,6 +3,8 @@ apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding
 metadata:
   name: {{ include "iglu.app.name" . }}
+  labels:
+    {{ include "snowplow.labels" $ | nindent 4 }}
 spec:
   serviceRef:
     name: {{ include "iglu.app.name" . }}

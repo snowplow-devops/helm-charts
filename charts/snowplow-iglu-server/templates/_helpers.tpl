@@ -60,3 +60,24 @@ Define default values for required values.
 {{- define "iglu.service.config.checksum" -}}
 {{- printf "%s-%s-%s" (include "iglu.service.config.superApiKey" .) .Values.service.config.database.secrets.password .Values.service.config.database.secrets.username | sha256sum -}}
 {{- end -}}
+
+{{/*
+Create chart name and version to use as chart label.
+*/}}
+{{- define "iglu.service.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Snowplow labels
+*/}}
+{{- define "snowplow.labels" -}}
+{{- with .Values.global.labels -}}
+{{ toYaml . }}
+{{ end -}}
+helm.sh/chart: {{ include "iglu.service.chart" . }}
+{{- if .Chart.Version }}
+app.kubernetes.io/version: {{ .Chart.Version | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
