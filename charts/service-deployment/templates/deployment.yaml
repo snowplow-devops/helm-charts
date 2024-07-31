@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: {{ .Values.deployment.kind }}
 metadata:
   name: {{ include "app.fullname" . }}
+  labels:
+    {{ include "snowplow.labels" $ | nindent 4 }}
 spec:
   {{- if .Values.deployment.scaleToZero }}
   replicas: 0
