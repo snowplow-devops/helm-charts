@@ -70,6 +70,7 @@ helm delete service-deployment
 | dockerconfigjson.username | string | `""` | Username for the private repository |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp , azure) |
+| global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
 | hpa.averageCPUUtilization | int | `75` | Average CPU utilization before auto-scaling starts |
 | hpa.behavior | object | `{}` |  |
 | hpa.deploy | bool | `true` | Whether to deploy HPA rules |

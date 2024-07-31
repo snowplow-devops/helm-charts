@@ -21,3 +21,24 @@ Define the default NEG name for GCP deployments.
 {{- define "service.gcp.networkEndpointGroupName" -}}
 {{- default .Release.Name .Values.service.gcp.networkEndpointGroupName -}}
 {{- end -}}
+
+{{/*
+Create chart name and version to use as chart label.
+*/}}
+{{- define "service.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Snowplow labels
+*/}}
+{{- define "snowplow.labels" -}}
+{{- with .Values.global.labels -}}
+{{ toYaml . }}
+{{ end -}}
+helm.sh/chart: {{ include "service.chart" . }}
+{{- if .Chart.Version }}
+app.kubernetes.io/version: {{ .Chart.Version | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
