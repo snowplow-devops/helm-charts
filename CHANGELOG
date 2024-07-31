@@ -1,3 +1,11 @@
+Version 0.1.70 (2024-07-31)
+---------------------------
+charts/snowplow-iglu-server add global labels (closes #179)
+charts/priority-class add global labels (closes #180)
+charts/daemonset add global labels (closes #181)
+charts/cron-job add global labels (closes #182)
+charts/cluster-warmer add global labels (closes #183)
+
 Version 0.1.69 (2024-07-31)
 ---------------------------
 charts/service-deployment: Add missing global labels to Deployment (#185)
