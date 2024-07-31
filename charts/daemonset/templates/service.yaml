@@ -4,9 +4,7 @@ kind: Service
 metadata:
   name: {{ include "app.fullname" . }}
   labels:
-  {{- range $k, $v := .Values.service.labels }}
-    {{ $k }}: {{ $v }}
-  {{- end }}
+    {{ include "snowplow.labels" $ | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   selector:
