@@ -3,10 +3,13 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "iglu.cloudsqlproxy.name" . }}
+  labels:
+    {{ include "snowplow.labels" $ | nindent 4 }}
 spec:
   selector:
     matchLabels:
       app: {{ include "iglu.cloudsqlproxy.name" . }}
+      {{ include "snowplow.labels" $ | nindent 8 }}
   template:
     metadata:
       labels:

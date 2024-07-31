@@ -2,5 +2,7 @@ apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: {{ include "app.fullname" . }}
+  labels:
+    {{ include "snowplow.labels" $ | nindent 4 }}
 value: -1
 globalDefault: false

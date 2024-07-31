@@ -21,6 +21,7 @@ A Helm Chart to deploy pods to force scaling in a node-pool to keep it warm
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
+| global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
 | hpa.replicas | int | `1` | Number of replicas to setup to manage how many warm nodes are created |
 | image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |

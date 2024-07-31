@@ -11,3 +11,24 @@ If release name contains chart name it will be used as a full name.
 {{- .Release.Name | trunc 50 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create chart name and version to use as chart label.
+*/}}
+{{- define "cluster.warmer.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Snowplow labels
+*/}}
+{{- define "snowplow.labels" -}}
+{{- with .Values.global.labels -}}
+{{ toYaml . }}
+{{ end -}}
+helm.sh/chart: {{ include "cluster.warmer.chart" . }}
+{{- if .Chart.Version }}
+app.kubernetes.io/version: {{ .Chart.Version | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}

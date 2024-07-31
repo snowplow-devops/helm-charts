@@ -1,3 +1,7 @@
+global:
+  # global labels will be applied to all resources deployed by the chart
+  labels: {}
+
 # -- Overrides the full-name given to the deployment resources (default: .Release.Name)
 fullnameOverride: ""
 

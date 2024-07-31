@@ -3,6 +3,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "iglu.app.config.name" . }}
+  labels:
+    {{ include "snowplow.labels" $ | nindent 4 }}
 binaryData:
   config.hocon: {{ .Values.service.config.hoconBase64 }}
 {{- end }}

@@ -51,6 +51,7 @@ helm delete daemonset
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
+| global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | image.repository | string | `"nginx"` |  |
 | image.tag | string | `"latest"` |  |

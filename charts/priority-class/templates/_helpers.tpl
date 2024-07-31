@@ -34,6 +34,9 @@ Create chart name and version as used by the chart label.
 Common labels
 */}}
 {{- define "priority-class.labels" -}}
+{{- with .Values.labels -}}
+{{ toYaml . }}
+{{ end -}}
 helm.sh/chart: {{ include "priority-class.chart" . }}
 {{ include "priority-class.selectorLabels" . }}
 {{- if .Chart.AppVersion }}

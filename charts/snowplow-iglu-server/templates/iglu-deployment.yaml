@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "iglu.app.name" . }}
+  labels:
+    {{ include "snowplow.labels" $ | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -10,6 +12,7 @@ spec:
     metadata:
       labels:
         app: {{ include "iglu.app.name" . }}
+        {{ include "snowplow.labels" $ | nindent 8 }}
       annotations:
         checksum/config: "{{ include "iglu.service.config.checksum" . }}"
         {{- if ne .Values.service.config.hoconBase64 "" }}

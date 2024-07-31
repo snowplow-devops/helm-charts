@@ -40,3 +40,4 @@ helm delete priority-class
 |-----|------|---------|-------------|
 | nameOverride | string | `""` | Overrides the name given to the deployment resources (default: .Release.Name) |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
+| labels | object | `{}` | labels deployed to all priority classes deployed by the chart |
