@@ -1,7 +1,7 @@
 apiVersion: v2
 name: priority-class
 description: A Helm Chart to setup priority classes for all tiers
-version: 0.1.0
+version: 0.2.0
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts
 sources:
