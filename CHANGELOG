@@ -1,3 +1,7 @@
+Version 0.1.69 (2024-07-31)
+---------------------------
+charts/service-deployment: Add missing global labels to Deployment (#185)
+
 Version 0.1.68 (2024-07-30)
 ---------------------------
 charts/service-deployment: Add support for global labels applied to resources deployed by the chart (#177)
