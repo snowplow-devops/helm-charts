@@ -19,6 +19,7 @@ spec:
   template:
     metadata:
       labels:
+        {{ include "snowplow.labels" $ | nindent 8 }}
         {{- if .Values.deployment.podLabels }}
         {{- toYaml .Values.deployment.podLabels | nindent 8 }}
         {{- end }}
