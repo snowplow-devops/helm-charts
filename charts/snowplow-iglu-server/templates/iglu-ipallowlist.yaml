@@ -3,6 +3,8 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: {{ include "iglu.app.name" . }}-ipallowlist
+  labels:
+    {{ include "snowplow.labels" $ | nindent 4 }}
 spec:
   ipWhiteList:
     sourceRange:
