@@ -15,7 +15,7 @@ spec:
       template:
         metadata:
           labels:
-            {{ include "snowplow.labels" $ | nindent 8 }}
+            {{ include "snowplow.labels" $ | nindent 12 }}
             app: {{ include "app.fullname" . }}
             {{- if eq .Values.global.cloud "azure" }}
             azure.workload.identity/use: "true"
