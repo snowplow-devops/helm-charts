@@ -4,7 +4,7 @@ kind: TargetGroupBinding
 metadata:
   name: {{ include "iglu.app.name" . }}
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
   serviceRef:
     name: {{ include "iglu.app.name" . }}
