@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: {{ include "app.fullname" . }}
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
   schedule: "{{ .Values.schedule }}"
   concurrencyPolicy: "{{ .Values.concurrencyPolicy }}"
@@ -15,7 +15,7 @@ spec:
       template:
         metadata:
           labels:
-            {{ include "snowplow.labels" $ | nindent 12 }}
+            {{- include "snowplow.labels" $ | nindent 12 }}
             app: {{ include "app.fullname" . }}
             {{- if eq .Values.global.cloud "azure" }}
             azure.workload.identity/use: "true"

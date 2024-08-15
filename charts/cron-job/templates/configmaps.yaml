@@ -5,7 +5,7 @@ kind: ConfigMap
 metadata:
   name: {{ $v.name }}
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
 binaryData:
   {{- range $f := $v.files }}
   {{- if $f.contentsB64 }}
