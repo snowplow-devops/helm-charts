@@ -3,7 +3,7 @@ kind: DaemonSet
 metadata:
   name: {{ include "app.fullname" . }}
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
   selector:
     matchLabels:
@@ -11,7 +11,7 @@ spec:
   template:
     metadata:
       labels:
-        {{ include "snowplow.labels" $ | nindent 8 }}
+        {{- include "snowplow.labels" $ | nindent 8 }}
         app: {{ include "app.fullname" . }}
         {{- if eq .Values.global.cloud "azure" }}
         azure.workload.identity/use: "true"

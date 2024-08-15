@@ -4,7 +4,7 @@ kind: ClusterRole
 metadata:
   name: {{ include "app.fullname" . }}
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
 rules:
 {{- toYaml $.Values.clusterrole.rules  | nindent 2 }}
 ---
