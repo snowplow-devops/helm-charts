@@ -4,16 +4,16 @@ kind: Deployment
 metadata:
   name: {{ include "iglu.cloudsqlproxy.name" . }}
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
   selector:
     matchLabels:
       app: {{ include "iglu.cloudsqlproxy.name" . }}
-      {{ include "snowplow.labels" $ | nindent 8 }}
   template:
     metadata:
       labels:
         app: {{ include "iglu.cloudsqlproxy.name" . }}
+        {{- include "snowplow.labels" $ | nindent 8 }}
     spec:
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}
