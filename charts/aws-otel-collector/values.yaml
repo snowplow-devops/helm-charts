@@ -24,3 +24,15 @@ serviceAccount:
   name: ""
   # -- Optional annotations to be applied to service account
   annotations: {}
+
+# -- Determines whether to enable kube state metrics collection with Prometheus
+kube_state_metrics_enabled: false
+
+# -- Set the retention for log group /aws/containerinsights/{ClusterName}/performance
+performance_log_retention_in_days: 30
+
+# -- Set the retention for log group /aws/containerinsights/{TaskId}/prometheus
+prometheus_log_retention_in_days: 30
+
+# -- Set tags to log groups created by otel collector awsemfexporter
+tags: {}
