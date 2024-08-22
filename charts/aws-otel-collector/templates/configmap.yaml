@@ -6,6 +6,7 @@ metadata:
     {{- include "aws-otel-collector.labels" . | nindent 4 }}
 data:
   otel-agent-config: |
+{{- if not .Values.kube_state_metrics_enabled }}
     extensions:
       health_check:
 
@@ -22,10 +23,15 @@ data:
         namespace: ContainerInsights
         log_group_name: '/aws/containerinsights/{ClusterName}/performance'
         log_stream_name: '{NodeName}'
+        log_retention: {{ .Values.performance_log_retention_in_days }}
         resource_to_telemetry_conversion:
           enabled: true
         dimension_rollup_option: NoDimensionRollup
         parse_json_encoded_attr_values: [Sources, kubernetes]
+        {{- with .Values.tags }}
+        tags:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         metric_declarations:
           - dimensions: [[PodName, Namespace, ClusterName]]
             metric_name_selectors:
@@ -51,3 +57,102 @@ data:
           exporters: [awsemf]
 
       extensions: [health_check]
+{{- else }}
+    extensions:
+      health_check:
+
+    receivers:
+      awscontainerinsightreceiver:
+        add_full_pod_name_metric_label: true
+      prometheus:
+        config:
+          global:
+            scrape_interval: 1m
+            scrape_timeout: 10s
+          scrape_configs:
+            - job_name: kube-state-metrics
+              honor_timestamps: true
+              scrape_interval: 1m
+              scrape_timeout: 1m
+              metrics_path: /metrics
+              scheme: http
+              static_configs:
+              - targets:
+                - prometheus-kube-state-metrics.monitoring.svc.cluster.local:8080
+
+    processors:
+      batch/metrics:
+        timeout: 60s
+      resourcedetection/ec2:
+        detectors: [ env ]
+        timeout: 2s
+        override: false
+      resource:
+        attributes:
+          - key: TaskId
+            from_attribute: service.name
+            action: insert
+          - key: receiver
+            value: "prometheus"
+            action: insert
+
+    exporters:
+      awsemf:
+        namespace: ContainerInsights
+        log_group_name: '/aws/containerinsights/{ClusterName}/performance'
+        log_stream_name: '{NodeName}'
+        log_retention: {{ .Values.performance_log_retention_in_days }}
+        resource_to_telemetry_conversion:
+          enabled: true
+        dimension_rollup_option: NoDimensionRollup
+        parse_json_encoded_attr_values: [Sources, kubernetes]
+        {{- with .Values.tags }}
+        tags:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        metric_declarations:
+          - dimensions: [[PodName, Namespace, ClusterName]]
+            metric_name_selectors:
+              - pod_cpu_utilization
+              - pod_memory_utilization
+              - pod_number_of_running_containers
+              - pod_number_of_container_restarts
+          - dimensions: [[FullPodName, Namespace, ClusterName]]
+            metric_name_selectors:
+              - pod_cpu_utilization
+              - pod_memory_utilization
+
+      awsemf/prometheus:
+        namespace: ContainerInsights/Prometheus
+        log_group_name: "/aws/containerinsights/{TaskId}/prometheus"
+        log_stream_name: "{TaskId}"
+        log_retention: {{ .Values.prometheus_log_retention_in_days }}
+        resource_to_telemetry_conversion:
+          enabled: true
+        dimension_rollup_option: NoDimensionRollup
+        {{- with .Values.tags }}
+        tags:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        metric_declarations:
+        - dimensions: [[ namespace, deployment ]]
+          metric_name_selectors:
+            - "^kube_deployment_status_replicas_ready$"
+          label_matchers:
+            - label_names:
+                - service.name
+              regex: ^kube-state-metrics$
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [awscontainerinsightreceiver]
+          processors: [batch/metrics]
+          exporters: [awsemf]
+        metrics/prometheus:
+          receivers: [prometheus]
+          processors: [resourcedetection/ec2, resource]
+          exporters: [awsemf/prometheus]
+
+      extensions: [health_check]
+{{- end }}
