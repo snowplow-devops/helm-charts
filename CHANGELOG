@@ -1,3 +1,7 @@
+Version 0.1.72 (2024-08-27)
+---------------------------
+charts/service-deployment add support for tolerations and topologySpreadConstraints (closes #165, closes #189)
+
 Version 0.1.71 (2024-08-23)
 ---------------------------
 charts/aws-otel-collector add support for kube-state-metrics (closes #190)
