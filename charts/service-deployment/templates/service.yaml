@@ -12,7 +12,7 @@ metadata:
     cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.service.port }}":{"name": "{{ include "service.gcp.networkEndpointGroupName" . }}"}}}'
   {{- end }}
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
   type: NodePort
   selector:

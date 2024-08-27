@@ -176,6 +176,16 @@ deployment:
 # -- PriorityClassName for pods
 priorityClassName: ""
 
+# -- Allow the scheduler to schedule pods with matching taints
+#
+# more details here: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
+tolerations: []
+
+# -- topologySpreadConstraints control how Pods are  spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains.
+#
+# more details here: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+topologySpreadConstraints: {}
+
 # -- Affinity supports podAffinity, podAntiAffinity, or nodeAffinity
 affinity: {}
 # podAffinity:

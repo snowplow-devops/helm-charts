@@ -5,7 +5,7 @@ kind: Ingress
 metadata:
   name: {{ required "A valid hostname is required!" .hostname }}
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
   annotations:
   {{- if .annotations }}
     {{- toYaml .annotations | nindent 4 }}
