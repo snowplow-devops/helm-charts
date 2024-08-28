@@ -54,7 +54,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "iglu.hooks.name" . }}-db-dev-user-setup
+  name: {{ include "iglu.hooks.name" . }}-dev-db-user-setup
   labels:
     {{- include "snowplow.labels" $ | nindent 4 }}
   annotations:
@@ -64,11 +64,11 @@ metadata:
 spec:
   template:
     metadata:
-      name: {{ include "iglu.hooks.name" . }}-db-dev-user-setup
+      name: {{ include "iglu.hooks.name" . }}-dev-db-user-setup
     spec:
       restartPolicy: Never
       containers:
-      - name: {{ include "iglu.hooks.name" . }}-db-dev-user-setup
+      - name: {{ include "iglu.hooks.name" . }}-dev-db-user-setup
         image: postgres:15
         imagePullPolicy: Always
         command: ["/bin/bash", "-c"]
