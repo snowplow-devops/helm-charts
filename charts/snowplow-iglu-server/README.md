@@ -118,7 +118,7 @@ You will need to fill these targeted fields:
 
 ### Azure (AKS) settings
 
-When `dev_db` is `true` and  `cloud` is `azure` the hook job `-dev-db-user-setup` will be initiated
+When `dev_db` is `true` the hook job `-dev-db-user-setup` will be initiated
 
 ### AWS (EKS) settings
 
