@@ -1,5 +1,6 @@
 {{- if .Values.service.deploySetupHooks }}
 {{- if eq (include "iglu.service.config.database.type" .) "postgres" }}
+
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -9,6 +10,7 @@ metadata:
   annotations:
     "helm.sh/hook": post-install,post-upgrade
     "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-weight": "2"  
 spec:
   template:
     metadata:
@@ -17,12 +19,10 @@ spec:
       restartPolicy: Never
       containers:
       - name: {{ include "iglu.hooks.name" . }}
-        image: {{ .Values.service.image.repository}}:{{ .Values.service.image.tag}}
+        image: {{ .Values.service.image.repository}}:{{ .Values.service.image.tag }}
         imagePullPolicy: Always
-
         args:
         - "setup"
-
         env:
         {{- range $k, $v := .Values.service.config.env }}
         - name: "{{ $k }}"
@@ -31,21 +31,82 @@ spec:
         - name: "JDK_JAVA_OPTIONS"
           value: "-Dconfig.override_with_env_vars=true"
         {{- if .Values.service.gcp.deployProxy }}
-        - name : "CONFIG_FORCE_iglu_database_host"
+        - name: "CONFIG_FORCE_iglu_database_host"
           value: {{ include "iglu.cloudsqlproxy.host" . }}
-        - name : "CONFIG_FORCE_iglu_database_port"
+        - name: "CONFIG_FORCE_iglu_database_port"
           value: "{{ .Values.service.gcp.proxy.port }}"
         {{- else }}
-        - name : "CONFIG_FORCE_iglu_database_host"
+        - name: "CONFIG_FORCE_iglu_database_host"
           value: "{{ .Values.service.config.database.host }}"
-        - name : "CONFIG_FORCE_iglu_database_port"
+        - name: "CONFIG_FORCE_iglu_database_port"
           value: "{{ .Values.service.config.database.port }}"
         {{- end }}
-        - name : "CONFIG_FORCE_iglu_database_dbname"
+        - name: "CONFIG_FORCE_iglu_database_dbname"
           value: "{{ .Values.service.config.database.dbname }}"
-
         envFrom:
         - secretRef:
             name: {{ include "iglu.app.secret.name" . }}
+
+{{- if and (eq .Values.service.azure.dev_db "true") (eq .Values.global.cloud "azure") }}
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "iglu.hooks.name" . }}-db-dev-user-setup
+  labels:
+    {{- include "snowplow.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-weight": "1" 
+spec:
+  template:
+    metadata:
+      name: {{ include "iglu.hooks.name" . }}-db-dev-user-setup
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ include "iglu.hooks.name" . }}-db-dev-user-setup
+        image: postgres:15
+        imagePullPolicy: Always
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            export PGPASSWORD="${CONFIG_FORCE_iglu_database_admin_password}" 
+            psql -h "${CONFIG_FORCE_iglu_database_host}" \
+                 -U "${CONFIG_FORCE_iglu_database_admin_username}" \
+                 -d "${CONFIG_FORCE_iglu_database_dbname}" \
+                 -c "CREATE USER ${CONFIG_FORCE_iglu_database_dev_username} WITH PASSWORD '${CONFIG_FORCE_iglu_database_dev_password}';" && echo "OK"
+            psql -h "${CONFIG_FORCE_iglu_database_host}" \
+                 -U "${CONFIG_FORCE_iglu_database_admin_username}" \
+                 -d "${CONFIG_FORCE_iglu_database_dbname}" \
+                 -c "GRANT ALL PRIVILEGES ON DATABASE ${CONFIG_FORCE_iglu_database_dbname} TO ${CONFIG_FORCE_iglu_database_dev_username};" && echo "OK"
+            psql -h "${CONFIG_FORCE_iglu_database_host}" \
+                 -U "${CONFIG_FORCE_iglu_database_admin_username}" \
+                 -d "${CONFIG_FORCE_iglu_database_dbname}" \
+                 -c "GRANT USAGE, CREATE ON SCHEMA public TO ${CONFIG_FORCE_iglu_database_dev_username};" && echo "OK"
+        env:
+        - name: "CONFIG_FORCE_Test"
+          value: "{{ .Values.service.azure.dev_db  }}"
+        - name: "CONFIG_FORCE_iglu_database_admin_password"
+          value: "{{ .Values.service.azure.secrets.admin_password }}"
+        - name: "CONFIG_FORCE_iglu_database_admin_username"
+          value: "{{ .Values.service.azure.secrets.admin_username }}"
+        - name: "CONFIG_FORCE_iglu_database_dev_username"
+          value: "{{ .Values.service.config.database.secrets.username }}"
+        - name: "CONFIG_FORCE_iglu_database_dev_password"
+          value: "{{ .Values.service.config.database.secrets.password }}"
+        - name: "CONFIG_FORCE_iglu_database_host"
+          value: "{{ .Values.service.config.database.host }}"
+        - name: "CONFIG_FORCE_iglu_database_dbname"
+          value: "{{ .Values.service.config.database.dbname }}"
+        - name: "CONFIG_FORCE_iglu_database_port"
+          value: "{{ .Values.service.gcp.proxy.port }}"
+        envFrom:
+        - secretRef:
+            name: {{ include "iglu.app.secret.name" . }}
+{{- end }}
 {{- end }}
 {{- end }}
