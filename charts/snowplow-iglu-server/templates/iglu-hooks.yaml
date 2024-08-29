@@ -69,7 +69,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: {{ include "iglu.hooks.name" . }}-dev-db-user-setup
-        image: postgres:15
+        image: postgres:15-alpine
         imagePullPolicy: Always
         command: ["/bin/bash", "-c"]
         args:

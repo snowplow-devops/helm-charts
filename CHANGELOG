@@ -1,3 +1,7 @@
+Version 0.1.72 (2024-08-29)
+---------------------------
+charts/snowplow-iglu-server: Create Helm Hook Job for DB users and permissions (closes #196)
+
 Version 0.1.71 (2024-08-23)
 ---------------------------
 charts/aws-otel-collector add support for kube-state-metrics (closes #190)
