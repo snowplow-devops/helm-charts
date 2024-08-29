@@ -39,6 +39,7 @@ helm delete aws-otel-collector --namespace kube-system
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| clusterName | string | `""` | Sets cluster name for log groups and kube label for prometheus metric dimensions |
 | nameOverride | string | `""` | Overrides the name given to the deployment (default: .Release.Name) |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | image.repository | string | `"public.ecr.aws/aws-observability/aws-otel-collector"` | Image to use for deploying |
