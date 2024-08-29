@@ -107,3 +107,5 @@ helm delete service-deployment
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
+| tolerations | list |`[]` | Tolerations labels for pod assignment with matching taints |
+| topologySpreadConstraints | object | `{}` | Topology Spread Constraints for pod assignment |

@@ -4,7 +4,7 @@ kind: Middleware
 metadata:
   name: {{ include "app.fullname" . }}-ipallowlist
   labels:
-    {{ include "snowplow.labels" $ | nindent 4 }}
+    {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
   ipWhiteList:
     sourceRange:
