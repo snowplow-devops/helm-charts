@@ -47,7 +47,7 @@ spec:
         - secretRef:
             name: {{ include "iglu.app.secret.name" . }}
 
-{{- if eq .Values.service.azure.dev_db "true" }}
+{{- if .Values.service.azure.dev_db }}
 
 ---
 

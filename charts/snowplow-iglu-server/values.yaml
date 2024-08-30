@@ -70,7 +70,7 @@ service:
       # -- Postgres database port
       port: 5432
       # -- Postgres database name
-      dbname: ""
+      dbname: false
       secrets:
         username: ""
         password: ""
