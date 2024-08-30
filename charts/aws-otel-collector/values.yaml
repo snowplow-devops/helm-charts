@@ -13,11 +13,10 @@ image:
 
 resources:
   limits:
-    cpu: 200m
     memory: 200Mi
   requests:
-    cpu: 200m
-    memory: 200Mi
+    cpu: 20m
+    memory: 100Mi
 
 serviceAccount:
   # -- Whether to create a service account or not
