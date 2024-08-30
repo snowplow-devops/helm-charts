@@ -88,7 +88,7 @@ service:
 
   azure:
     # -- Whether we deploy for dev db
-    dev_db: ""
+    dev_db: false
     secrets:
       admin_username: ""
       dev_username: ""
