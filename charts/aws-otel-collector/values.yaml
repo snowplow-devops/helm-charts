@@ -2,6 +2,8 @@
 nameOverride: ""
 # -- Overrides the full-name given to the deployment resources (default: .Release.Name)
 fullnameOverride: ""
+# -- Sets cluster name for scraping metric and log groups
+clusterName: ""
 
 image:
   # -- Image to use for deploying

@@ -21,7 +21,7 @@ data:
     exporters:
       awsemf:
         namespace: ContainerInsights
-        log_group_name: '/aws/containerinsights/{ClusterName}/performance'
+        log_group_name: '/aws/containerinsights/{{ .Values.clusterName }}/performance'
         log_stream_name: '{NodeName}'
         log_retention: {{ .Values.performance_log_retention_in_days }}
         resource_to_telemetry_conversion:
@@ -77,8 +77,10 @@ data:
               metrics_path: /metrics
               scheme: http
               static_configs:
-              - targets:
-                - prometheus-kube-state-metrics.monitoring.svc.cluster.local:8080
+                - targets:
+                  - prometheus-kube-state-metrics.monitoring.svc.cluster.local:8080
+                  labels:
+                    cluster_name: {{ .Values.clusterName }}
 
     processors:
       batch/metrics:
@@ -99,7 +101,7 @@ data:
     exporters:
       awsemf:
         namespace: ContainerInsights
-        log_group_name: '/aws/containerinsights/{ClusterName}/performance'
+        log_group_name: '/aws/containerinsights/{{ .Values.clusterName }}/performance'
         log_stream_name: '{NodeName}'
         log_retention: {{ .Values.performance_log_retention_in_days }}
         resource_to_telemetry_conversion:
@@ -124,7 +126,7 @@ data:
 
       awsemf/prometheus:
         namespace: ContainerInsights/Prometheus
-        log_group_name: "/aws/containerinsights/{TaskId}/prometheus"
+        log_group_name: '/aws/containerinsights/{{ .Values.clusterName }}/{TaskId}/prometheus'
         log_stream_name: "{TaskId}"
         log_retention: {{ .Values.prometheus_log_retention_in_days }}
         resource_to_telemetry_conversion:
@@ -135,7 +137,7 @@ data:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         metric_declarations:
-        - dimensions: [[ namespace, deployment ]]
+        - dimensions: [[ namespace, deployment, cluster_name ]]
           metric_name_selectors:
             - "^kube_deployment_status_replicas_ready$"
           label_matchers:
