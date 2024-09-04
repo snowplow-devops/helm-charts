@@ -1,4 +1,4 @@
-Version 0.1.74 (2024-08-30)
+Version 0.1.75 (2024-08-30)
 ---------------------------
 charts/snowplow-iglu-server: Create Helm Hook Job for DB users and permissions (closes #196)
 
