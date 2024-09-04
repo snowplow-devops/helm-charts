@@ -88,8 +88,6 @@ spec:
                  -d "${CONFIG_FORCE_iglu_database_dbname}" \
                  -c "GRANT USAGE, CREATE ON SCHEMA public TO ${CONFIG_FORCE_iglu_database_dev_username};" && echo "OK"
         env:
-        - name: "CONFIG_FORCE_Test"
-          value: "{{ .Values.service.azure.dev_db  }}"
         - name: "CONFIG_FORCE_iglu_database_admin_password"
           value: "{{ .Values.service.azure.secrets.admin_password }}"
         - name: "CONFIG_FORCE_iglu_database_admin_username"
