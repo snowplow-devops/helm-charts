@@ -2,6 +2,10 @@ Version 0.1.74 (2024-08-30)
 ---------------------------
 charts/snowplow-iglu-server: Create Helm Hook Job for DB users and permissions (closes #196)
 
+Version 0.1.74 (2024-08-30)
+---------------------------
+charts/aws-otel-collector: change default resource allocation (#198)
+
 Version 0.1.73 (2024-08-29)
 ---------------------------
 charts/aws-otel-collector add cluster_name label to prometheus scrap config (closes #192)
