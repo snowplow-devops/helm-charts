@@ -1,0 +1,36 @@
+{
+  "input": {
+    "hostName": "rmq1-rabbitmq.default.svc.cluster.local"
+    "portNumber": 5672
+    "userName": "admin"
+    "password": "secretpassword"
+    "virtualHost": "/"
+    "exchangeName": "raw-queue"
+    "routingKey": "raw-queue"
+    "queueName": "raw-queue"
+  }
+
+  "output": {
+    "good": {
+      "hostName": "rmq1-rabbitmq.default.svc.cluster.local"
+      "portNumber": 5672
+      "userName": "admin"
+      "password": "secretpassword"
+      "virtualHost": "/"
+      "exchangeName": "enriched-queue"
+      "routingKey": "enriched-queue"
+      "queueName": "enriched-queue"
+    }
+
+    "bad": {
+      "hostName": "rmq1-rabbitmq.default.svc.cluster.local"
+      "portNumber": 5672
+      "userName": "admin"
+      "password": "secretpassword"
+      "virtualHost": "/"
+      "exchangeName": "bad-1-queue"
+      "routingKey": "bad-1-queue"
+      "queueName": "bad-1-queue"
+    }
+  }
+}
