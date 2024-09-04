@@ -118,6 +118,8 @@ You will need to fill these targeted fields:
 
 ### Azure (AKS) settings
 
+When `dev_db` is `true` the hook job `-dev-db-user-setup` will be initiated
+
 ### AWS (EKS) settings
 
 #### TargetGroup binding
@@ -163,6 +165,9 @@ You will need to fill these targeted fields:
 | service.config.repoServer.hsts.enable | bool | `true` | Whether to enable sending HSTS headers (>=0.12.0) |
 | service.config.secrets.superApiKey | string | `""` | Lowercase uuidv4 to use as admin apikey of the service (default: auto-generated) |
 | service.deploySetupHooks | bool | `true` | Whether to run the post-deploy setup hooks |
+| service.azure.dev_db | bool | `false` | Whether we deploy for dev db in Azure |
+| service.azure.secrets.admin_username | string | `""` | The admin username that will be used for the psql command |
+| service.azure.secrets.admin_password | string | `""` | The admin password that will be used for the psql command |
 | service.gcp.deployProxy | bool | `false` | Whether to use CloudSQL Proxy (note: requires GCP service account to be attached) |
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
 | service.gcp.proxy.image.isRepositoryPublic | bool | `true` | Whether the repository is public |

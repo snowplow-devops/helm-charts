@@ -86,6 +86,13 @@ service:
     # -- EC2 TargetGroup ARN to bind the service onto
     targetGroupARN: ""
 
+  azure:
+    # -- Whether we deploy for dev db
+    dev_db: false
+    secrets:
+      admin_username: ""
+      dev_username: ""
+
   gcp:
     # -- Name of the Network Endpoint Group to bind onto
     networkEndpointGroupName: ""
