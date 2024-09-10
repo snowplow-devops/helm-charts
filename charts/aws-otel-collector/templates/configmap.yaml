@@ -81,8 +81,36 @@ data:
                   - prometheus-kube-state-metrics.monitoring.svc.cluster.local:8080
                   labels:
                     cluster_name: {{ .Values.clusterName }}
+            - job_name: traefik-metrics
+              honor_timestamps: true
+              scrape_interval: 1m
+              scrape_timeout: 1m
+              metrics_path: /metrics
+              scheme: http
+              kubernetes_sd_configs:
+                - role: pod
+              relabel_configs:
+                - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+                  action: keep
+                  regex: traefik
+                - source_labels: [__meta_kubernetes_namespace]
+                  action: keep
+                  regex: traefik
+                # Add a custom label (cluster name)
+                - target_label: cluster_name
+                  replacement: {{ .Values.clusterName }}
 
     processors:
+      filter/traefik:
+        metrics:
+          include:
+            match_type: regexp
+            metric_names:
+              - "traefik_service_requests_total"
+          # include:
+          #   match_type: strict
+          #   metric_names:
+          #     - traefik_service_requests_total  # Only include this specific Traefik metric
       batch/metrics:
         timeout: 60s
       resourcedetection/ec2:
@@ -154,6 +182,10 @@ data:
         metrics/prometheus:
           receivers: [prometheus]
           processors: [resourcedetection/ec2, resource]
+          exporters: [awsemf/prometheus]
+        metrics/traefik:
+          receivers: [prometheus]
+          processors: [resource, filter/traefik]
           exporters: [awsemf/prometheus]
 
       extensions: [health_check]
