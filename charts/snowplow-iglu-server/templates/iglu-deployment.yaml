@@ -30,6 +30,15 @@ spec:
       - name: {{ .Values.dockerconfigjson.name }}
       {{- end }}
 
+      {{- with .Values.service.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.service.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
       volumes:
       {{- if ne .Values.service.config.hoconBase64 "" }}
       - configMap:
