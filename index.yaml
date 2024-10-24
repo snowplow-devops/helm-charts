@@ -1818,6 +1818,35 @@ entries:
   snowplow-iglu-server:
   - apiVersion: v2
     appVersion: 0.12.0
+    created: "2024-10-24T15:19:28.312472102Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to deploy the Snowplow Iglu Server project
+    digest: 2419b3db1ed2173b6777979e7d1d08194e33005b11a5f82be1ddea22df531a84
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - snowplow
+    - iglu
+    - schemas
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: snowplow-iglu-server
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/snowplow-incubator/iglu-server
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.9.0/snowplow-iglu-server-0.9.0.tgz
+    version: 0.9.0
+  - apiVersion: v2
+    appVersion: 0.12.0
     created: "2024-09-04T14:58:09.386615781Z"
     dependencies:
     - name: dockerconfigjson
@@ -2425,4 +2454,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-04T14:58:09.386890604Z"
+generated: "2024-10-24T15:19:28.31278831Z"
