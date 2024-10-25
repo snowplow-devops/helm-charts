@@ -92,8 +92,14 @@ hpa:
   minReplicas: 1
   # -- Maximum number of pods to deploy
   maxReplicas: 20
-  # -- Average CPU utilization before auto-scaling starts
-  averageCPUUtilization: 75
+  # -- Default average CPU utilization before auto-scaling starts
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
   behavior: {}
 
 service:
