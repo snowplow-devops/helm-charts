@@ -12,10 +12,8 @@ spec:
     name: {{ include "app.fullname" . }}
   minReplicas: {{ .Values.hpa.minReplicas }}
   maxReplicas: {{ .Values.hpa.maxReplicas }}
-  {{- if .Values.hpa.metrics }}
   metrics:
     {{- toYaml .Values.hpa.metrics | nindent 4 }}
-  {{- end }}
   behavior:
     {{- toYaml .Values.hpa.behavior | nindent 4 }}
 {{- end }}
