@@ -100,7 +100,6 @@ service:
     prod_dbname: ""
     secrets:
       admin_username: ""
-      dev_username: ""
 
   azure:
     # -- Whether we deploy for dev db

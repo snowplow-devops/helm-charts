@@ -122,6 +122,8 @@ When `dev_db` is `true` the hook job `-dev-db-user-setup` will be initiated
 
 ### AWS (EKS) settings
 
+When `dev_db` is `true` the hook job `-create-dev-db` will be initiated
+
 #### TargetGroup binding
 
 To manage the load balancer externally to the kubernetes cluster you can bind the deployment to an existing TargetGroup ARN.  Its important that the TargetGroup exist ahead of time and that you use the same port as you have used in your `values.yaml`. 
@@ -151,6 +153,8 @@ You will need to fill these targeted fields:
 | global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
 | service.annotations | object | `{}` | Map of annotations to add to the service |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
+| service.aws.dev_db | bool | `false` | Whether we deploy for dev db in AWS |
+| service.aws.secrets.admin_username | string | `""` | The admin username that will be used for the psql command |
 | service.config.database.dbname | string | `""` | Postgres database name |
 | service.config.database.host | string | `""` | Postgres database host |
 | service.config.database.port | int | `5432` | Postgres database port |
