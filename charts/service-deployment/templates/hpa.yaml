@@ -13,12 +13,7 @@ spec:
   minReplicas: {{ .Values.hpa.minReplicas }}
   maxReplicas: {{ .Values.hpa.maxReplicas }}
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: {{ .Values.hpa.averageCPUUtilization }}
+    {{- toYaml .Values.hpa.metrics | nindent 4 }}
   behavior:
     {{- toYaml .Values.hpa.behavior | nindent 4 }}
 {{- end }}

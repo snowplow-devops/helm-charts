@@ -204,3 +204,5 @@ You will need to fill these targeted fields:
 | service.resources.requests.memory | string | `"512Mi"` |  |
 | service.targetCPUUtilizationPercentage | int | `75` |  |
 | service.terminationGracePeriodSeconds | int | `630` |  |
+| service.tolerations | list |`[]` | Tolerations labels for pod assignment with matching taints |
+| service.topologySpreadConstraints | object | `{}` | Topology Spread Constraints for pod assignment |
