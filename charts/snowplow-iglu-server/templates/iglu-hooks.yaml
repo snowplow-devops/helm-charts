@@ -101,7 +101,58 @@ spec:
         - name: "CONFIG_FORCE_iglu_database_dbname"
           value: "{{ .Values.service.config.database.dbname }}"
         - name: "CONFIG_FORCE_iglu_database_port"
-          value: "{{ .Values.service.gcp.proxy.port }}"
+          value: "{{ .Values.service.config.database.port }}"
+        envFrom:
+        - secretRef:
+            name: {{ include "iglu.app.secret.name" . }}
+{{- end }}
+
+{{- if .Values.service.aws.dev_db }}
+
+---
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "iglu.hooks.name" . }}-create-dev-db
+  labels:
+    {{- include "snowplow.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-weight": "1"
+spec:
+  template:
+    metadata:
+      name: {{ include "iglu.hooks.name" . }}-create-dev-db
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ include "iglu.hooks.name" . }}-create-dev-db
+        image: postgres:15-alpine
+        imagePullPolicy: Always
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            export PGPASSWORD="${CONFIG_FORCE_iglu_database_admin_password}"
+            psql -h "${CONFIG_FORCE_iglu_database_host}" \
+                 -d "${CONFIG_FORCE_iglu_database_prod_dbname}" \
+                 -U "${CONFIG_FORCE_iglu_database_admin_username}" \
+                 -p "${CONFIG_FORCE_iglu_database_port}" \
+                 -c "CREATE DATABASE ${CONFIG_FORCE_iglu_database_dbname};" && echo "OK"
+        env:
+        - name: "CONFIG_FORCE_iglu_database_admin_password"
+          value: "{{ .Values.service.aws.secrets.admin_password }}"
+        - name: "CONFIG_FORCE_iglu_database_admin_username"
+          value: "{{ .Values.service.aws.secrets.admin_username }}"
+        - name: "CONFIG_FORCE_iglu_database_prod_dbname"
+          value: "{{ .Values.service.aws.prod_dbname }}"
+        - name: "CONFIG_FORCE_iglu_database_host"
+          value: "{{ .Values.service.config.database.host }}"
+        - name: "CONFIG_FORCE_iglu_database_dbname"
+          value: "{{ .Values.service.config.database.dbname }}"
+        - name: "CONFIG_FORCE_iglu_database_port"
+          value: "{{ .Values.service.config.database.port }}"
         envFrom:
         - secretRef:
             name: {{ include "iglu.app.secret.name" . }}

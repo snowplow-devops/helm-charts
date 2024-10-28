@@ -85,6 +85,12 @@ service:
   aws:
     # -- EC2 TargetGroup ARN to bind the service onto
     targetGroupARN: ""
+    # -- Whether we deploy for dev db
+    dev_db: false
+    prod_dbname: ""
+    secrets:
+      admin_username: ""
+      dev_username: ""
 
   azure:
     # -- Whether we deploy for dev db
