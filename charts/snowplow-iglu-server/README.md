@@ -155,6 +155,7 @@ You will need to fill these targeted fields:
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
 | service.aws.dev_db | bool | `false` | Whether we deploy for dev db in AWS |
 | service.aws.secrets.admin_username | string | `""` | The admin username that will be used for the psql command |
+| service.aws.secrets.admin_password | string | `""` | The admin password that will be used for the psql command |
 | service.config.database.dbname | string | `""` | Postgres database name |
 | service.config.database.host | string | `""` | Postgres database host |
 | service.config.database.port | int | `5432` | Postgres database port |
