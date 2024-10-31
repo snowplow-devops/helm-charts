@@ -122,7 +122,7 @@ When `dev_db` is `true` the hook job `-dev-db-user-setup` will be initiated
 
 ### AWS (EKS) settings
 
-When `dev_db` is `true` the hook job `-create-dev-db` will be initiated
+When `dev_db` and `deploy_rds_into_private_subnet` are both `true` the hook job `-create-dev-db` will be initiated
 
 #### TargetGroup binding
 
@@ -154,6 +154,7 @@ You will need to fill these targeted fields:
 | service.annotations | object | `{}` | Map of annotations to add to the service |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
 | service.aws.dev_db | bool | `false` | Whether we deploy for dev db in AWS |
+| service.aws.deploy_rds_into_private_subnet | bool | `false` | Whether we deploy into private subnets |
 | service.aws.secrets.admin_username | string | `""` | The admin username that will be used for the psql command |
 | service.aws.secrets.admin_password | string | `""` | The admin password that will be used for the psql command |
 | service.config.database.dbname | string | `""` | Postgres database name |

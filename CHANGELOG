@@ -1,3 +1,7 @@
+Version 0.1.80 (2024-10-31)
+---------------------------
+charts/snowplow-iglu-server: Adds condition to deploy hook job only when we use private subnet (closes #205)
+
 Version 0.1.79 (2024-10-29)
 ---------------------------
 charts/snowplow-iglu-server: Adds missiing variable to fix bug from previous version (closes #205)
