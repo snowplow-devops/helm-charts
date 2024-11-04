@@ -1,6 +1,6 @@
 Version 0.1.80 (2024-10-31)
 ---------------------------
-charts/snowplow-iglu-server: Adds condition to deploy hook job only when we use private subnet (closes #205)
+charts/snowplow-iglu-server: Change annotations to deploy hook job only on post-install and not on post-upgrade (closes #205)
 
 Version 0.1.79 (2024-10-29)
 ---------------------------
