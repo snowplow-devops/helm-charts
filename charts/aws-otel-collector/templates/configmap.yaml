@@ -39,6 +39,8 @@ data:
               - pod_memory_utilization
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
+              - pod_cpu_reserved_capacity
+              - pod_memory_reserved_capacity
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
@@ -119,10 +121,17 @@ data:
               - pod_memory_utilization
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
+              - pod_cpu_reserved_capacity
+              - pod_memory_reserved_capacity
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
               - pod_memory_utilization
+          - dimensions: [[ClusterName]]
+            metric_name_selectors:
+              - cluster_node_count
+              - node_cpu_utilization
+              - node_memory_utilization
 
       awsemf/prometheus:
         namespace: ContainerInsights/Prometheus
