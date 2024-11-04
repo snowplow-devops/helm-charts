@@ -97,8 +97,6 @@ service:
     targetGroupARN: ""
     # -- Whether we deploy for dev db
     dev_db: false
-    # -- Whether we deploy into private subnets
-    deploy_rds_into_private_subnet: false
     prod_dbname: ""
     secrets:
       admin_username: ""
