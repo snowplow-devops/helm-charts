@@ -108,7 +108,6 @@ spec:
 {{- end }}
 
 {{- if .Values.service.aws.dev_db }}
-{{- if .Values.service.aws.deploy_rds_into_private_subnet }}
 
 ---
 
@@ -157,7 +156,6 @@ spec:
         envFrom:
         - secretRef:
             name: {{ include "iglu.app.secret.name" . }}
-{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
