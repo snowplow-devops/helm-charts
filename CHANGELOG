@@ -1,3 +1,7 @@
+Version 0.1.81 (2024-11-14)
+---------------------------
+charts/aws-otel-collector: add reserved capacity for cpu and memory metrics (closes #209)
+
 Version 0.1.80 (2024-10-31)
 ---------------------------
 charts/snowplow-iglu-server: Change annotations to deploy hook job only on post-install and not on post-upgrade (closes #205)

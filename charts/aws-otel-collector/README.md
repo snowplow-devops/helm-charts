@@ -48,10 +48,10 @@ helm delete aws-otel-collector --namespace kube-system
 | kube_state_metrics_enabled | bool | `false` | Whether to collect kube-state-metrics |
 | performance_log_retention_in_days | int | `30` | The retention for performance log group |
 | prometheus_log_retention_in_days | int | `30` | The retention for prometheus log group|
-| resources.limits.cpu | string | `"200m"` |  |
+| resources.limits.cpu | string | `""` |  |
 | resources.limits.memory | string | `"200Mi"` |  |
-| resources.requests.cpu | string | `"200m"` |  |
-| resources.requests.memory | string | `"200Mi"` |  |
+| resources.requests.cpu | string | `"20m"` |  |
+| resources.requests.memory | string | `"100Mi"` |  |
 | serviceAccount.create | bool | `true` | Whether to create a service account or not |
 | serviceAccount.name | string | `""` | The name of the service account to create or use |
 | serviceAccount.annotations | object | `{}` | Optional annotations to be applied to service account |
