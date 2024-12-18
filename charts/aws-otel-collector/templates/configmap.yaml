@@ -83,6 +83,10 @@ data:
                   - prometheus-kube-state-metrics.monitoring.svc.cluster.local:8080
                   labels:
                     cluster_name: {{ .Values.clusterName }}
+              metric_relabel_configs:
+                - source_labels: [__name__]
+                  regex: "^kube_deployment_status_replicas_ready$"
+                  action: keep
 
     processors:
       batch/metrics:
