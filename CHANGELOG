@@ -1,3 +1,10 @@
+Version 0.1.82 (2025-02-12)
+---------------------------
+charts/snowplow-iglu-server: simplify checksum generation (#213)
+charts/service-deployment: simplify checksum generation (#214)
+charts/daemonset: simplify checksum generation (#215)
+charts/cron-job: simplify checksum generation (#216)
+
 Version 0.1.81 (2024-11-14)
 ---------------------------
 charts/aws-otel-collector: add reserved capacity for cpu and memory metrics (closes #209)
