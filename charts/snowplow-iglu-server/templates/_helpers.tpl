@@ -57,9 +57,6 @@ Define default values for required values.
 {{- define "iglu.service.gcp.networkEndpointGroupName" -}}
 {{- default .Release.Name .Values.service.gcp.networkEndpointGroupName -}}
 {{- end -}}
-{{- define "iglu.service.config.checksum" -}}
-{{- printf "%s-%s-%s" (include "iglu.service.config.superApiKey" .) .Values.service.config.database.secrets.password .Values.service.config.database.secrets.username | sha256sum -}}
-{{- end -}}
 
 {{/*
 Create chart name and version to use as chart label.
