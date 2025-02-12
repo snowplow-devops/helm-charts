@@ -20,17 +20,7 @@ spec:
         {{- with .Values.daemonsetAnnotations }}
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        {{- if .Values.configMaps }}
-        {{- range $v := .Values.configMaps }}
-        {{- range $f := $v.files }}
-        {{- if $f.contentsB64 }}
-        checksum/{{ $v.name }}-{{ $f.key }}: "{{ $f.contentsB64 | sha256sum }}"
-        {{- else }}
-        checksum/{{ $v.name }}-{{ $f.key }}: "{{ ($.Files.Get $f.contentsFile) | b64enc | sha256sum }}"
-        {{- end }}
-        {{- end }}
-        {{- end }}
-        {{- end }}
+        checksum/values: "{{ toJson .Values | sha256sum }}"
     spec:
       enableServiceLinks: false
       hostPID: {{ .Values.config.hostPIDAccess | default "false" }}
