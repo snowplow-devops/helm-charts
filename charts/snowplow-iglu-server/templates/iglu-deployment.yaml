@@ -14,10 +14,7 @@ spec:
         app: {{ include "iglu.app.name" . }}
         {{- include "snowplow.labels" $ | nindent 8 }}
       annotations:
-        checksum/config: "{{ include "iglu.service.config.checksum" . }}"
-        {{- if ne .Values.service.config.hoconBase64 "" }}
-        checksum/config.hocon: "{{ .Values.service.config.hoconBase64 | sha256sum}}"
-        {{- end }}
+        checksum/values: "{{ toJson .Values | sha256sum }}"
     spec:
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}
