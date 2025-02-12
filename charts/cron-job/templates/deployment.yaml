@@ -21,17 +21,7 @@ spec:
             azure.workload.identity/use: "true"
             {{- end }}
           annotations:
-            {{- if .Values.configMaps }}
-            {{- range $v := .Values.configMaps }}
-            {{- range $f := $v.files }}
-            {{- if $f.contentsB64 }}
-            checksum/{{ $v.name }}-{{ $f.key }}: "{{ $f.contentsB64 | sha256sum }}"
-            {{- else }}
-            checksum/{{ $v.name }}-{{ $f.key }}: "{{ ($.Files.Get $f.contentsFile) | b64enc | sha256sum }}"
-            {{- end }}
-            {{- end }}
-            {{- end }}
-            {{- end }}
+            checksum/values: "{{ toJson .Values | sha256sum }}"
         spec:
           {{- if .Values.cloudserviceaccount.deploy }}
           serviceAccountName: {{ .Values.cloudserviceaccount.name }}
