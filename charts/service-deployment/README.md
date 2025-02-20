@@ -97,6 +97,7 @@ helm delete service-deployment
 | readinessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | readinessProbe is enabled if httpGet.path or exec.command are present |
 | readinessProbe.exec.command | list | `[]` | Command/arguments to execute to determine readiness |
 | readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |
+| replicas | int | `1` | Number of replicas to deploy when HPA is disabled (`hpa.deploy: false`) |
 | resources | object | `{}` | Map of resource constraints for the service |
 | service.annotations | object | `{}` | Map of annotations to add to the service |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |

@@ -7,8 +7,8 @@ metadata:
 spec:
   {{- if .Values.deployment.scaleToZero }}
   replicas: 0
-  {{- else }}
-  replicas: {{ .Values.replicas }}
+  {{- else if not .Values.hpa.deploy }}
+  replicas: {{ .Values.deployment.replicas }}
   {{- end }}
   selector:
     matchLabels:
