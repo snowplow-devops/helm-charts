@@ -175,7 +175,7 @@ You will need to fill these targeted fields:
 | service.azure.secrets.admin_password | string | `""` | The admin password that will be used for the psql command |
 | service.gcp.deployProxy | bool | `false` | Whether to use CloudSQL Proxy (note: requires GCP service account to be attached) |
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
-| service.gcp.proxy.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| service.gcp.proxy.image.isRepositoryPublic | bool | `""` | Whether the repository is public |
 | service.gcp.proxy.image.repository | string | `"gcr.io/cloudsql-docker/gce-proxy"` |  |
 | service.gcp.proxy.image.tag | string | `"1.31.2"` |  |
 | service.gcp.proxy.instanceName | string | `""` | Name of the CloudSQL instance |
@@ -186,7 +186,7 @@ You will need to fill these targeted fields:
 | service.gcp.proxy.resources.limits.memory | string | `"256Mi"` |  |
 | service.gcp.proxy.resources.requests.cpu | string | `"50m"` |  |
 | service.gcp.proxy.resources.requests.memory | string | `"128Mi"` |  |
-| service.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| service.image.isRepositoryPublic | bool | `""` | Whether the repository is public |
 | service.image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | service.image.repository | string | `"snowplow/iglu-server"` |  |
 | service.image.tag | string | `"0.10.0-distroless"` |  |

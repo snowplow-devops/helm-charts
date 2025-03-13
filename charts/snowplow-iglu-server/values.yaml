@@ -21,7 +21,7 @@ service:
     repository: "snowplow/iglu-server"
     tag: "0.12.0-distroless"
     # -- Whether the repository is public
-    isRepositoryPublic: true
+    isRepositoryPublic: ""
     # -- The image pullPolicy to use
     pullPolicy: "IfNotPresent"
   minReplicas: 1
@@ -129,7 +129,7 @@ service:
         repository: "gcr.io/cloudsql-docker/gce-proxy"
         tag: "1.31.2"
         # -- Whether the repository is public
-        isRepositoryPublic: true
+        isRepositoryPublic: ""
 
       resources:
         limits:
