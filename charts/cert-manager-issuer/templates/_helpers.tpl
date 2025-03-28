@@ -23,8 +23,8 @@ If release name contains chart name it will be used as a full name.
 {{ include "app.fullname" . }}-secret
 {{- end -}}
 {{- define "validate-environment" -}}
-{{- if not (or (eq .Values.acme.environment "letsencrypt") (eq .Values.acme.environment "letsencrypt-staging")) -}}
-{{- printf "Error: invalid acme.environment (%s). Allowed values: letsencrypt, letsencrypt-staging." .Values.acme.environment | fail -}}
+{{- if not (or (eq .Values.acme.environment "letsencrypt") (eq .Values.acme.environment "letsencrypt-staging") (eq .Values.acme.environment "external-zerossl")) -}}
+{{- printf "Error: invalid acme.environment (%s). Allowed values: letsencrypt, letsencrypt-staging, external-zerossl." .Values.acme.environment | fail -}}
 {{- end -}}
 {{- end -}}
 {{- define "validate-type" -}}
@@ -37,5 +37,7 @@ If release name contains chart name it will be used as a full name.
 {{- print "https://acme-v02.api.letsencrypt.org/directory" | trim | replace " " "" -}}
 {{- else if eq .Values.acme.environment "letsencrypt-staging" -}}
 {{- print "https://acme-staging-v02.api.letsencrypt.org/directory" | trim | replace " " "" -}}
+{{- else if eq .Values.acme.environment "external-zerossl" -}}
+{{- print "https://acme.zerossl.com/v2/DV90" | trim | replace " " "" -}}
 {{- end -}}
 {{- end -}}
