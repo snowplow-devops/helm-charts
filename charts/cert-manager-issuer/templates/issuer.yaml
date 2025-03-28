@@ -5,7 +5,16 @@ metadata:
 spec:
   {{- if .Values.acme.enabled}}
   acme:
+    {{- if eq (include "app.fullname" .) "letsencrypt" }}
     email: {{ .Values.acme.email }}
+    {{- else if contains "external" (include "app.fullname" .) }}
+    externalAccountBinding:
+      keyID: {{ .Values.acme.EABKeyId }}
+      keySecretRef:
+        name: {{ include "app.fullname" . }}-eabsecret
+        key: secret
+      keyAlgorithm: HS256
+    {{- end}}
     {{- if .Values.acme.accountPrivateKeyData}}
     disableAccountKeyGeneration: true
     {{- end }}

@@ -23,7 +23,7 @@ A helm chart that creates an Issuer or ClusterIssuer for cert-manager
 | acme.accountPrivateKeyData | string | `""` | A private key to use for registration (if not provided, one will be generated) |
 | acme.email | string | `"firstname.lastname@example.com"` | The email address to use for registration |
 | acme.enabled | bool | `true` | Whether to enable the ACME protocol |
-| acme.environment | string | `"letsencrypt-staging"` | The ACME server to use (options: letsencrypt, letsencrypt-staging) |
+| acme.environment | string | `"letsencrypt-staging"` | The ACME server to use (options: letsencrypt, letsencrypt-staging, external-zerossl) |
 | acme.httpSolverIngressClass | string | `"traefik"` | The name of the ingress class to setup the HTTP-01 challenge solver on |
 | acme.solver | string | `"http01"` | The type of challenge to use (options: http01, dns01) |
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure. Only used for dns01 type) |
