@@ -14,7 +14,7 @@ acme:
   email: "firstname.lastname@example.com"
   # -- A private key to use for registration (if not provided, one will be generated)
   accountPrivateKeyData: ""
-  # -- External Account Binding (EAB) Key ID, required for ACME registration with providers like ZeroSSL and Cloudflare.
+  # -- External Account Binding (EAB) Key ID, required for ACME registration with providers like ZeroSSL.
   EABKeyId: ""
   # -- External Account Binding (EAB) HMAC Key, used to cryptographically sign requests during ACME registration.
   EABHmacKey: ""
