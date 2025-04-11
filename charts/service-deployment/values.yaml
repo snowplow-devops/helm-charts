@@ -34,6 +34,16 @@ config:
   secretsB64: {}
   #  username: "cGFzc3dvcmQK"
 
+  # -- List of configMaps from other deployments within the
+  #    same namespace - to reference and mount in the deployment
+  sharedNamespaceConfigMaps: []
+  #  - name: "10c8b-config-fs-dev1"
+  #    mountPath: "/etc/config" # Must match the path of referenced volume
+  #    mountPropagation: None # If unset will default to 'None'
+  #    readOnly: true #  If unset will default to 'true'
+  #  - name: "another-shared-configmap"
+  #    mountPath: "/app/config" # Must match the path of referenced volume
+
 # -- List of config maps to mount to the deployment
 configMaps: []
 #  - name: "volume-1"

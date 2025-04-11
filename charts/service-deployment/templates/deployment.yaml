@@ -60,6 +60,12 @@ spec:
           optional: false
         name: {{ $v.name }}
       {{- end }}
+      {{- range $v := .Values.config.sharedNamespaceConfigMaps }}
+      - configMap:
+          name: {{ $v.name }}
+          optional: false
+        name: {{ $v.name }}
+      {{- end }}
       {{- if and (.Values.persistentVolume.enabled) (eq .Values.deployment.kind "Deployment") }}
       - name: storage-volume
         persistentVolumeClaim:
@@ -169,6 +175,12 @@ spec:
           mountPropagation: None
           {{- end }}
           name: {{ $v.name }}
+        {{- end }}
+        {{- range $v := .Values.config.sharedNamespaceConfigMaps }}
+        - name: "{{ $v.name }}"
+          mountPath: "{{ $v.mountPath }}"
+          mountPropagation: {{ default "None" $v.mountPropagation }}
+          readOnly: {{ default true $v.readOnly }}
         {{- end }}
         {{- if and (.Values.persistentVolume.enabled) (eq .Values.deployment.kind "Deployment") }}
         - name: storage-volume
