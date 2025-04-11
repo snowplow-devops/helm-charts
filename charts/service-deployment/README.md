@@ -55,6 +55,7 @@ helm delete service-deployment
 | config.env | string | `nil` | Map of environment variables to use within the job |
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
 | config.secretsB64 | object | `{}` | Map of base64-encoded secrets that will be exposed as environment variables within the job |
+| config.sharedNamespaceConfigMaps | list | `[]` | List of config maps from same namespace to reference and mount in the deployment |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
 | deployment.kind | string | `"Deployment"` | Can be either a "Deployment" or "StatefulSet" |
 | deployment.podLabels | object | `{}` | Map of labels that will be added to each pod in the deployment |
