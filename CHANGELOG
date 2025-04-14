@@ -1,3 +1,7 @@
+Version 0.1.85 (2025-04-14)
+---------------------------
+charts/service-deployment: add support for mounting separate deployment configMaps (#228)
+
 Version 0.1.84 (2025-03-28)
 ---------------------------
 charts/cert-manager-issuer: add external issuer support (#222)
