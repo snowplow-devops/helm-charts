@@ -72,3 +72,85 @@ Defaults to ["Ingress", "Egress"] if neither is specified.
   {{- end }}
 {{- end }}
 {{- end }}
+
+{{/*
+Generate the ingress section for the NetworkPolicy if .ingress is defined.
+*/}}
+{{- define "network-policy.ingress" -}}
+{{- $ingress := .ingress -}}
+{{- if $ingress }}
+ingress:
+  {{- if or $ingress.ports $ingress.from }}
+  - {{- if $ingress.ports }}
+      ports:
+        {{- range $ingress.ports }}
+        - protocol: {{ .protocol | default "TCP" }}
+          port: {{ .port }}
+        {{- end }}
+    {{- end }}
+    {{- if $ingress.from }}
+      from:
+        {{- range $ingress.from }}
+        - {{- if .ipBlock }}
+            ipBlock:
+              cidr: {{ .ipBlock.cidr }}
+              {{- if .ipBlock.except }}
+              except: {{ toYaml .ipBlock.except | nindent 14 }}
+              {{- end }}
+          {{- end }}
+          {{- if .podSelector }}
+            podSelector:
+              matchLabels: {{ toYaml .podSelector | nindent 14 }}
+          {{- end }}
+          {{- if .namespaceSelector }}
+            namespaceSelector:
+              matchLabels: {{ toYaml .namespaceSelector | nindent 14 }}
+          {{- end }}
+        {{- end }}
+    {{- end }}
+  {{- else }}
+  []
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{/*
+Generate the egress section for the NetworkPolicy if .egress is defined.
+*/}}
+{{- define "network-policy.egress" -}}
+{{- $egress := .egress -}}
+{{- if $egress }}
+egress:
+  {{- if or $egress.ports $egress.to }}
+  - {{- if $egress.ports }}
+      ports:
+        {{- range $egress.ports }}
+        - protocol: {{ .protocol | default "TCP" }}
+          port: {{ .port }}
+        {{- end }}
+    {{- end }}
+    {{- if $egress.to }}
+      to:
+        {{- range $egress.to }}
+        - {{- if .ipBlock }}
+            ipBlock:
+              cidr: {{ .ipBlock.cidr }}
+              {{- if .ipBlock.except }}
+              except: {{ toYaml .ipBlock.except | nindent 14 }}
+              {{- end }}
+          {{- end }}
+          {{- if .podSelector }}
+            podSelector:
+              matchLabels: {{ toYaml .podSelector | nindent 14 }}
+          {{- end }}
+          {{- if .namespaceSelector }}
+            namespaceSelector:
+              matchLabels: {{ toYaml .namespaceSelector | nindent 14 }}
+          {{- end }}
+        {{- end }}
+    {{- end }}
+  {{- else }}
+  []
+  {{- end }}
+{{- end }}
+{{- end }}
