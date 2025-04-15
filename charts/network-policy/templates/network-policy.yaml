@@ -1,0 +1,83 @@
+{{- range .Values.policies }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "network-policy.labels" $ | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- range $k, $v := .podSelector }}
+      {{ $k }}: {{ $v }}
+      {{- end }}
+
+  policyTypes:
+    {{- include "network-policy.policyTypes" . | nindent 4 }}
+  
+  {{- if .ingress }}
+  ingress:
+    {{- if or .ingress.ports .ingress.from }}
+    -   ports:
+          {{- range .ingress.ports }}
+          - protocol: {{ .protocol | default "TCP" }}
+            port: {{ .port }}
+          {{- end }}
+        from:
+          {{- range .ingress.from }}
+          - {{- if .ipBlock }}
+              ipBlock:
+                cidr: {{ .ipBlock.cidr }}
+                {{- if .ipBlock.except }}
+                except: {{ toYaml .ipBlock.except | nindent 16 }}
+                {{- end }}
+            {{- end }}
+            {{- if .podSelector }}
+              podSelector:
+                matchLabels: {{ toYaml .podSelector | nindent 16 }}
+            {{- end }}
+            {{- if .namespaceSelector }}
+              namespaceSelector:
+                matchLabels: {{ toYaml .namespaceSelector | nindent 16 }}
+            {{- end }}
+          {{- end }}
+    {{- else }}
+    []
+    {{- end }}
+  {{- end }}
+
+  {{- if .egress }}
+  egress:
+    {{- if or .egress.ports .egress.to }}
+    -   ports:
+          {{- range .egress.ports }}
+          - protocol: {{ .protocol | default "TCP" }}
+            port: {{ .port }}
+          {{- end }}
+        to:
+          {{- range .egress.to }}
+          - {{- if .ipBlock }}
+              ipBlock:
+                cidr: {{ .ipBlock.cidr }}
+                {{- if .ipBlock.except }}
+                except: {{ toYaml .ipBlock.except | nindent 16 }}
+                {{- end }}
+            {{- end }}
+            {{- if .podSelector }}
+              podSelector:
+                matchLabels: {{ toYaml .podSelector | nindent 16 }}
+            {{- end }}
+            {{- if .namespaceSelector }}
+              namespaceSelector:
+                matchLabels: {{ toYaml .namespaceSelector | nindent 16 }}
+            {{- end }}
+          {{- end }}      
+
+    {{- else }}
+    []
+    {{- end }}
+  {{- end }}
+
+---
+{{- end }}
