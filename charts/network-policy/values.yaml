@@ -2,27 +2,10 @@
 nameOverride: ""
 # -- Overrides the full-name given to the deployment resources (default: .Release.Name)
 fullnameOverride: ""
-# -- Labels will be applied to each priority class
+# -- Labels will be applied to each network policy
 labels: {}
 policies:
-  - name: app-policy
-    podSelector:
-      app: my-app
-    ingress:
-      ports:
-        - port: 80
-        - port: 443
-      from:
-        - ipBlock:
-            cidr: 10.0.0.0/8
-        - podSelector:
-            app: ingress-app
-        - namespaceSelector:
-            team: frontend
-    egress:
-      ports:
-        - port: 53
-          protocol: UDP
-      to:
-        - ipBlock:
-            cidr: 0.0.0.0/0
+  - name: app-network-policy
+    podSelector: {}
+    ingress: {}
+    egress: {}
