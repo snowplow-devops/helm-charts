@@ -1,3 +1,7 @@
+Version 0.1.86 (2025-04-22)
+---------------------------
+charts/network-policy: add network-policy chart (#225)
+
 Version 0.1.85 (2025-04-14)
 ---------------------------
 charts/service-deployment: add support for mounting separate deployment configMaps (#228)
