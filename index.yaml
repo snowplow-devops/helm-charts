@@ -1137,6 +1137,26 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/github-actions-runners-0.1.0/github-actions-runners-0.1.0.tgz
     version: 0.1.0
+  network-policy:
+  - apiVersion: v2
+    created: "2025-04-22T15:10:26.436451768Z"
+    description: A Helm chart to deploy a Kubernetes NetworkPolicy
+    digest: 6836fd1c2c6166315870997d8c6a4a9facdf36f214d4619923ba31fbe3367241
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - network-policy
+    - network-policies
+    maintainers:
+    - email: jamesarems@users.noreply.github.com
+      name: jamesarems
+      url: https://github.com/jamesarems
+    name: network-policy
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/network-policy-0.1.0/network-policy-0.1.0.tgz
+    version: 0.1.0
   priority-class:
   - apiVersion: v2
     created: "2024-08-16T13:09:17.634226583Z"
@@ -2796,4 +2816,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-14T21:11:17.235064632Z"
+generated: "2025-04-22T15:10:26.436837219Z"
