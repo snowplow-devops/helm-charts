@@ -65,3 +65,7 @@ helm delete cron-job
 | cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
 | cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
 | cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
+| customRole.deploy | bool | `false` | Whether to deploy the custom role and bind it to the cloudserviceaccount |
+| customRole.apiGroups | list | `[]` | APIGroups is the name of the APIGroup that contains the resources |
+| customRole.resources | list | `[]` | Resources is a list of resources this rule applies to |
+| customRole.verbs | list | `[]` | Verbs is a list of Verbs that apply to ALL the ResourceKinds contained in this rule |
