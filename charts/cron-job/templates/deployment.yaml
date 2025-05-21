@@ -5,6 +5,7 @@ metadata:
   labels:
     {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
+  suspend: {{ .Values.suspend }}
   schedule: "{{ .Values.schedule }}"
   concurrencyPolicy: "{{ .Values.concurrencyPolicy }}"
   failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
