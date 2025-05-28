@@ -88,17 +88,21 @@ cloudserviceaccount:
 customRole:
   # -- Whether to deploy the custom role and bind it to the cloudserviceaccount
   deploy: false
-
-  # -- APIGroups is the name of the APIGroup that contains the resources
-  apiGroups: []
-  #  - ""
-  # -- Resources is a list of resources this rule applies to
-  resources: []
-  #  - "configmaps"
-  # -- Verbs is a list of Verbs that apply to ALL the ResourceKinds contained in this rule
-  verbs: []
-  #  - "get"
-  #  - "create"
-  #  - "update"
-  #  - "patch"
-  #  - "delete"
+  # -- Array of role definitions to setup for the custom role
+  definition: []
+    # - apiGroups:
+    #     - ""
+    #   resources:
+    #     - "configmaps"
+    #   verbs:
+    #     - "get"
+    #     - "create"
+    #     - "update"
+    #     - "patch"
+    #     - "delete"
+    # - apiGroups:
+    #     - ""
+    #   resources:
+    #     - "pods"
+    #   verbs:
+    #     - "get"
