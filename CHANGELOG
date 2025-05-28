@@ -1,3 +1,8 @@
+Version 0.1.89 (2025-05-28)
+---------------------------
+charts/cron-job: Add ability to specify resources (#236)
+charts/cron-job: Add ability to specify fine-grained custom roles (#237)
+
 Version 0.1.88 (2025-05-21)
 ---------------------------
 charts/cron-job: attach custom role to service account (#234)
