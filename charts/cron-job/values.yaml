@@ -49,6 +49,15 @@ configMaps: []
 #        contentsB64: "" # The file contents which have already been base-64 encoded
 #        contentsFile: "" # The path to a local file (note: contentsB64 will take precedence if not-empty)
 
+# -- Map of resource constraints for the deployment
+resources: {}
+#  limits:
+#    cpu: 746m
+#    memory: 900Mi
+#  requests:
+#    cpu: 400m
+#    memory: 512Mi
+
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
   name: "snowplow-cron-job-dockerhub"

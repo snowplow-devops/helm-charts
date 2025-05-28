@@ -55,6 +55,7 @@ helm delete cron-job
 | config.env | object | `{}` | Map of environment variables to use within the job |
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
+| resources | object | `{}` | Map of resource constraints for the deployment |
 | dockerconfigjson.name | string | `"snowplow-cron-job-dockerhub"` | Name of the secret to use for the private repository |
 | dockerconfigjson.username | string | `""` | Username for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |

@@ -79,6 +79,9 @@ spec:
                 name: {{ include "app.secret.fullname" . }}
             {{- end }}
 
+            resources:
+              {{- toYaml .Values.resources | nindent 14 }}
+
             {{- if .Values.configMaps }}
             volumeMounts:
             {{- range $v := .Values.configMaps }}
