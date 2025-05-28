@@ -6,16 +6,18 @@ metadata:
   labels:
     {{- include "snowplow.labels" $ | nindent 4 }}
 rules:
+{{- range $d := .Values.customRole.definition }}
 - apiGroups:
-  {{- range $v := .Values.customRole.apiGroups }}
+  {{- range $v := $d.apiGroups }}
   - {{ $v | quote }}
   {{- end }}
   resources:
-  {{- range $v := .Values.customRole.resources }}
+  {{- range $v := $d.resources }}
   - {{ $v | quote }}
   {{- end }}
   verbs:
-  {{- range $v := .Values.customRole.verbs }}
+  {{- range $v := $d.verbs }}
   - {{ $v | quote }}
   {{- end }}
+{{- end }}
 {{- end }}
