@@ -40,8 +40,7 @@ helm delete cron-job
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
 | global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
-| suspend | bool | `false` | Whether to suspend scheduled executions |
-| schedule | string | `"*/1 * * * *"` |  |
+| schedules | list | `[]` |  |
 | concurrencyPolicy | string | `"Forbid"` |  |
 | restartPolicy | string | `"Never"` |  |
 | failedJobsHistoryLimit | int | `1` |  |

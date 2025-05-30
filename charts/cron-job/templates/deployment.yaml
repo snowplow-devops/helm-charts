@@ -1,15 +1,17 @@
+{{- range $s := .Values.schedules }}
+---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "app.fullname" . }}
+  name: "{{ include "app.fullname" $ }}-{{ $s.name }}"
   labels:
     {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
-  suspend: {{ .Values.suspend }}
-  schedule: "{{ .Values.schedule }}"
-  concurrencyPolicy: "{{ .Values.concurrencyPolicy }}"
-  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
-  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
+  suspend: {{ $s.suspend }}
+  schedule: "{{ $s.crontab }}"
+  concurrencyPolicy: "{{ $.Values.concurrencyPolicy }}"
+  failedJobsHistoryLimit: {{ $.Values.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ $.Values.successfulJobsHistoryLimit }}
 
   jobTemplate:
     spec:
@@ -17,28 +19,28 @@ spec:
         metadata:
           labels:
             {{- include "snowplow.labels" $ | nindent 12 }}
-            app: {{ include "app.fullname" . }}
-            {{- if eq .Values.global.cloud "azure" }}
+            app: "{{ include "app.fullname" $ }}-{{ $s.name }}"
+            {{- if eq $.Values.global.cloud "azure" }}
             azure.workload.identity/use: "true"
             {{- end }}
           annotations:
-            checksum/values: "{{ toJson .Values | sha256sum }}"
+            checksum/values: "{{ toJson $.Values | sha256sum }}"
         spec:
-          {{- if .Values.cloudserviceaccount.deploy }}
-          serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+          {{- if $.Values.cloudserviceaccount.deploy }}
+          serviceAccountName: {{ $.Values.cloudserviceaccount.name }}
           {{- end }}
           automountServiceAccountToken: true
 
-          {{- if not .Values.image.isRepositoryPublic }}
+          {{- if not $.Values.image.isRepositoryPublic }}
           imagePullSecrets:
-          - name: {{ .Values.dockerconfigjson.name }}
+          - name: {{ $.Values.dockerconfigjson.name }}
           {{- end }}
 
-          restartPolicy: "{{ .Values.restartPolicy }}"
+          restartPolicy: "{{ $.Values.restartPolicy }}"
 
-          {{- if .Values.configMaps }}
+          {{- if $.Values.configMaps }}
           volumes:
-          {{- range $v := .Values.configMaps }}
+          {{- range $v := $.Values.configMaps }}
           - configMap:
               name: {{ $v.name }}
               optional: false
@@ -47,44 +49,44 @@ spec:
           {{- end }}
 
           containers:
-          - name: "{{ include "app.fullname" . }}"
-            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-            imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy }}
+          - name: "{{ include "app.fullname" $ }}-{{ $s.name }}"
+            image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+            imagePullPolicy: {{ default "IfNotPresent" $.Values.image.pullPolicy }}
 
-            {{- if .Values.config.command  }}
+            {{- if $.Values.config.command  }}
             command:
-            {{- range $v := .Values.config.command }}
+            {{- range $v := $.Values.config.command }}
             - "{{ $v }}"
             {{- end }}
             {{- end }}
 
-            {{- if .Values.config.args  }}
+            {{- if $.Values.config.args  }}
             args:
-            {{- range $v := .Values.config.args }}
+            {{- range $v := $.Values.config.args }}
             - "{{ $v }}"
             {{- end }}
             {{- end }}
 
-            {{- if .Values.config.env  }}
+            {{- if $.Values.config.env  }}
             env:
-            {{- range $k, $v := .Values.config.env }}
+            {{- range $k, $v := $.Values.config.env }}
             - name: "{{ $k }}"
               value: "{{ $v }}"
             {{- end }}
             {{- end }}
             
-            {{- if .Values.config.secrets  }}
+            {{- if $.Values.config.secrets  }}
             envFrom:
             - secretRef:
-                name: {{ include "app.secret.fullname" . }}
+                name: {{ include "app.secret.fullname" $ }}
             {{- end }}
 
             resources:
-              {{- toYaml .Values.resources | nindent 14 }}
+              {{- toYaml $.Values.resources | nindent 14 }}
 
-            {{- if .Values.configMaps }}
+            {{- if $.Values.configMaps }}
             volumeMounts:
-            {{- range $v := .Values.configMaps }}
+            {{- range $v := $.Values.configMaps }}
             - mountPath: "{{ $v.mountPath }}"
               {{- if $v.mountPropagation }}
               mountPropagation: {{ $v.mountPropagation }}
@@ -94,3 +96,4 @@ spec:
               name: {{ $v.name }}
             {{- end }}
             {{- end }}
+{{- end }}
