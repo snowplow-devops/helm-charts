@@ -27,4 +27,8 @@ spec:
         ingress:
           class: {{ $.Values.acme.httpSolverIngressClass }}
     {{- end}}
+    {{- if eq .Values.acme.dnsSolver.type "route53"}}
+    - dns01:
+        route53: {}
+    {{- end}}
   {{- end}}

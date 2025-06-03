@@ -1,3 +1,7 @@
+Version 0.1.91 (2025-06-03)
+---------------------------
+charts/cert-manager-issuer: Add support for Route53 DNS challenge (#241)
+
 Version 0.1.90 (2025-05-30)
 ---------------------------
 charts/cron-job: Add ability to have multiple schedules with shared resources (#239)
