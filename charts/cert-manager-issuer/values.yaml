@@ -22,3 +22,7 @@ acme:
   solver: "http01"
   # -- The name of the ingress class to setup the HTTP-01 challenge solver on
   httpSolverIngressClass: "traefik"
+
+  dnsSolver:
+    # -- The type of DNS solver to use (options: route53)
+    type: ""   
