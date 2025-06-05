@@ -1,3 +1,7 @@
+Version 0.1.91 (2025-06-05)
+---------------------------
+charts/cron-job: Add backoff limit to created jobs (#243)
+
 Version 0.1.90 (2025-05-30)
 ---------------------------
 charts/cron-job: Add ability to have multiple schedules with shared resources (#239)
