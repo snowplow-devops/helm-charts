@@ -45,6 +45,7 @@ helm delete cron-job
 | restartPolicy | string | `"Never"` |  |
 | failedJobsHistoryLimit | int | `1` |  |
 | successfulJobsHistoryLimit | int | `1` |  |
+| backoffLimit | int | `6` | The number of retries to attempt before marking the job as failed |
 | image.repository | string | `"busybox"` |  |
 | image.tag | string | `"latest"` |  |
 | image.isRepositoryPublic | bool | `true` | Whether the repository is public |

@@ -16,6 +16,8 @@ concurrencyPolicy: "Forbid"
 restartPolicy: "Never"
 failedJobsHistoryLimit: 1
 successfulJobsHistoryLimit: 1
+# -- The number of retries to attempt before marking the job as failed
+backoffLimit: 6
 
 image:
   repository: "busybox"
