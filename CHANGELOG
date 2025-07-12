@@ -1,3 +1,7 @@
+Version 0.1.92 (2025-07-11)
+---------------------------
+charts/service-deployment: add optional tls secret name override (#245)
+
 Version 0.1.91 (2025-06-05)
 ---------------------------
 charts/cron-job: Add backoff limit to created jobs (#243)
