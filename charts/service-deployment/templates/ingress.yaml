@@ -23,7 +23,7 @@ spec:
   tls:
   - hosts:
       - "{{ .hostname }}"
-    secretName: {{ .hostname }}-tls
+    secretName: {{ if .tlsSecretName }}{{ .tlsSecretName }}{{ else }}{{ .hostname }}-tls{{ end }}
   rules:
     - host: "{{ required "A valid hostname is required!" .hostname }}"
       http:

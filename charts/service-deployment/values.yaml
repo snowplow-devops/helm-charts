@@ -139,6 +139,7 @@ service:
     #   certificateIssuerName: cloudflare # -- What issuer to use for the Certificate (default: letsencrypt-staging)
     #   certificateIssuerKind: Issuer # -- Kind of issuer (default: ClusterIssuer)
     #   enableTraefik: false # -- Enables traefik annotations and set ingressClassName. (default: true)
+    #   tlsSecretName: qa1-tracking-snowplow-io-tls # -- Override TLS secret name (optional, defaults to {hostname}-tls)
     #   annotations: {} # -- Map of annotations to add to the ingress
   # -- List of IP addresses to restrict ingress traffic to
   ingressIPAllowlist: []

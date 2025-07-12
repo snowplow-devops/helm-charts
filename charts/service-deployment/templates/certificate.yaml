@@ -1,5 +1,5 @@
 {{- range .Values.service.ingress }}
-{{- if .certificateCreate  | default "true" }}
+{{- if and (.certificateCreate  | default "true") (not .tlsSecretName) }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
