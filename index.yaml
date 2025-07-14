@@ -1323,6 +1323,33 @@ entries:
     version: 0.1.0
   service-deployment:
   - apiVersion: v2
+    created: "2025-07-14T01:33:43.807035425Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to setup a generic deployment with optional service/hpa
+      bindings
+    digest: 9ec2980e87ed9c000641f7d3568c976b7e2f49fc85f2792d9cd4bd5030c198b9
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - service
+    - deployment
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: service-deployment
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/service-deployment-0.25.0/service-deployment-0.25.0.tgz
+    version: 0.25.0
+  - apiVersion: v2
     created: "2025-04-14T21:11:17.234637066Z"
     dependencies:
     - name: dockerconfigjson
@@ -2941,4 +2968,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-05T11:18:09.665277861Z"
+generated: "2025-07-14T01:33:43.807511019Z"
