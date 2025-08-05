@@ -104,12 +104,12 @@ hpa:
   maxReplicas: 20
   # -- Default average CPU utilization before auto-scaling starts
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 75
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75
   behavior: {}
 
 service:
@@ -130,7 +130,8 @@ service:
   # -- Map of annotations to add to the service
   annotations: {}
   # -- A map of ingress rules to deploy
-  ingress: {}
+  ingress:
+    {}
     # ingress-0001:
     #   hostname: example-01.com
     # ingress-0002:
@@ -188,7 +189,8 @@ deployment:
       # -- The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number "5" for 5 additional pods
       maxSurge: "25%"
   # -- Map of labels that will be added to each pod in the deployment
-  podLabels: {}
+  podLabels:
+    {}
     # env: prod2
     # dept: engineering
 
@@ -260,3 +262,44 @@ persistentVolume:
   subPath: ""
   # -- Set to "-" or "" to disable dynamic provisioning, if undefined uses the default provisioner
   # storageClass: "-"
+
+# Database Bootstrap Hook Configuration
+databaseBootstrap:
+  # -- Whether to enable the database bootstrap hook
+  enabled: false
+  # -- Script to execute in the bootstrap job
+  script: |
+    echo "Starting database bootstrap..."
+    # Your bootstrap logic here
+    echo "Bootstrap completed!"
+  # -- Image to use for bootstrap job (defaults to postgres:alpine for DB operations)
+  image: postgres:alpine
+  # -- When to run the hook (pre-install or pre-install,pre-upgrade)
+  hookPhase: "pre-install"
+  # -- Hook deletion policy (hook-succeeded, hook-failed, or before-hook-creation)
+  hookDeletePolicy: "before-hook-creation"
+  # -- Maximum number of retries before marking job as failed
+  backoffLimit: 3
+  # -- Maximum time in seconds for the job to run
+  activeDeadlineSeconds: 300
+  # -- Optional SQL scripts to mount at /bootstrap-sql/
+  sqlScripts:
+    []
+    # - name: "01-create-schema.sql"
+    #   content: |
+    #     CREATE SCHEMA IF NOT EXISTS myschema;
+    # - name: "02-create-tables.sql"
+    #   content: |
+    #     CREATE TABLE IF NOT EXISTS myschema.mytable (
+    #       id SERIAL PRIMARY KEY,
+    #       name VARCHAR(255)
+    #     );
+  # -- Resource limits for the bootstrap job
+  resources:
+    {}
+    # limits:
+    #   cpu: 200m
+    #   memory: 256Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
