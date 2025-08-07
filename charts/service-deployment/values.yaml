@@ -104,12 +104,12 @@ hpa:
   maxReplicas: 20
   # -- Default average CPU utilization before auto-scaling starts
   metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 75
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
   behavior: {}
 
 service:
@@ -277,7 +277,7 @@ databaseBootstrap:
   # -- When to run the hook (pre-install or pre-install,pre-upgrade)
   hookPhase: "pre-install"
   # -- Hook deletion policy (hook-succeeded, hook-failed, or before-hook-creation)
-  hookDeletePolicy: "before-hook-creation"
+  hookDeletePolicy: "before-hook-creation,hook-succeeded"
   # -- Maximum number of retries before marking job as failed
   backoffLimit: 3
   # -- Maximum time in seconds for the job to run
@@ -303,3 +303,8 @@ databaseBootstrap:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
+  # -- Secrets specific to database bootstrap (separate from main deployment secrets)
+  secrets:
+    {}
+    # DB_ADMIN_PASSWORD: "your-admin-password"
+    # DB_HOST: "your-db-host"
