@@ -1,3 +1,7 @@
+Version 0.1.93 (2025-08-07)
+---------------------------
+charts/service-deployment: database bootstrap job (#248)
+
 Version 0.1.92 (2025-07-11)
 ---------------------------
 charts/service-deployment: add optional tls secret name override (#245)

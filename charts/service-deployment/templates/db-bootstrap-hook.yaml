@@ -1,5 +1,5 @@
 {{- if .Values.databaseBootstrap.enabled }}
-{{- if .Values.config.secrets }}
+{{- if .Values.databaseBootstrap.secrets }}
 ---
 apiVersion: v1
 kind: Secret
@@ -14,7 +14,7 @@ metadata:
     "helm.sh/hook-weight": "0"
 type: Opaque
 data:
-  {{- range $k, $v := .Values.config.secrets }}
+  {{- range $k, $v := .Values.databaseBootstrap.secrets }}
   {{ $k }}: {{ $v | b64enc | quote }}
   {{- end }}
 {{- end }}
@@ -79,7 +79,7 @@ spec:
           value: "{{ $v }}"
         {{- end }}
         {{- end }}
-        {{- if .Values.config.secrets }}
+        {{- if .Values.databaseBootstrap.secrets }}
         envFrom:
         - secretRef:
             name: {{ include "app.fullname" . }}-db-bootstrap-secret
