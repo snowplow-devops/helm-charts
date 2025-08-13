@@ -1,0 +1,17 @@
+apiVersion: v2
+name: vertical-pod-autoscaler
+description: A Helm Chart to deploy Vertical Pod Autoscaler components
+version: 0.1.0
+appVersion: 1.4.1
+icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+home: https://github.com/snowplow-devops/helm-charts
+sources:
+  - https://github.com/snowplow-devops/helm-charts
+maintainers:
+  - name: ianarsenault
+    url: https://github.com/ianarsenault
+    email: ianarsenault@users.noreply.github.com
+keywords:
+  - vpa
+  - vertical-pod-autoscaler
+  - autoscaling

@@ -1,0 +1,194 @@
+global:
+  # global labels will be applied to all resources deployed by the chart
+  labels: {}
+
+# -- Overrides the full-name given to the deployment resources (default: .Release.Name)
+fullnameOverride: ""
+
+# -- Image pull secrets for all VPA components
+imagePullSecrets: []
+
+vpa:
+  recommender:
+    # -- Enable VPA Recommender component
+    enabled: true
+    # -- Number of recommender replicas
+    replicas: 1
+    image:
+      # -- Image repository for the Recommender default container
+      repository: registry.k8s.io/autoscaling/vpa-recommender
+      # -- (string) Image tag for the Recommender default container; this will default to .Chart.AppVersion if not set
+      tag:
+      # -- Image pull policy for the Recommender default container
+      pullPolicy: IfNotPresent
+    # -- Resource requirements for recommender
+    resources:
+      limits: {}
+      requests:
+        cpu: 50m
+        memory: 500Mi
+    # -- Additional arguments for recommender
+    extraArgs: []
+    # -- Node selector for recommender pods
+    nodeSelector: {}
+    # -- Tolerations for recommender pods
+    tolerations: []
+    # -- Affinity rules for recommender pods
+    affinity: {}
+    # -- Liveness probe configuration for recommender
+    livenessProbe:
+      failureThreshold: 6
+      httpGet:
+        path: /health-check
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 3
+    # -- Readiness probe configuration for recommender
+    readinessProbe:
+      failureThreshold: 120
+      httpGet:
+        path: /health-check
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 3
+
+  updater:
+    # -- Enable VPA Updater component (set to false for recommender-only mode)
+    enabled: true
+    # -- Number of updater replicas
+    replicas: 1
+    image:
+      # -- Image repository for the Updater default container
+      repository: registry.k8s.io/autoscaling/vpa-updater
+      # -- (string) Image tag for the Updater default container; this will default to .Chart.AppVersion if not set
+      tag:
+      # -- Image pull policy for the Updater default container
+      pullPolicy: IfNotPresent
+    # -- Resource requirements for updater
+    resources:
+      limits: {}
+      requests:
+        cpu: 50m
+        memory: 500Mi
+    # -- Additional arguments for updater
+    extraArgs: []
+    # -- Node selector for updater pods
+    nodeSelector: {}
+    # -- Tolerations for updater pods
+    tolerations: []
+    # -- Affinity rules for updater pods
+    affinity: {}
+    # -- Liveness probe configuration for updater
+    livenessProbe:
+      failureThreshold: 6
+      httpGet:
+        path: /health-check
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 3
+    # -- Readiness probe configuration for updater
+    readinessProbe:
+      failureThreshold: 120
+      httpGet:
+        path: /health-check
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 3
+
+  admissionController:
+    # -- Enable VPA Admission Controller component (set to false for recommender-only mode)
+    enabled: true
+    # -- Number of admission controller replicas
+    replicas: 1
+    image:
+      # -- Image repository for the Admission Controller default container
+      repository: registry.k8s.io/autoscaling/vpa-admission-controller
+      # -- (string) Image tag for the Admission Controller default container; this will default to .Chart.AppVersion if not set
+      tag:
+      # -- Image pull policy for the Admission Controller default container
+      pullPolicy: IfNotPresent
+    # -- Resource requirements for admission controller
+    resources:
+      limits: {}
+      requests:
+        cpu: 50m
+        memory: 200Mi
+    # -- Additional arguments for admission controller
+    extraArgs: []
+    # -- Node selector for admission controller pods
+    nodeSelector: {}
+    # -- Tolerations for admission controller pods
+    tolerations: []
+    # -- Affinity rules for admission controller pods
+    affinity: {}
+    # -- TLS configuration for admission webhook
+    tls:
+      # -- Secret name containing TLS certificates (auto-generated if empty)
+      secretName: ""
+      # -- CA bundle for webhook (auto-generated if empty)
+      caBundle: ""
+    # -- Certificate configuration for admission webhook
+    certificate:
+      # -- Create a Certificate resource for the admission webhook (default: true)
+      create: true
+      # -- What issuer to use for the Certificate (default: letsencrypt)
+      issuerName: "letsencrypt"
+      # -- Kind of issuer (default: ClusterIssuer)
+      issuerKind: "ClusterIssuer"
+    # -- Liveness probe configuration for admission controller
+    livenessProbe:
+      failureThreshold: 6
+      httpGet:
+        path: /health-check
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 3
+    # -- Readiness probe configuration for admission controller
+    readinessProbe:
+      failureThreshold: 120
+      httpGet:
+        path: /health-check
+        port: metrics
+        scheme: HTTP
+      periodSeconds: 5
+      successThreshold: 1
+      timeoutSeconds: 3
+
+rbac:
+  # -- Create RBAC resources
+  create: true
+
+serviceAccount:
+  # -- Create ServiceAccount
+  create: true
+  # -- Name of ServiceAccount to use (auto-generated if empty)
+  name: ""
+  # -- Annotations for ServiceAccount
+  annotations: {}
+
+# -- Pod Security Context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+
+# -- Container Security Context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+    - ALL
+
+# -- Priority class for VPA pods
+priorityClassName: ""

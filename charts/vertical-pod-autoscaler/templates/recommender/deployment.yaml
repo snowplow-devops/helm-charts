@@ -1,0 +1,75 @@
+{{- if .Values.vpa.recommender.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vertical-pod-autoscaler.recommender.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: recommender
+spec:
+  replicas: {{ .Values.vpa.recommender.replicas }}
+  selector:
+    matchLabels:
+      {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: recommender
+  template:
+    metadata:
+      labels:
+        {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: recommender
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vertical-pod-autoscaler.recommender.name" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      containers:
+      - name: recommender
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        image: "{{ .Values.vpa.recommender.image.repository }}:{{ .Values.vpa.recommender.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.vpa.recommender.image.pullPolicy }}
+        command:
+        - ./recommender
+        args:
+        - --v=4
+        - --stderrthreshold=info
+        - --pod-recommendation-min-cpu-millicores=15
+        - --pod-recommendation-min-memory-mb=100
+        {{- range .Values.vpa.recommender.extraArgs }}
+        - {{ . }}
+        {{- end }}
+        livenessProbe:
+          {{- toYaml .Values.vpa.recommender.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.vpa.recommender.readinessProbe | nindent 10 }}
+        ports:
+        - name: metrics
+          containerPort: 8942
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.vpa.recommender.resources | nindent 10 }}
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      {{- with .Values.vpa.recommender.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vpa.recommender.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vpa.recommender.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

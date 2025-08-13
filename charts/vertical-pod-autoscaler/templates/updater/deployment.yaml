@@ -1,0 +1,73 @@
+{{- if .Values.vpa.updater.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vertical-pod-autoscaler.updater.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: updater
+spec:
+  replicas: {{ .Values.vpa.updater.replicas }}
+  selector:
+    matchLabels:
+      {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: updater
+  template:
+    metadata:
+      labels:
+        {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: updater
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vertical-pod-autoscaler.updater.name" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      containers:
+      - name: updater
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        image: "{{ .Values.vpa.updater.image.repository }}:{{ .Values.vpa.updater.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.vpa.updater.image.pullPolicy }}
+        command:
+        - ./updater
+        args:
+        - --v=4
+        - --stderrthreshold=info
+        {{- range .Values.vpa.updater.extraArgs }}
+        - {{ . }}
+        {{- end }}
+        livenessProbe:
+          {{- toYaml .Values.vpa.updater.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.vpa.updater.readinessProbe | nindent 10 }}
+        ports:
+        - name: metrics
+          containerPort: 8943
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.vpa.updater.resources | nindent 10 }}
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      {{- with .Values.vpa.updater.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vpa.updater.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vpa.updater.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

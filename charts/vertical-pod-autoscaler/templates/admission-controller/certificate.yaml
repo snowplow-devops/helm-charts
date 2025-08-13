@@ -1,0 +1,19 @@
+{{- if and .Values.vpa.admissionController.enabled .Values.vpa.admissionController.certificate.create (not .Values.vpa.admissionController.tls.secretName) -}}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "vertical-pod-autoscaler.admissionController.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: admission-controller
+spec:
+  secretName: {{ include "vertical-pod-autoscaler.admissionController.name" . }}-tls
+  issuerRef:
+    name: {{ .Values.vpa.admissionController.certificate.issuerName }}
+    kind: {{ .Values.vpa.admissionController.certificate.issuerKind }}
+  commonName: {{ include "vertical-pod-autoscaler.admissionController.name" . }}.{{ .Release.Namespace }}.svc
+  dnsNames:
+  - {{ include "vertical-pod-autoscaler.admissionController.name" . }}.{{ .Release.Namespace }}.svc
+  - {{ include "vertical-pod-autoscaler.admissionController.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+{{- end }}
