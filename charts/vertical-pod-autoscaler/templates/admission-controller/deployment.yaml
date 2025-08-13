@@ -1,0 +1,85 @@
+{{- if .Values.vpa.admissionController.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vertical-pod-autoscaler.admissionController.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: admission-controller
+spec:
+  replicas: {{ .Values.vpa.admissionController.replicas }}
+  selector:
+    matchLabels:
+      {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: admission-controller
+  template:
+    metadata:
+      labels:
+        {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: admission-controller
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "vertical-pod-autoscaler.admissionController.name" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      containers:
+      - name: admission-controller
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        image: "{{ .Values.vpa.admissionController.image.repository }}:{{ .Values.vpa.admissionController.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.vpa.admissionController.image.pullPolicy }}
+        command:
+        - ./admission-controller
+        args:
+        - --v=4
+        - --stderrthreshold=info
+        - --reload-cert
+        {{- range .Values.vpa.admissionController.extraArgs }}
+        - {{ . }}
+        {{- end }}
+        livenessProbe:
+          {{- toYaml .Values.vpa.admissionController.livenessProbe | nindent 10 }}
+        readinessProbe:
+          {{- toYaml .Values.vpa.admissionController.readinessProbe | nindent 10 }}
+        ports:
+        - name: webhook
+          containerPort: 8000
+          protocol: TCP
+        - name: metrics
+          containerPort: 8944
+          protocol: TCP
+        resources:
+          {{- toYaml .Values.vpa.admissionController.resources | nindent 10 }}
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - name: tls-certs
+          mountPath: /etc/tls-certs
+          readOnly: true
+      volumes:
+      - name: tls-certs
+        secret:
+          secretName: {{ .Values.vpa.admissionController.tls.secretName | default (printf "%s-tls" (include "vertical-pod-autoscaler.admissionController.name" .)) }}
+      {{- with .Values.vpa.admissionController.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vpa.admissionController.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.vpa.admissionController.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

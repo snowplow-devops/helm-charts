@@ -1,0 +1,19 @@
+{{- if .Values.vpa.recommender.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vertical-pod-autoscaler.recommender.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: recommender
+spec:
+  selector:
+    {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: recommender
+  ports:
+  - name: metrics
+    port: 8942
+    targetPort: metrics
+    protocol: TCP
+{{- end }}

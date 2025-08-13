@@ -1,0 +1,19 @@
+{{- if .Values.vpa.updater.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vertical-pod-autoscaler.updater.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: updater
+spec:
+  selector:
+    {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: updater
+  ports:
+  - name: metrics
+    port: 8943
+    targetPort: metrics
+    protocol: TCP
+{{- end }}

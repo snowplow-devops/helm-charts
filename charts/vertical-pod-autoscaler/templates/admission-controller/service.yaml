@@ -1,0 +1,23 @@
+{{- if .Values.vpa.admissionController.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "vertical-pod-autoscaler.admissionController.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: admission-controller
+spec:
+  selector:
+    {{- include "vertical-pod-autoscaler.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: admission-controller
+  ports:
+  - name: webhook
+    port: 443
+    targetPort: webhook
+    protocol: TCP
+  - name: metrics
+    port: 8944
+    targetPort: metrics
+    protocol: TCP
+{{- end }}
