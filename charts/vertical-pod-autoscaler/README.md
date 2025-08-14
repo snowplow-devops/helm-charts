@@ -29,9 +29,11 @@ _Note_: VPA requires a metrics server to be running in your cluster and should n
 ## Prerequisites
 
 - Kubernetes cluster with RBAC enabled
-- [cert-manager](https://cert-manager.io/) installed for TLS certificate management
 - [Metrics Server](https://github.com/kubernetes-sigs/metrics-server) running in the cluster
 - Cluster admin permissions for RBAC creation
+- For admission controller webhook TLS:
+  - Default: Auto-generated self-signed certificates (no additional setup required)
+  - Production: [cert-manager](https://cert-manager.io/) installed (set `vpa.admissionController.certManager.enabled=true`)
 
 ## Installing the Chart
 
@@ -51,13 +53,14 @@ helm upgrade --install vertical-pod-autoscaler snowplow-devops/vertical-pod-auto
   --set vpa.admissionController.enabled=false
 ```
 
-Install with custom cert-manager issuer:
+Install with cert-manager for automatic TLS certificate management:
 
 ```bash
 helm upgrade --install vertical-pod-autoscaler snowplow-devops/vertical-pod-autoscaler \
   --namespace kube-system \
-  --set vpa.admissionController.certificate.issuerName=my-cluster-issuer \
-  --set vpa.admissionController.certificate.issuerKind=ClusterIssuer
+  --set vpa.admissionController.certManager.enabled=true \
+  --set vpa.admissionController.certManager.issuerName=my-cluster-issuer \
+  --set vpa.admissionController.certManager.issuerKind=ClusterIssuer
 ```
 
 ## Uninstalling the Chart
@@ -93,9 +96,9 @@ kubectl delete clusterroles,clusterrolebindings -l app.kubernetes.io/name=vertic
 | serviceAccount.create | bool | `true` | Create ServiceAccount |
 | serviceAccount.name | string | `""` | Name of ServiceAccount to use |
 | vpa.admissionController.affinity | object | `{}` | Affinity rules for admission controller pods |
-| vpa.admissionController.certificate.create | bool | `true` | Create a Certificate resource for the admission webhook |
-| vpa.admissionController.certificate.issuerKind | string | `"ClusterIssuer"` | Kind of issuer |
-| vpa.admissionController.certificate.issuerName | string | `"letsencrypt"` | What issuer to use for the Certificate |
+| vpa.admissionController.certManager.enabled | bool | `false` | Use cert-manager to generate certificates (default: auto-generated self-signed certs) |
+| vpa.admissionController.certManager.issuerKind | string | `"ClusterIssuer"` | Kind of issuer |
+| vpa.admissionController.certManager.issuerName | string | `"letsencrypt"` | What issuer to use for the Certificate |
 | vpa.admissionController.enabled | bool | `true` | Enable VPA Admission Controller component |
 | vpa.admissionController.extraArgs | list | `[]` | Additional arguments for admission controller |
 | vpa.admissionController.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy for the Admission Controller |
@@ -108,8 +111,6 @@ kubectl delete clusterroles,clusterrolebindings -l app.kubernetes.io/name=vertic
 | vpa.admissionController.resources.limits | object | `{}` | Resource limits for admission controller |
 | vpa.admissionController.resources.requests.cpu | string | `"50m"` | CPU request for admission controller |
 | vpa.admissionController.resources.requests.memory | string | `"200Mi"` | Memory request for admission controller |
-| vpa.admissionController.tls.caBundle | string | `""` | CA bundle for webhook |
-| vpa.admissionController.tls.secretName | string | `""` | Secret name containing TLS certificates |
 | vpa.admissionController.tolerations | list | `[]` | Tolerations for admission controller pods |
 | vpa.recommender.affinity | object | `{}` | Affinity rules for recommender pods |
 | vpa.recommender.enabled | bool | `true` | Enable VPA Recommender component |

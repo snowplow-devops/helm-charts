@@ -1,4 +1,20 @@
 {{- if .Values.vpa.admissionController.enabled -}}
+{{- if not .Values.vpa.admissionController.certManager.enabled }}
+{{- $certs := fromYaml (include "vertical-pod-autoscaler.admissionController.selfSignedCert" .) }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "vertical-pod-autoscaler.admissionController.name" . }}-tls
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+    app.kubernetes.io/component: admission-controller
+type: kubernetes.io/tls
+data:
+  {{- $certs | toYaml | nindent 2 }}
+{{- end }}
+---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
@@ -6,8 +22,10 @@ metadata:
   labels:
     {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
     app.kubernetes.io/component: admission-controller
+  {{- if .Values.vpa.admissionController.certManager.enabled }}
   annotations:
     cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "vertical-pod-autoscaler.admissionController.name" . }}
+  {{- end }}
 webhooks:
 - name: vpa.k8s.io
   admissionReviewVersions:
@@ -16,6 +34,10 @@ webhooks:
   failurePolicy: Ignore
   sideEffects: None
   clientConfig:
+    {{- if not .Values.vpa.admissionController.certManager.enabled }}
+    {{- $certs := fromYaml (include "vertical-pod-autoscaler.admissionController.selfSignedCert" .) }}
+    caBundle: {{ $certs.caBundle }}
+    {{- end }}
     service:
       name: {{ include "vertical-pod-autoscaler.admissionController.name" . }}
       namespace: {{ .Release.Namespace }}

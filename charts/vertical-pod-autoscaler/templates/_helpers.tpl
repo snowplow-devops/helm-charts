@@ -91,3 +91,19 @@ Admission Controller component name
 {{- define "vertical-pod-autoscaler.admissionController.name" -}}
 {{ include "vertical-pod-autoscaler.fullname" . }}-admission-controller
 {{- end }}
+
+{{/*
+Generate self-signed certificate for admission controller webhook (only when cert-manager is disabled)
+*/}}
+{{- define "vertical-pod-autoscaler.admissionController.selfSignedCert" -}}
+{{- if not .Values.vpa.admissionController.certManager.enabled -}}
+{{- $serviceName := include "vertical-pod-autoscaler.admissionController.name" . -}}
+{{- $ca := genCA "vpa-ca" 365 -}}
+{{- $altNames := list (printf "%s.%s.svc" $serviceName .Release.Namespace) (printf "%s.%s.svc.cluster.local" $serviceName .Release.Namespace) -}}
+{{- $cert := genSignedCert $serviceName nil $altNames 365 $ca -}}
+ca.crt: {{ $ca.Cert | b64enc }}
+tls.crt: {{ $cert.Cert | b64enc }}
+tls.key: {{ $cert.Key | b64enc }}
+caBundle: {{ $ca.Cert | b64enc }}
+{{- end -}}
+{{- end -}}
