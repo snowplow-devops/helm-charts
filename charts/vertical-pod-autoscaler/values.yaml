@@ -129,16 +129,10 @@ vpa:
     tolerations: []
     # -- Affinity rules for admission controller pods
     affinity: {}
-    # -- TLS configuration for admission webhook
-    tls:
-      # -- Secret name containing TLS certificates (auto-generated if empty)
-      secretName: ""
-      # -- CA bundle for webhook (auto-generated if empty)
-      caBundle: ""
-    # -- Certificate configuration for admission webhook
-    certificate:
-      # -- Create a Certificate resource for the admission webhook (default: true)
-      create: true
+    # -- Cert-manager configuration for admission webhook
+    certManager:
+      # -- Use cert-manager to generate certificates (default: false - uses auto-generated self-signed certs)
+      enabled: false
       # -- What issuer to use for the Certificate (default: letsencrypt)
       issuerName: "letsencrypt"
       # -- Kind of issuer (default: ClusterIssuer)

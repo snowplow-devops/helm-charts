@@ -69,7 +69,7 @@ spec:
       volumes:
       - name: tls-certs
         secret:
-          secretName: {{ .Values.vpa.admissionController.tls.secretName | default (printf "%s-tls" (include "vertical-pod-autoscaler.admissionController.name" .)) }}
+          secretName: {{ printf "%s-tls" (include "vertical-pod-autoscaler.admissionController.name" .) }}
       {{- with .Values.vpa.admissionController.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
