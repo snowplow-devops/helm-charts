@@ -35,8 +35,6 @@ spec:
           {{- toYaml .Values.securityContext | nindent 10 }}
         image: "{{ .Values.vpa.updater.image.repository }}:{{ .Values.vpa.updater.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.vpa.updater.image.pullPolicy }}
-        command:
-        - ./updater
         args:
         - --v=4
         - --stderrthreshold=info

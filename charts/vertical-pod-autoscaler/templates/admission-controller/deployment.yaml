@@ -35,8 +35,6 @@ spec:
           {{- toYaml .Values.securityContext | nindent 10 }}
         image: "{{ .Values.vpa.admissionController.image.repository }}:{{ .Values.vpa.admissionController.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.vpa.admissionController.image.pullPolicy }}
-        command:
-        - ./admission-controller
         args:
         - --v=4
         - --stderrthreshold=info

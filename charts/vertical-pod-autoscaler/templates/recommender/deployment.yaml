@@ -35,8 +35,6 @@ spec:
           {{- toYaml .Values.securityContext | nindent 10 }}
         image: "{{ .Values.vpa.recommender.image.repository }}:{{ .Values.vpa.recommender.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.vpa.recommender.image.pullPolicy }}
-        command:
-        - ./recommender
         args:
         - --v=4
         - --stderrthreshold=info
