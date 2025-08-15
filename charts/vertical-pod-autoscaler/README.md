@@ -176,5 +176,3 @@ Check VPA component status:
 kubectl get pods -n kube-system -l app.kubernetes.io/name=vertical-pod-autoscaler
 kubectl logs -n kube-system -l app.kubernetes.io/component=recommender
 ```
-
-For detailed operational guidance, troubleshooting, and advanced configuration, see [docs.md](./docs.md).
