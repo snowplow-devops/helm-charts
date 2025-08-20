@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "spark-thrift-server.fullname" . }}
+  labels:
+    {{- include "spark-thrift-server.labels" . | nindent 4 }}
+binaryData:
+{{- range $path, $_ := .Files.Glob "run.sh" }}
+  run.sh: {{ tpl ($.Files.Get $path) $ | b64enc }}
+{{ end }}
