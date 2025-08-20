@@ -1,3 +1,7 @@
+Version 0.1.94 (2025-08-21)
+---------------------------
+charts/vertical-pod-autoscaler: Adds vertical pod autoscaler chart (#249)
+
 Version 0.1.93 (2025-08-07)
 ---------------------------
 charts/service-deployment: database bootstrap job (#248)
