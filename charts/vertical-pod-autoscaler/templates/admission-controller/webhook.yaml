@@ -10,7 +10,7 @@ metadata:
   labels:
     {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
     app.kubernetes.io/component: admission-controller
-type: kubernetes.io/tls
+type: Opaque
 data:
   {{- $certs | toYaml | nindent 2 }}
 {{- end }}
