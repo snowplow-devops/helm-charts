@@ -101,9 +101,9 @@ Generate self-signed certificate for admission controller webhook (only when cer
 {{- $ca := genCA "vpa-ca" 365 -}}
 {{- $altNames := list (printf "%s.%s.svc" $serviceName .Release.Namespace) (printf "%s.%s.svc.cluster.local" $serviceName .Release.Namespace) -}}
 {{- $cert := genSignedCert $serviceName nil $altNames 365 $ca -}}
-ca.crt: {{ $ca.Cert | b64enc }}
-tls.crt: {{ $cert.Cert | b64enc }}
-tls.key: {{ $cert.Key | b64enc }}
+caCert.pem: {{ $ca.Cert | b64enc }}
+serverCert.pem: {{ $cert.Cert | b64enc }}
+serverKey.pem: {{ $cert.Key | b64enc }}
 caBundle: {{ $ca.Cert | b64enc }}
 {{- end -}}
 {{- end -}}
