@@ -7,6 +7,7 @@ icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/
 home: https://github.com/snowplow-devops/helm-charts
 sources:
   - https://github.com/snowplow-devops/helm-charts
+  - https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
 maintainers:
   - name: ianarsenault
     url: https://github.com/ianarsenault
