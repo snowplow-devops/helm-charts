@@ -24,6 +24,35 @@ _Note_: This should be a long running process - if you are looking for cron-base
 
 This chart won't solve for every possible option of deploying a service - it is meant to serve as an opinionated starting point to get something working decently well.  For more flexibility open a PR or fork this chart to suit your specific needs.
 
+### VPA RBAC Requirements
+
+If you enable VPA (`vpa.enabled: true`), you may need to ensure that the appropriate RBAC permissions are in place for the service account to manage VPA resources. This typically requires a ClusterRole with permissions to manage `verticalpodautoscalers` resources in the `autoscaling.k8s.io` API group, bound to your service account via a ClusterRoleBinding.
+
+Example RBAC configuration:
+```yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vpa-manager
+rules:
+- apiGroups: ["autoscaling.k8s.io"]
+  resources: ["verticalpodautoscalers"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vpa-manager-binding
+subjects:
+- kind: ServiceAccount
+  name: your-service-account-name
+  namespace: your-namespace
+roleRef:
+  kind: ClusterRole
+  name: vpa-manager
+  apiGroup: rbac.authorization.k8s.io
+```
+
 ## Installing the Chart
 
 Install or upgrading the chart with default configuration:
@@ -78,6 +107,8 @@ helm delete service-deployment
 | hpa.deploy | bool | `true` | Whether to deploy HPA rules |
 | hpa.maxReplicas | int | `20` | Maximum number of pods to deploy |
 | hpa.minReplicas | int | `1` | Minimum number of pods to deploy |
+| vpa.enabled | bool | `false` | Whether to deploy VPA rules |
+| vpa.spec | object | `{}` | VPA resource specification (accepts any valid VPA spec fields) |
 | image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | image.repository | string | `"nginx"` |  |

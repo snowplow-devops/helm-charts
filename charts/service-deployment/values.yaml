@@ -112,6 +112,25 @@ hpa:
         averageUtilization: 75
   behavior: {}
 
+vpa:
+  # -- Whether to deploy VPA rules
+  enabled: false
+  # -- VPA resource specification (accepts any valid VPA spec fields)
+  spec: {}
+  # Example:
+  # spec:
+  #   resourcePolicy:
+  #     containerPolicies:
+  #     - containerName: '*'
+  #       maxAllowed:
+  #         cpu: 2
+  #         memory: 4Gi
+  #       minAllowed:
+  #         cpu: 100m
+  #         memory: 128Mi
+  #   updatePolicy:
+  #     updateMode: "Auto"
+
 service:
   # -- Whether to setup service bindings (note: only NodePort is supported)
   deploy: true
