@@ -118,7 +118,7 @@ vpa:
   # -- VPA resource specification (accepts any valid VPA spec fields)
   spec: {}
   # Examples of common VPA configurations:
-  # 
+  #
   # Basic auto-scaling (recommended for most workloads):
   # spec:
   #   updatePolicy:
@@ -132,12 +132,12 @@ vpa:
   #       maxAllowed:
   #         cpu: 2
   #         memory: 4Gi
-  # 
+  #
   # Recommendation-only mode (for testing):
   # spec:
   #   updatePolicy:
   #     updateMode: "Off"
-  # 
+  #
   # Conservative scaling with controlled resources:
   # spec:
   #   updatePolicy:
