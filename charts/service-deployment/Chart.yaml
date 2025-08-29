@@ -1,6 +1,6 @@
 apiVersion: v2
 name: service-deployment
-description: A Helm Chart to setup a generic deployment with optional service/hpa bindings
+description: A Helm Chart to setup a generic deployment with optional service/hpa/vpa bindings
 version: 0.27.0
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts

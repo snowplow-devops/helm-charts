@@ -117,19 +117,42 @@ vpa:
   enabled: false
   # -- VPA resource specification (accepts any valid VPA spec fields)
   spec: {}
-  # Example:
+  # Examples of common VPA configurations:
+  # 
+  # Basic auto-scaling (recommended for most workloads):
   # spec:
+  #   updatePolicy:
+  #     updateMode: "Auto"
   #   resourcePolicy:
   #     containerPolicies:
   #     - containerName: '*'
-  #       maxAllowed:
-  #         cpu: 2
-  #         memory: 4Gi
   #       minAllowed:
   #         cpu: 100m
   #         memory: 128Mi
+  #       maxAllowed:
+  #         cpu: 2
+  #         memory: 4Gi
+  # 
+  # Recommendation-only mode (for testing):
+  # spec:
   #   updatePolicy:
-  #     updateMode: "Auto"
+  #     updateMode: "Off"
+  # 
+  # Conservative scaling with controlled resources:
+  # spec:
+  #   updatePolicy:
+  #     updateMode: "Recreate"
+  #   resourcePolicy:
+  #     containerPolicies:
+  #     - containerName: '*'
+  #       controlledResources: ["cpu", "memory"]
+  #       controlledValues: "RequestsAndLimits"
+  #       minAllowed:
+  #         cpu: 100m
+  #         memory: 128Mi
+  #       maxAllowed:
+  #         cpu: 1
+  #         memory: 2Gi
 
 service:
   # -- Whether to setup service bindings (note: only NodePort is supported)
