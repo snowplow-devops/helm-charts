@@ -122,7 +122,7 @@ vpa:
   # Basic auto-scaling (recommended for most workloads):
   # spec:
   #   updatePolicy:
-  #     updateMode: "Auto"
+  #     updateMode: "Recreate"
   #   resourcePolicy:
   #     containerPolicies:
   #     - containerName: '*'
