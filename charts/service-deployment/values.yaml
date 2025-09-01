@@ -263,48 +263,81 @@ persistentVolume:
   # -- Set to "-" or "" to disable dynamic provisioning, if undefined uses the default provisioner
   # storageClass: "-"
 
-# Database Bootstrap Hook Configuration
-databaseBootstrap:
-  # -- Whether to enable the database bootstrap hook
-  enabled: false
-  # -- Script to execute in the bootstrap job
-  script: |
-    echo "Starting database bootstrap..."
-    # Your bootstrap logic here
-    echo "Bootstrap completed!"
-  # -- Image to use for bootstrap job (defaults to postgres:alpine for DB operations)
-  image: postgres:alpine
-  # -- When to run the hook (pre-install or pre-install,pre-upgrade)
-  hookPhase: "pre-install"
-  # -- Hook deletion policy (hook-succeeded, hook-failed, or before-hook-creation)
-  hookDeletePolicy: "before-hook-creation,hook-succeeded"
-  # -- Maximum number of retries before marking job as failed
-  backoffLimit: 3
-  # -- Maximum time in seconds for the job to run
-  activeDeadlineSeconds: 300
-  # -- Optional SQL scripts to mount at /bootstrap-sql/
-  sqlScripts:
-    []
-    # - name: "01-create-schema.sql"
-    #   content: |
-    #     CREATE SCHEMA IF NOT EXISTS myschema;
-    # - name: "02-create-tables.sql"
-    #   content: |
-    #     CREATE TABLE IF NOT EXISTS myschema.mytable (
-    #       id SERIAL PRIMARY KEY,
-    #       name VARCHAR(255)
-    #     );
-  # -- Resource limits for the bootstrap job
-  resources:
-    {}
-    # limits:
-    #   cpu: 200m
-    #   memory: 256Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
-  # -- Secrets specific to database bootstrap (separate from main deployment secrets)
-  secrets:
-    {}
-    # DB_ADMIN_PASSWORD: "your-admin-password"
-    # DB_HOST: "your-db-host"
+
+# Hooks Configuration
+hooks:
+  {}
+  # Example: Database Bootstrap Hook
+  # db-bootstrap:
+  #   # -- Whether to enable this hook
+  #   enabled: false
+  #   # -- Container image to use for the hook
+  #   image: postgres:alpine
+  #   # -- When to run the hook (pre-install, post-install, pre-upgrade, post-upgrade, pre-delete, post-delete, pre-rollback, post-rollback)
+  #   hookPhase: "pre-install"
+  #   # -- Hook deletion policy (hook-succeeded, hook-failed, before-hook-creation)
+  #   hookDeletePolicy: "before-hook-creation,hook-succeeded"
+  #   # -- Hook weight for execution order (lower numbers run first)
+  #   hookWeight: 2
+  #   # -- Maximum number of retries before marking job as failed
+  #   backoffLimit: 3
+  #   # -- Maximum time in seconds for the job to run
+  #   activeDeadlineSeconds: 300
+  #   # -- Time in seconds after job completion before cleanup (default: 86400 = 24 hours)
+  #   ttlSecondsAfterFinished: 86400
+  #   # -- Script to execute in the hook job
+  #   script: |
+  #     echo "Starting database bootstrap..."
+  #     # Your bootstrap logic here
+  #     echo "Bootstrap completed!"
+  #   # -- Optional: Custom command to override default /bin/sh -c
+  #   command: []
+  #   # -- Optional: Custom args (if not using script)
+  #   args: []
+  #   # -- Environment variables specific to this hook
+  #   env:
+  #     HOOK_TYPE: "bootstrap"
+  #   # -- Secrets specific to this hook
+  #   secrets:
+  #     DB_ADMIN_PASSWORD: "your-admin-password"
+  #     DB_HOST: "your-db-host"
+  #   # -- Configuration files to mount in the hook container
+  #   configFiles:
+  #     - name: "01-create-schema.sql"
+  #       content: |
+  #         CREATE SCHEMA IF NOT EXISTS myschema;
+  #     - name: "02-create-tables.sql"
+  #       content: |
+  #         CREATE TABLE IF NOT EXISTS myschema.mytable (
+  #           id SERIAL PRIMARY KEY,
+  #           name VARCHAR(255)
+  #         );
+  #   # -- Path where config files will be mounted (default: /hook-config)
+  #   configMountPath: "/bootstrap-sql"
+  #   # -- Resource limits for the hook job
+  #   resources:
+  #     limits:
+  #       cpu: 200m
+  #       memory: 256Mi
+  #     requests:
+  #       cpu: 100m
+  #       memory: 128Mi
+  #   # -- Additional volumes to mount
+  #   volumes: []
+  #   # -- Additional volume mounts
+  #   volumeMounts: []
+  #
+  # Example: Database Cleanup Hook
+  # db-cleanup:
+  #   enabled: false
+  #   image: postgres:alpine
+  #   hookPhase: "post-delete"
+  #   hookDeletePolicy: "hook-succeeded"
+  #   hookWeight: 1
+  #   script: |
+  #     echo "Starting database cleanup..."
+  #     # Your cleanup logic here
+  #     echo "Cleanup completed!"
+  #   secrets:
+  #     DB_ADMIN_PASSWORD: "your-admin-password"
+  #     DB_HOST: "your-db-host"

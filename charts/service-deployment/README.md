@@ -57,16 +57,6 @@ helm delete service-deployment
 | config.secretsB64 | object | `{}` | Map of base64-encoded secrets that will be exposed as environment variables within the job |
 | config.sharedNamespaceConfigMaps | list | `[]` | List of config maps from same namespace to reference and mount in the deployment |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
-| databaseBootstrap.activeDeadlineSeconds | int | `300` | Maximum time in seconds for the job to run |
-| databaseBootstrap.backoffLimit | int | `3` | Maximum number of retries before marking job as failed |
-| databaseBootstrap.enabled | bool | `false` | Whether to enable the database bootstrap hook |
-| databaseBootstrap.hookDeletePolicy | string | `"before-hook-creation,hook-succeeded"` | Hook deletion policy (hook-succeeded, hook-failed, or before-hook-creation) |
-| databaseBootstrap.hookPhase | string | `"pre-install"` | When to run the hook (pre-install or pre-install,pre-upgrade) |
-| databaseBootstrap.image | string | `"postgres:alpine"` | Image to use for bootstrap job (defaults to postgres:alpine for DB operations) |
-| databaseBootstrap.resources | object | `{}` | Resource limits for the bootstrap job |
-| databaseBootstrap.script | string | `"echo \"Starting database bootstrap...\"\n# Your bootstrap logic here\necho \"Bootstrap completed!\""` | Script to execute in the bootstrap job |
-| databaseBootstrap.secrets | object | `{}` | Secrets specific to database bootstrap (separate from main deployment secrets) |
-| databaseBootstrap.sqlScripts | list | `[]` | Optional SQL scripts to mount at /bootstrap-sql/ |
 | deployment.kind | string | `"Deployment"` | Can be either a "Deployment" or "StatefulSet" |
 | deployment.podLabels | object | `{}` | Map of labels that will be added to each pod in the deployment |
 | deployment.scaleToZero | bool | `false` | When enabled, disables the HPA and scales the deployment to zero replicas |
@@ -82,6 +72,7 @@ helm delete service-deployment
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp , azure) |
 | global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
+| hooks | object | `{}` | Optional pre/post install/upgrade hooks. Each hook can be configured with image, script, secrets, configFiles, etc. |
 | hpa.metrics | object | `[{"type":"Resource","resource":{"name":"cpu","target":{"type":"Utilization","averageUtilization":75}}}]` | Metrics for HPA configuration |
 | hpa.behavior | object | `{}` |  |
 | hpa.deploy | bool | `true` | Whether to deploy HPA rules |
