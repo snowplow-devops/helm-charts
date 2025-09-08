@@ -1,3 +1,7 @@
+Version 0.1.95 (2025-09-08)
+---------------------------
+charts/service-deployment: Add vertical pod autoscaler support (#188)
+
 Version 0.1.94 (2025-08-21)
 ---------------------------
 charts/vertical-pod-autoscaler: Adds vertical pod autoscaler chart (#249)
