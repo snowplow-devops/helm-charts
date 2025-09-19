@@ -37,3 +37,7 @@ prometheus_log_retention_in_days: 30
 
 # -- Set tags to log groups created by otel collector awsemfexporter
 tags: {}
+
+# -- List of regexp patterns to exclude pods from Container Insights metrics collection
+# Example: [".*kclmon-cron.*", ".*metrics-relay.*"]
+excludedPodPatterns: []
