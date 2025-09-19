@@ -17,6 +17,15 @@ data:
     processors:
       batch/metrics:
         timeout: 60s
+{{- if .Values.excludedPodPatterns }}
+      filter/exclude_pods:
+        error_mode: ignore
+        metrics:
+          metric:
+{{- range .Values.excludedPodPatterns }}
+            - 'IsMatch(resource.attributes["PodName"], "{{ . }}")'
+{{- end }}
+{{- end }}
 
     exporters:
       awsemf:
@@ -55,7 +64,7 @@ data:
       pipelines:
         metrics:
           receivers: [awscontainerinsightreceiver]
-          processors: [batch/metrics]
+          processors: [{{- if .Values.excludedPodPatterns }}filter/exclude_pods, {{- end }}batch/metrics]
           exporters: [awsemf]
 
       extensions: [health_check]
@@ -91,6 +100,15 @@ data:
     processors:
       batch/metrics:
         timeout: 60s
+{{- if .Values.excludedPodPatterns }}
+      filter/exclude_pods:
+        error_mode: ignore
+        metrics:
+          metric:
+{{- range .Values.excludedPodPatterns }}
+            - 'IsMatch(resource.attributes["PodName"], "{{ . }}")'
+{{- end }}
+{{- end }}
       resourcedetection/ec2:
         detectors: [ env ]
         timeout: 2s
@@ -162,7 +180,7 @@ data:
       pipelines:
         metrics:
           receivers: [awscontainerinsightreceiver]
-          processors: [batch/metrics]
+          processors: [{{- if .Values.excludedPodPatterns }}filter/exclude_pods, {{- end }}batch/metrics]
           exporters: [awsemf]
         metrics/prometheus:
           receivers: [prometheus]
