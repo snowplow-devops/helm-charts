@@ -1,3 +1,7 @@
+Version 0.1.96 (2025-09-22)
+---------------------------
+charts/aws-otel-collector: Add pod exclusion filter support to reduce CloudWatch costs (#379)
+
 Version 0.1.95 (2025-09-08)
 ---------------------------
 charts/service-deployment: Add vertical pod autoscaler support (#188)
