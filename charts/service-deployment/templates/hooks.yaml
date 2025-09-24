@@ -62,6 +62,8 @@ spec:
         app.kubernetes.io/component: {{ $hookName }}-hook
     spec:
       restartPolicy: Never
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
       {{- if $hookConfig.configFiles }}
       volumes:
       - name: config-files
