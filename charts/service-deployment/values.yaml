@@ -383,3 +383,7 @@ hooks:
   #   secrets:
   #     DB_ADMIN_PASSWORD: "your-admin-password"
   #     DB_HOST: "your-db-host"
+
+# -- Extra Kubernetes objects to deploy alongside the service
+# This allows for additional resources like Middleware, NetworkPolicy, etc.
+extraObjects: []
