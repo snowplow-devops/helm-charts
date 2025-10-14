@@ -1,0 +1,27 @@
+{{- define "common.hpa" -}}
+{{- $global := .Values.global -}}
+{{- range .Values.services }}
+{{- if and .hpa.deploy (not .deployment.scaleToZero) }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .name }}
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: {{ .deployment.kind }}
+    name: {{ .name }}
+  minReplicas: {{ .hpa.minReplicas }}
+  maxReplicas: {{ .hpa.maxReplicas }}
+  metrics:
+    {{- toYaml .hpa.metrics | nindent 4 }}
+  behavior:
+    {{- toYaml .hpa.behavior | nindent 4 }}
+{{- end }}
+{{- end }}
+{{- end }}

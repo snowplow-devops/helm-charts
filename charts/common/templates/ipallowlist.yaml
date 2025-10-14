@@ -1,0 +1,22 @@
+{{- define "common.ipallowlist" -}}
+{{- $global := .Values.global -}}
+{{- range .Values.services }}
+{{- if and .service.ingressIPAllowlist .service.ingress }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .name }}-ipallowlist
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ipWhiteList:
+    sourceRange:
+      {{- range $ip := .service.ingressIPAllowlist }}
+      - "{{ $ip }}"
+      {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

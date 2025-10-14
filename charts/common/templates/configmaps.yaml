@@ -1,0 +1,31 @@
+{{- define "common.configmaps" -}}
+{{- $global := .Values.global -}}
+{{- range .Values.services }}
+{{- if .configMaps }}
+{{- range $v := .configMaps }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $v.name }}
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+binaryData:
+  {{- range $f := $v.files }}
+  {{- if $f.contentsB64 }}
+  {{ $f.key }}: "{{ $f.contentsB64 }}"
+  {{- end }}
+  {{- end }}
+data:
+  {{- range $f := $v.files }}
+  {{- if $f.contentsFile }}
+  {{ $f.key }}: |-
+{{ $f.contentsFile | indent 4 }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

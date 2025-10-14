@@ -1,3 +1,7 @@
+Version 0.1.99 (2025-10-15)
+---------------------------
+charts/common: Initial release of common library chart with reusable template helpers
+
 Version 0.1.98 (2025-10-15)
 ---------------------------
 charts/service-deployment: Add extraObjects for additional kubernetes objects (#261)
