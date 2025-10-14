@@ -12,6 +12,8 @@ schedules: []
 # - suspend: false
 #   crontab: "*/1 * * * *"
 #   name: "default" # Each schedule must have a unique name
+#   env: {}
+#     hello_env: "world"
 concurrencyPolicy: "Forbid"
 restartPolicy: "Never"
 failedJobsHistoryLimit: 1
