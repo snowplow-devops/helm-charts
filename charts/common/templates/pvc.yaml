@@ -1,0 +1,38 @@
+{{- define "common.pvc" -}}
+{{- $global := .Values.global -}}
+{{- $release := .Release -}}
+{{- range .Values.services }}
+{{- if and (.persistentVolume.enabled) (eq .deployment.kind "Deployment") }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  {{- if .persistentVolume.annotations }}
+  annotations:
+{{ toYaml .persistentVolume.annotations | indent 4 }}
+  {{- end }}
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with .persistentVolume.labels }}
+       {{- toYaml . | nindent 4 }}
+    {{- end }}
+  name: {{ .name }}
+  namespace: {{ $release.Namespace }}
+spec:
+  accessModes:
+{{ toYaml .persistentVolume.accessModes | indent 4 }}
+{{- if .persistentVolume.storageClass }}
+{{- if (eq "-" .persistentVolume.storageClass) }}
+  storageClassName: ""
+{{- else }}
+  storageClassName: "{{ .persistentVolume.storageClass }}"
+{{- end }}
+{{- end }}
+  resources:
+    requests:
+      storage: "{{ .persistentVolume.size }}"
+{{- end }}
+{{- end }}
+{{- end }}

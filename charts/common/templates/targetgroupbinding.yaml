@@ -1,0 +1,23 @@
+{{- define "common.targetgroupbinding" -}}
+{{- $global := .Values.global -}}
+{{- range .Values.services }}
+{{- if .service.deploy }}
+{{- if and (eq $global.cloud "aws")  (ne .service.aws.targetGroupARN "") }}
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ .name }}
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  serviceRef:
+    name: {{ .name }}
+    port: {{ .service.port }}
+  targetGroupARN: {{ .service.aws.targetGroupARN }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,234 @@
+{{- define "common.deployment" -}}
+{{- $global := .Values.global -}}
+{{- $release := .Release -}}
+{{- range .Values.services }}
+---
+apiVersion: apps/v1
+kind: {{ .deployment.kind }}
+metadata:
+  name: {{ .name }}
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .deployment.scaleToZero }}
+  replicas: 0
+  {{- else if not .hpa.deploy }}
+  replicas: {{ .deployment.replicas }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  strategy:
+    type: {{ .deployment.strategy.type }}
+    {{- if eq .deployment.strategy.type "RollingUpdate"}}
+    rollingUpdate:
+      maxUnavailable: {{ .deployment.strategy.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .deployment.strategy.rollingUpdate.maxSurge }}
+    {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- with $global.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if .deployment.podLabels }}
+        {{- toYaml .deployment.podLabels | nindent 8 }}
+        {{- end }}
+        app: {{ .name }}
+        {{- if eq $global.cloud "azure" }}
+        azure.workload.identity/use: "true"
+        {{- end }}
+      annotations:
+        checksum/values: "{{ toJson . | sha256sum }}"
+    spec:
+      {{- if .cloudserviceaccount.deploy }}
+      serviceAccount: {{ .cloudserviceaccount.name }}
+      serviceAccountName: {{ .cloudserviceaccount.name }}
+      {{- else }}
+      serviceAccount: ""
+      serviceAccountName: ""
+      {{- end }}
+      automountServiceAccountToken: true
+      terminationGracePeriodSeconds: {{ .terminationGracePeriodSeconds }}
+
+      {{- if .priorityClassName }}
+      priorityClassName: {{ .priorityClassName }}
+      {{- end }}
+
+      {{- if not .image.isRepositoryPublic }}
+      imagePullSecrets:
+      - name: {{ .dockerconfigjson.name }}
+      {{- end }}
+
+      volumes:
+      {{- range $v := .configMaps }}
+      - configMap:
+          name: {{ $v.name }}
+          optional: false
+        name: {{ $v.name }}
+      {{- end }}
+      {{- range $v := .config.sharedNamespaceConfigMaps }}
+      - configMap:
+          name: {{ $v.name }}
+          optional: false
+        name: {{ $v.name }}
+      {{- end }}
+      {{- if and (.persistentVolume.enabled) (eq .deployment.kind "Deployment") }}
+      - name: storage-volume
+        persistentVolumeClaim:
+          claimName: {{ .name }}
+      {{- end }}
+
+      {{- if .affinity }}
+      affinity:
+      {{- toYaml .affinity | nindent 8 }}
+      {{- end }}
+
+      {{- with .tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      containers:
+      - name: "{{ .name }}"
+        image: "{{ .image.repository }}:{{ .image.tag }}"
+        imagePullPolicy: {{ default "IfNotPresent" .image.pullPolicy }}
+
+        {{- if .config.command }}
+        command:
+        {{- range $v := .config.command }}
+        - "{{ $v }}"
+        {{- end }}
+        {{- end }}
+
+        {{- if .config.args }}
+        args:
+        {{- range $v := .config.args }}
+        - "{{ $v }}"
+        {{- end }}
+        {{- end }}
+
+        {{- if .config.env }}
+        env:
+        {{- range $k, $v := .config.env }}
+        - name: "{{ $k }}"
+          value: "{{ $v }}"
+        {{- end }}
+        {{- end }}
+
+        {{- if or .config.secrets .config.secretsB64 }}
+        envFrom:
+        - secretRef:
+            name: {{ .name }}-secret
+        {{- end }}
+
+        resources:
+          {{- toYaml .resources | nindent 10 }}
+
+        {{- if or (ne .readinessProbe.httpGet.path "") (.readinessProbe.exec.command) }}
+        readinessProbe:
+          {{- if ne .readinessProbe.httpGet.path "" }}
+          httpGet:
+            path: {{ .readinessProbe.httpGet.path }}
+            port: {{ .service.port }}
+            scheme: HTTP
+          {{- end }}
+          {{- if gt (len .readinessProbe.exec.command) 0 }}
+          exec:
+            command:
+          {{- range $v := .readinessProbe.exec.command }}
+            - {{ $v }}
+          {{- end }}
+          {{- end }}
+          initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .readinessProbe.periodSeconds }}
+          timeoutSeconds: {{ .readinessProbe.timeoutSeconds }}
+          failureThreshold: {{ .readinessProbe.failureThreshold }}
+          successThreshold: {{ .readinessProbe.successThreshold }}
+        {{- end }}
+
+        {{- if or (ne .livenessProbe.httpGet.path "") (.livenessProbe.exec.command) }}
+        livenessProbe:
+          {{- if ne .livenessProbe.httpGet.path "" }}
+          httpGet:
+            path: {{ .livenessProbe.httpGet.path }}
+            port: {{ .livenessProbe.httpGet.port }}
+            scheme: HTTP
+          {{- end }}
+          {{- if gt (len .livenessProbe.exec.command) 0 }}
+          exec:
+            command:
+          {{- range $v := .livenessProbe.exec.command }}
+            - {{ $v }}
+          {{- end }}
+          {{- end }}
+          initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .livenessProbe.periodSeconds }}
+          timeoutSeconds: {{ .livenessProbe.timeoutSeconds }}
+          failureThreshold: {{ .livenessProbe.failureThreshold }}
+          successThreshold: {{ .livenessProbe.successThreshold }}
+        {{- end }}
+
+        volumeMounts:
+        {{- range $v := .configMaps }}
+        - mountPath: "{{ $v.mountPath }}"
+          {{- if $v.mountPropagation }}
+          mountPropagation: {{ $v.mountPropagation }}
+          {{- else }}
+          mountPropagation: None
+          {{- end }}
+          name: {{ $v.name }}
+        {{- end }}
+        {{- range $v := .config.sharedNamespaceConfigMaps }}
+        - name: "{{ $v.name }}"
+          mountPath: "{{ $v.mountPath }}"
+          mountPropagation: {{ default "None" $v.mountPropagation }}
+          readOnly: {{ default true $v.readOnly }}
+        {{- end }}
+        {{- if and (.persistentVolume.enabled) (eq .deployment.kind "Deployment") }}
+        - name: storage-volume
+          mountPath: {{ .persistentVolume.mountPath }}
+          subPath: "{{ .persistentVolume.subPath }}"
+        {{- end }}
+        {{- if and (.persistentVolume.enabled) (eq .deployment.kind "StatefulSet") }}
+        - name: {{ .name }}
+          mountPath: {{ .persistentVolume.mountPath }}
+          subPath: "{{ .persistentVolume.subPath }}"
+        {{- end }}
+  {{- if and (.persistentVolume.enabled) (eq .deployment.kind "StatefulSet") }}
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: {{ .persistentVolume.statefulSetRetentionPolicy.whenDeleted }}
+    whenScaled: {{ .persistentVolume.statefulSetRetentionPolicy.whenScaled }}
+  volumeClaimTemplates:
+  - metadata:
+      annotations:
+        {{- with .persistentVolume.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- with .persistentVolume.labels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      name: {{ .name }}
+    spec:
+      accessModes:
+{{ toYaml .persistentVolume.accessModes | indent 6 }}
+    {{- if .persistentVolume.storageClass }}
+    {{- if (eq "-" .persistentVolume.storageClass) }}
+      storageClassName: ""
+    {{- else }}
+      storageClassName: "{{ .persistentVolume.storageClass }}"
+    {{- end }}
+    {{- end }}
+      resources:
+        requests:
+          storage: "{{ .persistentVolume.size }}"
+  {{- end }}
+{{- end }}
+{{- end }}

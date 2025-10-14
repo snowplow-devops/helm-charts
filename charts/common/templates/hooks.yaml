@@ -1,0 +1,136 @@
+{{- define "common.hooks" -}}
+{{- $global := .Values.global -}}
+{{- $release := .Release -}}
+{{- range .Values.services }}
+{{- range $hookName, $hookConfig := .hooks }}
+{{- if $hookConfig.enabled }}
+{{- if $hookConfig.secrets }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ $.name }}-{{ $hookName }}-secret
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    app.kubernetes.io/component: {{ $hookName }}-hook
+  annotations:
+    "helm.sh/hook": {{ $hookConfig.hookPhase }}
+    "helm.sh/hook-delete-policy": {{ $hookConfig.hookDeletePolicy }}
+    "helm.sh/hook-weight": "0"
+type: Opaque
+data:
+  {{- range $k, $v := $hookConfig.secrets }}
+  {{ $k }}: {{ $v | b64enc | quote }}
+  {{- end }}
+{{- end }}
+{{- if $hookConfig.configFiles }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.name }}-{{ $hookName }}-config
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    app.kubernetes.io/component: {{ $hookName }}-hook
+  annotations:
+    "helm.sh/hook": {{ $hookConfig.hookPhase }}
+    "helm.sh/hook-delete-policy": {{ $hookConfig.hookDeletePolicy }}
+    "helm.sh/hook-weight": "1"
+data:
+  {{- range $hookConfig.configFiles }}
+  {{ .name }}: |
+{{ .content | nindent 4 }}
+  {{- end }}
+{{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $.name }}-{{ $hookName }}-hook
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    app.kubernetes.io/component: {{ $hookName }}-hook
+  annotations:
+    "helm.sh/hook": {{ $hookConfig.hookPhase }}
+    "helm.sh/hook-delete-policy": {{ $hookConfig.hookDeletePolicy }}
+    "helm.sh/hook-weight": "{{ $hookConfig.hookWeight | default 2 }}"
+spec:
+  backoffLimit: {{ $hookConfig.backoffLimit | default 3 }}
+  activeDeadlineSeconds: {{ $hookConfig.activeDeadlineSeconds | default 300 }}
+  ttlSecondsAfterFinished: {{ $hookConfig.ttlSecondsAfterFinished | default 86400 }}
+  template:
+    metadata:
+      name: {{ $.name }}-{{ $hookName }}-hook
+      labels:
+        {{- with $global.labels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        app.kubernetes.io/component: {{ $hookName }}-hook
+    spec:
+      restartPolicy: Never
+      {{- if $hookConfig.configFiles }}
+      volumes:
+      - name: config-files
+        configMap:
+          name: {{ $.name }}-{{ $hookName }}-config
+      {{- end }}
+      {{- if $hookConfig.volumes }}
+      {{- with $hookConfig.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- end }}
+      containers:
+      - name: {{ $hookName }}-hook
+        image: {{ $hookConfig.image }}
+        {{- if $hookConfig.command }}
+        command: {{ $hookConfig.command | toJson }}
+        {{- else }}
+        command: ["/bin/sh", "-c"]
+        {{- end }}
+        {{- if $hookConfig.args }}
+        args: {{ $hookConfig.args | toJson }}
+        {{- else if $hookConfig.script }}
+        args:
+        - {{ $hookConfig.script | quote }}
+        {{- end }}
+        {{- if or $.config.env $hookConfig.env }}
+        env:
+        {{- range $k, $v := $.config.env }}
+        - name: "{{ $k }}"
+          value: "{{ $v }}"
+        {{- end }}
+        {{- range $k, $v := $hookConfig.env }}
+        - name: "{{ $k }}"
+          value: "{{ $v }}"
+        {{- end }}
+        {{- end }}
+        {{- if $hookConfig.secrets }}
+        envFrom:
+        - secretRef:
+            name: {{ $.name }}-{{ $hookName }}-secret
+        {{- end }}
+        {{- with $hookConfig.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- if or $hookConfig.configFiles $hookConfig.volumeMounts }}
+        volumeMounts:
+        {{- if $hookConfig.configFiles }}
+        - name: config-files
+          mountPath: {{ $hookConfig.configMountPath | default "/hook-config" }}
+          readOnly: true
+        {{- end }}
+        {{- with $hookConfig.volumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
