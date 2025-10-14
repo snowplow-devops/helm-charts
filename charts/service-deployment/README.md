@@ -98,7 +98,7 @@ helm delete service-deployment
 | dockerconfigjson.password | string | `""` | Password for the private repository |
 | dockerconfigjson.server | string | `"https://index.docker.io/v1/"` | Repository server URL |
 | dockerconfigjson.username | string | `""` | Username for the private repository |
-| extraObjects | list | `[]` | Extra Kubernetes objects to deploy alongside the service (see examples below) |
+| extraObjects | list | `[]` | Extra Kubernetes objects to deploy alongside the service |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp , azure) |
 | global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
