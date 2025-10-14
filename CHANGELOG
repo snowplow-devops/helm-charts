@@ -1,3 +1,7 @@
+Version 0.1.97 (2025-10-14)
+---------------------------
+charts/cron-job: Allow each schedule to have specific env vars
+
 Version 0.1.96 (2025-09-22)
 ---------------------------
 charts/aws-otel-collector: Add pod exclusion filter support to reduce CloudWatch costs (#379)
