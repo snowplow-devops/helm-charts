@@ -68,9 +68,10 @@ spec:
             {{- end }}
             {{- end }}
 
-            {{- if $.Values.config.env  }}
+            {{- $mergedEnv := merge (dict) (default dict $s.env) (default dict $.Values.config.env) }}
+            {{- if $mergedEnv }}
             env:
-            {{- range $k, $v := $.Values.config.env }}
+            {{- range $k, $v := $mergedEnv }}
             - name: "{{ $k }}"
               value: "{{ $v }}"
             {{- end }}

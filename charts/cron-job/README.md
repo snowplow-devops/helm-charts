@@ -40,7 +40,8 @@ helm delete cron-job
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
 | global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
-| schedules | list | `[]` |  |
+| schedules | list | `[]` | List of cron schedules. Each schedule must have unique `name`, `crontab`, and optional `suspend` and `env` fields |
+| schedules[].env | object | `{}` | Schedule-specific environment variables that extend/override global config.env |
 | concurrencyPolicy | string | `"Forbid"` |  |
 | restartPolicy | string | `"Never"` |  |
 | failedJobsHistoryLimit | int | `1` |  |
