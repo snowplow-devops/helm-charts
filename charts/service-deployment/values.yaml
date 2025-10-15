@@ -186,6 +186,33 @@ service:
     #   annotations: {} # -- Map of annotations to add to the ingress
   # -- List of IP addresses to restrict ingress traffic to
   ingressIPAllowlist: []
+  # -- Rate limiting configuration
+  # WARNING: These defaults are conservative and intended for testing.
+  # For production use, adjust based on your service's expected traffic patterns.
+  # Current defaults: 100 requests per minute = ~4.3M requests/month per IP (or total if global)
+  rateLimit:
+    # -- Enable rate limiting
+    enabled: false
+    # -- Average number of requests per period
+    average: 100
+    # -- Burst size - maximum number of requests allowed in a burst
+    burst: 200
+    # -- Time period for rate limiting (e.g., "1m", "1s", "1h")
+    period: "1m"
+    # -- Source-based rate limiting configuration
+    sourceCriterion:
+      # -- Enable source-based rate limiting (false = global rate limit for entire service)
+      enabled: false
+      # -- Type of source criterion: "ipStrategy" (default), "requestHeaderName", or "requestHost"
+      type: "ipStrategy"
+      # -- Configuration for IP-based rate limiting (when type is "ipStrategy")
+      ipStrategy:
+        # -- Depth of IP extraction for X-Forwarded-For header (1 = direct, 2 = behind 1 proxy)
+        depth: 1
+        # -- List of IPs/CIDRs that bypass rate limiting entirely (e.g., internal networks, monitoring)
+        excludedIPs: []
+      # -- Header name to use for rate limiting (required when type is "requestHeaderName")
+      requestHeaderName: ""
 
 dockerconfigjson:
   # -- Name of the secret to use for the private repository

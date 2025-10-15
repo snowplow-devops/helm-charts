@@ -138,8 +138,18 @@ helm delete service-deployment
 | service.deploy | bool | `true` | Whether to setup service bindings (note: only NodePort is supported) |
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
 | service.ingress | object | `{}` | A map of ingress rules to deploy |
+| service.ingressIPAllowlist | list | `[]` | List of IP addresses/CIDRs to restrict ingress traffic to |
 | service.port | int | `8000` | Port to bind and expose the service on |
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
+| service.rateLimit.average | int | `100` | Average number of requests per period allowed |
+| service.rateLimit.burst | int | `200` | Maximum number of requests allowed in a burst |
+| service.rateLimit.enabled | bool | `false` | Enable rate limiting |
+| service.rateLimit.period | string | `"1m"` | Time period for rate limiting (e.g., "1m", "1s", "1h") |
+| service.rateLimit.sourceCriterion.enabled | bool | `false` | Enable source-based rate limiting (false = global rate limit for entire service) |
+| service.rateLimit.sourceCriterion.ipStrategy.depth | int | `1` | Depth of IP extraction for X-Forwarded-For header (1 = direct, 2 = behind 1 proxy) |
+| service.rateLimit.sourceCriterion.ipStrategy.excludedIPs | list | `[]` | List of IPs/CIDRs that bypass rate limiting entirely (e.g., internal networks, monitoring) |
+| service.rateLimit.sourceCriterion.requestHeaderName | string | `""` | Header name to use for rate limiting (required when type is "requestHeaderName") |
+| service.rateLimit.sourceCriterion.type | string | `"ipStrategy"` | Type of source criterion: "ipStrategy" (default), "requestHeaderName", or "requestHost" |
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
 | tolerations | list |`[]` | Tolerations labels for pod assignment with matching taints |
