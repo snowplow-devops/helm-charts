@@ -29,6 +29,9 @@ This repository contains a collection of Helm Charts for deploying Snowplow micr
    - `github-actions-runners`: Self-hosted GitHub Actions runners
    - `cluster-warmer`: Cluster warming functionality
 
+4. **Library Charts**:
+   - `common`: Reusable template helpers for services, deployments, RBAC, ingress, etc.
+
 ### Chart Dependencies
 
 Most charts depend on two common utility charts:
@@ -39,18 +42,33 @@ Most charts depend on two common utility charts:
 
 Charts support three cloud providers through the `global.cloud` value:
 - `aws`: Amazon Web Services
-- `gcp`: Google Cloud Platform  
+- `gcp`: Google Cloud Platform
 - `azure`: Microsoft Azure
+
+### Library Chart Development
+
+The repository includes library charts (type: library) that provide reusable templates:
+- `common` (v0.1.0): Core template helpers for services, deployments, RBAC, ingress, etc.
+
+**Key Patterns:**
+- Library charts use named templates: `{{- define "common.resourcetype" -}}`
+- Support N-instance pattern via `{{- range .Values.services }}` for single or multi-service deployments
+- Capture contexts as variables in nested loops: `{{- $global := .Values.global -}}`, `{{- range $service := .Values.services }}`
+- Always check `.Values.global` existence before accessing nested properties
+
+**Testing:**
+- Library charts cannot be installed directly
+- Exclude from ct install tests via ct.yaml: `excluded-charts: - common`
 
 ## Common Development Commands
 
 ### Chart Testing and Validation
 ```bash
-# Lint all charts
-ct lint --target-branch main
+# Lint all charts (uses ct.yaml config)
+ct lint --target-branch main --config ct.yaml
 
-# Install/test changed charts
-ct install --target-branch main
+# Install/test changed charts (uses ct.yaml config)
+ct install --target-branch main --config ct.yaml
 
 # Add self as Helm repository (for dependency resolution)
 helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts
@@ -61,6 +79,12 @@ helm dependency update charts/[chart-name]
 # Template and validate a chart
 helm template [release-name] charts/[chart-name] --values charts/[chart-name]/values.yaml
 ```
+
+**Chart Testing Configuration:**
+The repository uses ct.yaml for chart-testing configuration:
+- Pass `--config ct.yaml` to ct lint and ct install commands
+- Exclude library charts from install tests: `excluded-charts: - common`
+- Configure chart repositories for dependency resolution
 
 ### Chart Development Workflow
 1. Create/modify chart templates in `charts/[chart-name]/templates/`
@@ -88,6 +112,39 @@ charts/[chart-name]/
 - Include `snowplow.labels` for standard labels
 - Support multi-cloud deployments via `global.cloud` value
 - Follow Kubernetes naming conventions (max 50-63 chars)
+
+### Template Best Practices
+
+**Context Safety:**
+- Always check parent objects exist before accessing nested properties:
+```yaml
+{{- if .Values.global }}
+{{- with .Values.global.labels }}
+{{ toYaml . }}
+{{- end }}
+{{- end }}
+```
+
+**Nested Loops:**
+- Capture outer contexts as named variables to avoid incorrect `$` references:
+```yaml
+{{- $global := .Values.global -}}
+{{- range $service := .Values.services }}
+  # Use $service.name, not $.name
+{{- end }}
+```
+
+**Hostname Sanitization:**
+- Replace dots with dashes for Kubernetes DNS-1123 compliance:
+```yaml
+name: {{ .hostname | replace "." "-" }}
+secretName: {{ .hostname | replace "." "-" }}-tls
+```
+
+**Other Best Practices:**
+- **YAML Formatting**: Use `nindent` (not `indent`) to ensure proper newline + indentation
+- **Boolean Defaults**: Use `| default true` not `| default "true"`
+- **RBAC**: ServiceAccount subjects do not use `apiGroup:` field (only Role/ClusterRole do)
 
 ### Values File Patterns
 - `global.cloud`: Cloud provider specification
