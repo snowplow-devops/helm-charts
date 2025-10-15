@@ -578,6 +578,29 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/cluster-warmer-0.1.0/cluster-warmer-0.1.0.tgz
     version: 0.1.0
+  common:
+  - apiVersion: v2
+    created: "2025-10-15T20:40:31.35384406Z"
+    description: A library chart containing common template helpers for Snowplow Helm
+      charts
+    digest: 39b522785bc30874d77297c045cb1cefa3fa50e6c623ccb663f4512150eb55a3
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - library
+    - common
+    - templates
+    maintainers:
+    - email: jparavisini@users.noreply.github.com
+      name: jparavisini
+      url: https://github.com/jparavisini
+    name: common
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    type: library
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/common-0.1.0/common-0.1.0.tgz
+    version: 0.1.0
   cron-job:
   - apiVersion: v2
     created: "2025-10-15T09:02:41.436346798Z"
@@ -3144,4 +3167,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2025-10-15T15:18:15.582726047Z"
+generated: "2025-10-15T20:40:31.354475817Z"
