@@ -1,3 +1,7 @@
+Version 0.1.98 (2025-10-15)
+---------------------------
+charts/service-deployment: Add extraObjects for additional kubernetes objects (#261)
+
 Version 0.1.97 (2025-10-14)
 ---------------------------
 charts/cron-job: Allow each schedule to have specific env vars
