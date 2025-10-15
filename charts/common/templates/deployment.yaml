@@ -158,7 +158,7 @@ spec:
           {{- if ne .livenessProbe.httpGet.path "" }}
           httpGet:
             path: {{ .livenessProbe.httpGet.path }}
-            port: {{ .livenessProbe.httpGet.port }}
+            port: {{ default .service.port .livenessProbe.httpGet.port }}
             scheme: HTTP
           {{- end }}
           {{- if gt (len .livenessProbe.exec.command) 0 }}

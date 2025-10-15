@@ -30,9 +30,11 @@ Create chart name and version as used by the chart label.
 Snowplow standard labels
 */}}
 {{- define "common.labels" -}}
-{{- with .Values.global.labels -}}
+{{- if .Values.global }}
+{{- with .Values.global.labels }}
 {{ toYaml . }}
-{{ end -}}
+{{- end }}
+{{- end }}
 helm.sh/chart: {{ include "common.chart" . }}
 {{- if .Chart.Version }}
 app.kubernetes.io/version: {{ .Chart.Version | quote }}

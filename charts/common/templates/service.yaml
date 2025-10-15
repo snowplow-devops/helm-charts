@@ -11,7 +11,7 @@ metadata:
   {{- if .service.annotations }}
     {{- toYaml .service.annotations | nindent 4 }}
   {{- end}}
-  {{- if and (eq $global.cloud "gcp") (ne .service.gcp.networkEndpointGroupName "") }}
+  {{- if and (eq $global.cloud "gcp") .service.gcp (ne .service.gcp.networkEndpointGroupName "") }}
     cloud.google.com/app-protocols:  '{"http-port": "HTTP"}'
     cloud.google.com/neg: '{"exposed_ports": {"{{ .service.port }}":{"name": "{{ default .name .service.gcp.networkEndpointGroupName }}"}}}'
   {{- end }}

@@ -9,20 +9,20 @@ kind: PersistentVolumeClaim
 metadata:
   {{- if .persistentVolume.annotations }}
   annotations:
-{{ toYaml .persistentVolume.annotations | indent 4 }}
+    {{- toYaml .persistentVolume.annotations | nindent 4 }}
   {{- end }}
   labels:
     {{- with $global.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- with .persistentVolume.labels }}
-       {{- toYaml . | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
   name: {{ .name }}
   namespace: {{ $release.Namespace }}
 spec:
   accessModes:
-{{ toYaml .persistentVolume.accessModes | indent 4 }}
+    {{- toYaml .persistentVolume.accessModes | nindent 4 }}
 {{- if .persistentVolume.storageClass }}
 {{- if (eq "-" .persistentVolume.storageClass) }}
   storageClassName: ""

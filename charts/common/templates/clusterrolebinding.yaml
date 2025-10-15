@@ -18,8 +18,7 @@ roleRef:
   name: {{ .name }}
 subjects:
 {{- if .cloudserviceaccount.deploy }}
-- apiGroup:
-  kind: ServiceAccount
+- kind: ServiceAccount
   name: {{ .cloudserviceaccount.name }}
   namespace: {{ $release.Namespace }}
 {{- end }}
