@@ -1,0 +1,5 @@
+helm-extra-args: --timeout 600s
+chart-repos:
+  - snowplow-devops=https://snowplow-devops.github.io/helm-charts
+excluded-charts:
+  - common
