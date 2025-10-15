@@ -580,6 +580,31 @@ entries:
     version: 0.1.0
   cron-job:
   - apiVersion: v2
+    created: "2025-10-15T09:02:41.436346798Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to deploy an arbitrary container as a cron job.
+    digest: b8243c2889aa4cc1a45daf08758c385ed4433197b1206ca50fd386e1e0de56be
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cron
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: cron-job
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cron-job-0.12.2/cron-job-0.12.2.tgz
+    version: 0.12.2
+  - apiVersion: v2
     created: "2025-06-05T11:18:09.664799293Z"
     dependencies:
     - name: dockerconfigjson
@@ -3092,4 +3117,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2025-09-22T16:57:42.685752879Z"
+generated: "2025-10-15T09:02:41.436870355Z"
