@@ -1,15 +1,15 @@
 {{- define "common.hooks" -}}
 {{- $global := .Values.global -}}
 {{- $release := .Release -}}
-{{- range .Values.services }}
-{{- range $hookName, $hookConfig := .hooks }}
+{{- range $service := .Values.services }}
+{{- range $hookName, $hookConfig := $service.hooks }}
 {{- if $hookConfig.enabled }}
 {{- if $hookConfig.secrets }}
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ $.name }}-{{ $hookName }}-secret
+  name: {{ $service.name }}-{{ $hookName }}-secret
   labels:
     {{- with $global.labels }}
     {{- toYaml . | nindent 4 }}
@@ -30,7 +30,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ $.name }}-{{ $hookName }}-config
+  name: {{ $service.name }}-{{ $hookName }}-config
   labels:
     {{- with $global.labels }}
     {{- toYaml . | nindent 4 }}
@@ -50,7 +50,7 @@ data:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ $.name }}-{{ $hookName }}-hook
+  name: {{ $service.name }}-{{ $hookName }}-hook
   labels:
     {{- with $global.labels }}
     {{- toYaml . | nindent 4 }}
@@ -66,7 +66,7 @@ spec:
   ttlSecondsAfterFinished: {{ $hookConfig.ttlSecondsAfterFinished | default 86400 }}
   template:
     metadata:
-      name: {{ $.name }}-{{ $hookName }}-hook
+      name: {{ $service.name }}-{{ $hookName }}-hook
       labels:
         {{- with $global.labels }}
         {{- toYaml . | nindent 8 }}
@@ -78,7 +78,7 @@ spec:
       volumes:
       - name: config-files
         configMap:
-          name: {{ $.name }}-{{ $hookName }}-config
+          name: {{ $service.name }}-{{ $hookName }}-config
       {{- end }}
       {{- if $hookConfig.volumes }}
       {{- with $hookConfig.volumes }}
@@ -99,9 +99,9 @@ spec:
         args:
         - {{ $hookConfig.script | quote }}
         {{- end }}
-        {{- if or $.config.env $hookConfig.env }}
+        {{- if or $service.config.env $hookConfig.env }}
         env:
-        {{- range $k, $v := $.config.env }}
+        {{- range $k, $v := $service.config.env }}
         - name: "{{ $k }}"
           value: "{{ $v }}"
         {{- end }}
@@ -113,7 +113,7 @@ spec:
         {{- if $hookConfig.secrets }}
         envFrom:
         - secretRef:
-            name: {{ $.name }}-{{ $hookName }}-secret
+            name: {{ $service.name }}-{{ $hookName }}-secret
         {{- end }}
         {{- with $hookConfig.resources }}
         resources:

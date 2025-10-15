@@ -1,7 +1,7 @@
 {{- define "common.ingress" -}}
 {{- $global := .Values.global -}}
 {{- $release := .Release -}}
-{{- range .Values.services }}
+{{- range $service := .Values.services }}
 {{- range .service.ingress }}
 ---
 apiVersion: networking.k8s.io/v1
@@ -19,8 +19,8 @@ metadata:
   {{- if .enableTraefik | default true }}
     traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
   {{- end}}
-  {{- if $.service.ingressIPAllowlist }}
-    traefik.ingress.kubernetes.io/router.middlewares: {{ $release.Namespace }}-{{ $.name }}-ipallowlist@kubernetescrd
+  {{- if $service.service.ingressIPAllowlist }}
+    traefik.ingress.kubernetes.io/router.middlewares: {{ $release.Namespace }}-{{ $service.name }}-ipallowlist@kubernetescrd
   {{- end }}
 spec:
   {{- if .enableTraefik | default true }}
@@ -38,9 +38,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name:  {{ $.name }}
+                name:  {{ $service.name }}
                 port:
-                  number: {{ $.service.port }}
+                  number: {{ $service.service.port }}
 {{- end }}
 {{- end }}
 {{- end }}
