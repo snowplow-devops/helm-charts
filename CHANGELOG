@@ -1,3 +1,7 @@
+Version 0.2.0 (2025-10-17)
+---------------------------
+charts/service-deployment: Add Traefik rate limit middleware (#265)
+
 Version 0.1.100 (2025-10-17)
 ---------------------------
 charts/aws-otel-collector: Add total bytes transmitted egress metric (#270)
