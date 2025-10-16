@@ -1,7 +1,7 @@
 {{- define "common.dockerconfigjson" -}}
 {{- $release := .Release -}}
 {{- range .Values.services }}
-{{- if not .image.isRepositoryPublic }}
+{{- if and .image (not .image.isRepositoryPublic) .dockerconfigjson }}
 ---
 apiVersion: v1
 kind: Secret
