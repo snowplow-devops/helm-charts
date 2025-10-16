@@ -1,0 +1,20 @@
+{{- include "common.deployment" . }}
+{{- include "common.service" . }}
+{{- include "common.configmaps" . }}
+{{- include "common.secret" . }}
+{{- include "common.ingress" . }}
+{{- include "common.certificate" . }}
+{{- include "common.hpa" . }}
+{{- include "common.vpa" . }}
+{{- include "common.pvc" . }}
+{{- include "common.targetgroupbinding" . }}
+{{- include "common.ipallowlist" . }}
+{{- include "common.hooks" . }}
+{{- include "common.role" . }}
+{{- include "common.rolebinding" . }}
+{{- include "common.clusterrole" . }}
+{{- include "common.clusterrolebinding" . }}
+{{- range .Values.extraObjects }}
+---
+{{ toYaml . }}
+{{- end }}

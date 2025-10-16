@@ -1,3 +1,7 @@
+Version 0.1.100 (2025-10-16)
+---------------------------
+charts/multi-service-deployment: Initial release of multi-service deployment chart using common library
+
 Version 0.1.99 (2025-10-15)
 ---------------------------
 charts/common: Initial release of common library chart with reusable template helpers
