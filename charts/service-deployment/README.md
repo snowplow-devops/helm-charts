@@ -110,7 +110,6 @@ helm delete service-deployment
 | hpa.minReplicas | int | `1` | Minimum number of pods to deploy |
 | vpa.enabled | bool | `false` | Whether to deploy VPA rules |
 | vpa.spec | object | `{}` | VPA resource specification (accepts any valid VPA spec fields) |
-| image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | image.repository | string | `"nginx"` |  |
 | image.tag | string | `"latest"` |  |
