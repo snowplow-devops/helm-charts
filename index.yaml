@@ -580,6 +580,28 @@ entries:
     version: 0.1.0
   common:
   - apiVersion: v2
+    created: "2025-10-16T13:28:50.455171021Z"
+    description: A library chart containing common template helpers for Snowplow Helm
+      charts
+    digest: 7eb86e940c1d43646928e3613a782d84d1882ced676113f8c6359e3e5f24b7fb
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - library
+    - common
+    - templates
+    maintainers:
+    - email: jparavisini@users.noreply.github.com
+      name: jparavisini
+      url: https://github.com/jparavisini
+    name: common
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    type: library
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/common-0.2.0/common-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     created: "2025-10-15T20:40:31.35384406Z"
     description: A library chart containing common template helpers for Snowplow Helm
       charts
@@ -3167,4 +3189,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2025-10-15T20:40:31.354475817Z"
+generated: "2025-10-16T13:28:50.455656016Z"
