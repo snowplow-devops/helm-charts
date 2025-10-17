@@ -42,3 +42,20 @@ app.kubernetes.io/version: {{ .Chart.Version | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+
+{{/*
+Generate Traefik middleware list for ingress annotations
+Usage: {{ include "service.traefik.middlewares" . }}
+*/}}
+{{- define "service.traefik.middlewares" -}}
+{{- $middlewares := list -}}
+{{- if $.Values.service.ingressIPAllowlist -}}
+  {{- $middlewares = append $middlewares (printf "%s-%s-ipallowlist@kubernetescrd" $.Release.Namespace (include "app.fullname" $)) -}}
+{{- end -}}
+{{- if $.Values.service.rateLimit.enabled -}}
+  {{- $middlewares = append $middlewares (printf "%s-%s-rate-limit@kubernetescrd" $.Release.Namespace (include "app.fullname" $)) -}}
+{{- end -}}
+{{- if $middlewares -}}
+{{- join ", " $middlewares | quote -}}
+{{- end -}}
+{{- end }}

@@ -1,0 +1,31 @@
+{{- if and .Values.service.rateLimit.enabled .Values.service.ingress -}}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "app.fullname" . }}-rate-limit
+  labels:
+    {{- include "snowplow.labels" $ | nindent 4 }}
+spec:
+  rateLimit:
+    average: {{ .Values.service.rateLimit.average }}
+    burst: {{ .Values.service.rateLimit.burst }}
+    period: {{ .Values.service.rateLimit.period | quote }}
+    {{- if .Values.service.rateLimit.sourceCriterion.enabled }}
+    sourceCriterion:
+      {{- $type := .Values.service.rateLimit.sourceCriterion.type | default "ipStrategy" }}
+      {{- if eq $type "ipStrategy" }}
+      ipStrategy:
+        depth: {{ .Values.service.rateLimit.sourceCriterion.ipStrategy.depth | default 1 }}
+        {{- if .Values.service.rateLimit.sourceCriterion.ipStrategy.excludedIPs }}
+        excludedIPs:
+          {{- range $ip := .Values.service.rateLimit.sourceCriterion.ipStrategy.excludedIPs }}
+          - "{{ $ip }}"
+          {{- end }}
+        {{- end }}
+      {{- else if eq $type "requestHeaderName" }}
+      requestHeaderName: {{ required "requestHeaderName is required when type is requestHeaderName" .Values.service.rateLimit.sourceCriterion.requestHeaderName }}
+      {{- else if eq $type "requestHost" }}
+      requestHost: true
+      {{- end }}
+    {{- end }}
+{{- end -}}

@@ -13,8 +13,9 @@ metadata:
   {{- if .enableTraefik | default "true" }}
     traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
   {{- end}}
-  {{- if $.Values.service.ingressIPAllowlist }}
-    traefik.ingress.kubernetes.io/router.middlewares: {{ $.Release.Namespace}}-{{ include "app.fullname" $ }}-ipallowlist@kubernetescrd
+  {{- $middlewares := include "service.traefik.middlewares" $ -}}
+  {{- if $middlewares }}
+    traefik.ingress.kubernetes.io/router.middlewares: {{ $middlewares }}
   {{- end }}
 spec:
   {{- if .enableTraefik | default "true" }}

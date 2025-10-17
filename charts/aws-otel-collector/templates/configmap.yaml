@@ -50,6 +50,7 @@ data:
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
+              - pod_network_tx_bytes
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
@@ -145,6 +146,7 @@ data:
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
+              - pod_network_tx_bytes
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
