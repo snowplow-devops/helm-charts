@@ -1,3 +1,7 @@
+Version 0.1.100 (2025-10-17)
+---------------------------
+charts/aws-otel-collector: Add total bytes transmitted egress metric (#270)
+
 Version 0.1.99 (2025-10-15)
 ---------------------------
 charts/common: Initial release of common library chart with reusable template helpers
