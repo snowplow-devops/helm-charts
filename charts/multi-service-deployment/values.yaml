@@ -1,0 +1,161 @@
+global:
+  # -- Cloud specific bindings (options: aws, gcp, azure)
+  cloud: ""
+
+  # global labels will be applied to all resources deployed by the chart
+  labels: {}
+
+# -- Array of services to deploy. Each service follows the same structure as service-deployment chart.
+services:
+  []
+  # Example with 2 services:
+  # - name: "frontend"
+  #   image:
+  #     repository: "nginx"
+  #     tag: "latest"
+  #     isRepositoryPublic: true
+  #     pullPolicy: "IfNotPresent"
+  #   config:
+  #     command: []
+  #     args: []
+  #     env: {}
+  #     secrets: {}
+  #     secretsB64: {}
+  #     sharedNamespaceConfigMaps: []
+  #   configMaps: []
+  #   resources: {}
+  #   readinessProbe:
+  #     httpGet:
+  #       path: ""
+  #     exec:
+  #       command: []
+  #     initialDelaySeconds: 5
+  #     periodSeconds: 5
+  #     timeoutSeconds: 5
+  #     failureThreshold: 3
+  #     successThreshold: 2
+  #   livenessProbe:
+  #     httpGet:
+  #       path: ""
+  #       port: ""
+  #     exec:
+  #       command: []
+  #     initialDelaySeconds: 5
+  #     periodSeconds: 5
+  #     timeoutSeconds: 5
+  #     failureThreshold: 3
+  #     successThreshold: 1
+  #   terminationGracePeriodSeconds: 60
+  #   hpa:
+  #     deploy: true
+  #     minReplicas: 1
+  #     maxReplicas: 20
+  #     metrics:
+  #     - type: Resource
+  #       resource:
+  #         name: cpu
+  #         target:
+  #           type: Utilization
+  #           averageUtilization: 75
+  #     behavior: {}
+  #   vpa:
+  #     enabled: false
+  #     spec: {}
+  #   service:
+  #     deploy: true
+  #     port: 8000
+  #     targetPort: 80
+  #     protocol: "TCP"
+  #     aws:
+  #       targetGroupARN: ""
+  #     gcp:
+  #       networkEndpointGroupName: ""
+  #     annotations: {}
+  #     ingress: {}
+  #     ingressIPAllowlist: []
+  #   dockerconfigjson:
+  #     name: "frontend-dockerhub"
+  #     username: ""
+  #     password: ""
+  #     server: "https://index.docker.io/v1/"
+  #     email: ""
+  #   cloudserviceaccount:
+  #     deploy: false
+  #     name: "frontend-service-account"
+  #     aws:
+  #       roleARN: ""
+  #     gcp:
+  #       serviceAccount: ""
+  #     azure:
+  #       managedIdentityId: ""
+  #   deployment:
+  #     kind: "Deployment"
+  #     replicas: 1
+  #     scaleToZero: false
+  #     strategy:
+  #       type: "RollingUpdate"
+  #       rollingUpdate:
+  #         maxUnavailable: "25%"
+  #         maxSurge: "25%"
+  #     podLabels: {}
+  #   priorityClassName: ""
+  #   tolerations: []
+  #   topologySpreadConstraints: {}
+  #   affinity: {}
+  #   persistentVolume:
+  #     enabled: false
+  #     accessModes:
+  #       - ReadWriteOnce
+  #     statefulSetRetentionPolicy:
+  #       whenDeleted: "Retain"
+  #       whenScaled: "Delete"
+  #     labels: {}
+  #     annotations: {}
+  #     mountPath: /data
+  #     size: 8Gi
+  #     subPath: ""
+  #   hooks: {}
+  #   rbac:
+  #     role:
+  #       deploy: false
+  #       rules: []
+  #     clusterRole:
+  #       deploy: false
+  #       rules: []
+  #
+  # - name: "backend"
+  #   image:
+  #     repository: "backend-app"
+  #     tag: "v1.0.0"
+  #     isRepositoryPublic: false
+  #     pullPolicy: "IfNotPresent"
+  #   config:
+  #     env:
+  #       DATABASE_URL: "postgres://db:5432/mydb"
+  #     secrets:
+  #       DB_PASSWORD: "secret-password"
+  #   service:
+  #     deploy: true
+  #     port: 3000
+  #     targetPort: 3000
+  #     protocol: "TCP"
+  #   deployment:
+  #     kind: "Deployment"
+  #     replicas: 2
+  #   hpa:
+  #     deploy: true
+  #     minReplicas: 2
+  #     maxReplicas: 10
+  #   dockerconfigjson:
+  #     name: "backend-dockerhub"
+  #     username: "myuser"
+  #     password: "mypassword"
+  #   cloudserviceaccount:
+  #     deploy: true
+  #     name: "backend-service-account"
+  #     aws:
+  #       roleARN: "arn:aws:iam::123456789012:role/backend-role"
+
+# -- Extra Kubernetes objects to deploy alongside the services
+# This allows for additional resources like Middleware, NetworkPolicy, etc.
+extraObjects: []
