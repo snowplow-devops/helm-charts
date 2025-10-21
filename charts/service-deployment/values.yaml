@@ -11,8 +11,6 @@ fullnameOverride: ""
 image:
   repository: "nginx"
   tag: "latest"
-  # -- Whether the repository is public
-  isRepositoryPublic: true
   # -- The image pullPolicy to use
   pullPolicy: "IfNotPresent"
 

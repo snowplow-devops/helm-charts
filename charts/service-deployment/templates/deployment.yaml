@@ -48,10 +48,8 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
 
-      {{- if not .Values.image.isRepositoryPublic }}
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
-      {{- end }}
 
       volumes:
       {{- range $v := .Values.configMaps }}
