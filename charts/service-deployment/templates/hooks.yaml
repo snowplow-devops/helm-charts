@@ -63,7 +63,7 @@ spec:
     spec:
       restartPolicy: Never
       imagePullSecrets:
-      - name: {{ .Values.dockerconfigjson.name }}
+      - name: {{ $.Values.dockerconfigjson.name }}
       {{- if $hookConfig.configFiles }}
       volumes:
       - name: config-files
