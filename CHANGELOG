@@ -1,3 +1,7 @@
+Version 0.3.2 (2025-10-22)
+---------------------------
+charts/service-deployment: Fix dockerconfigjson in hooks (#272)
+
 Version 0.3.1 (2025-10-21)
 ---------------------------
 charts/service-deployment: Add imagePullSecrets to hooks (#259)
