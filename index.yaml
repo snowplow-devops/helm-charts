@@ -399,6 +399,28 @@ entries:
     version: 0.1.0
   cert-manager-crds:
   - apiVersion: v1
+    appVersion: v1.19.1
+    created: "2025-10-24T09:31:29.966074687Z"
+    description: Cert Manager CRDs Helm chart for Kubernetes
+    digest: b0f8807ee9ca7182cf5dd0bf3654c4c549452bb5b4934910c74a939273f8b201
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cert-manager
+    - crd
+    - tls
+    maintainers:
+    - email: ianarsenault@users.noreply.github.com
+      name: ianarsenault
+      url: https://github.com/ianarsenault
+    name: cert-manager-crds
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/cert-manager/cert-manager
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cert-manager-crds-0.2.0/cert-manager-crds-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v1
     appVersion: v1.12.3
     created: "2023-09-07T22:02:38.688612844Z"
     description: Cert Manager CRDs Helm chart for Kubernetes
@@ -3314,4 +3336,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2025-10-22T10:37:27.718512624Z"
+generated: "2025-10-24T09:31:29.966603706Z"
