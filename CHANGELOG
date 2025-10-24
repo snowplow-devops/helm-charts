@@ -1,3 +1,7 @@
+Version 0.3.4 (2025-10-24)
+---------------------------
+charts/cert-manager-issuer: Add compatibility with charts/cert-manager-crds (v1.19.x)
+
 Version 0.3.3 (2025-10-23)
 ---------------------------
 charts/cert-manager-crds: Add compatibility with the latest cert-manager version (v1.19.x) (#274)
