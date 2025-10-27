@@ -55,6 +55,19 @@ _Note_: This assumes 8080 is available on your host and you have used the defaul
 
 You can then use the Iglu Server as normal leveraging the APIKey you generated earlier and `localhost:8080` as your endpoint (e.g. `curl http://localhost:8080/static/swagger-ui/index.html`).
 
+### AWS (EKS) settings
+
+#### TargetGroup binding
+
+To manage the load balancer externally to the kubernetes cluster you can bind the deployment to an existing TargetGroup ARN.  Its important that the TargetGroup exist ahead of time and that you use the same port as you have used in your `values.yaml`. 
+
+*Note*: Before this will work you will need to install the `aws-load-balancer-controller-crds` and `aws-load-balancer-controller` charts into your EKS cluster.
+
+You will need to fill these targeted fields:
+
+- `global.cloud: "aws"`
+- `service.aws.targetGroupARN: "<target_group_arn>"`
+
 ### GCP (GKE) settings
 
 #### NetworkEndpointGroup binding
@@ -115,25 +128,72 @@ You will need to fill these targeted fields:
 
 *Note*: As the iglu deployment and setup hooks depend on this service it is normal to expect a few initial failures to occur - they should automatically resolve without intervention.
 
+## Database Setup and Teardown Hooks
 
-### Azure (AKS) settings
+The chart includes Helm hooks for automated database and user initialization when using PostgreSQL as the backend.
 
-When `dev_db` is `true` the hook job `-dev-db-user-setup` will be initiated
+### Setup Hooks
 
-### AWS (EKS) settings
+Setup hooks run after installation (`post-install`) and upgrades (`post-upgrade`) to prepare the database environment:
 
-When `dev_db` is `true` the hook job `-create-dev-db` will be initiated
+1. **Database Initialization Hook** (`hooks.deploySetupHooks: true`)
+   - Creates database user if `hooks.deployDBUser: true`
+   - Creates database if `hooks.deployDB: true` 
+   - Grants privileges to the user if `hooks.deployDBUserGrants: true`. Required if the database is created separately.
+   - Runs with `helm.sh/hook-weight: "1"` (before Iglu Server setup)
 
-#### TargetGroup binding
+2. **Iglu Setup Hook** (automatically runs when `hooks.deploySetupHooks: true`)
+   - Initializes Iglu Server database schema and configuration
+   - Runs with `helm.sh/hook-weight: "2"` (after database / user initialization)
 
-To manage the load balancer externally to the kubernetes cluster you can bind the deployment to an existing TargetGroup ARN.  Its important that the TargetGroup exist ahead of time and that you use the same port as you have used in your `values.yaml`. 
+### Destroy Hooks
 
-*Note*: Before this will work you will need to install the `aws-load-balancer-controller-crds` and `aws-load-balancer-controller` charts into your EKS cluster.
+Destroy hooks run before deletion (`pre-delete`) to clean up database resources:
 
-You will need to fill these targeted fields:
+- **Database Cleanup Hook** (`hooks.deployDestroyHooks: true`)
+  - Drops database if `hooks.destroyDB: true`
+  - Drops database user if `hooks.destroyDBUser: true`
+  - Requires admin credentials for cleanup operations
 
-- `global.cloud: "aws"`
-- `service.aws.targetGroupARN: "<target_group_arn>"`
+### Configuration
+
+To use hooks, you need to provide administrative database credentials:
+
+```yaml
+hooks:
+  deploySetupHooks: true
+  deployDBUser: true
+  deployDB: true
+  deployDBUserGrants: true
+  defaultDBName: "postgres"  # Database to connect to for admin operations
+  secrets:
+    admin_username: "postgres"
+    admin_password: "your-admin-password"
+
+service:
+  config:
+    database:
+      type: "postgres"
+      host: "your-postgres-host"
+      port: 5432
+      dbname: "iglu_db"  # Database to create/use for Iglu
+      secrets:
+        username: "iglu_user"  # User to create for Iglu
+        password: "iglu-password"
+```
+
+### Hook Execution Order
+
+1. **Installation/Upgrade**:
+   - Database initialization hook (weight: 1) - Creates user, database, grants permissions
+   - Iglu setup hook (weight: 2) - Initializes Iglu schema
+   - Main deployment starts
+
+2. **Deletion**:
+   - Main deployment stops
+   - Database cleanup hook - Drops database and user (if configured)
+
+*Note*: Hooks are only active when `service.config.database.type` is set to `"postgres"`.
 
 ## Configuration
 
@@ -151,11 +211,18 @@ You will need to fill these targeted fields:
 | fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
 | global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
 | global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
+| hooks.deploySetupHooks | bool | `false` | Whether to run the post-deploy setup hooks to create database and user |
+| hooks.deployDestroyHooks | bool | `false` | Whether to run the pre-delete destroy hooks to clean up database and user |
+| hooks.deployDBUser | bool | `false` | Whether the setup hook should create the database user |
+| hooks.deployDBUserGrants | bool | `false` | Whether the setup hook should grant privileges to the database user |
+| hooks.deployDB | bool | `false` | Whether the setup hook should create the database |
+| hooks.destroyDBUser | bool | `false` | Whether the destroy hook should drop the database user |
+| hooks.destroyDB | bool | `false` | Whether the destroy hook should drop the database |
+| hooks.defaultDBName | string | `"postgres"` | Default database name to connect to for administrative operations |
+| hooks.secrets.admin_username | string | `""` | Admin username for database operations in hooks |
+| hooks.secrets.admin_password | string | `""` | Admin password for database operations in hooks |
 | service.annotations | object | `{}` | Map of annotations to add to the service |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
-| service.aws.dev_db | bool | `false` | Whether we deploy for dev db in AWS |
-| service.aws.secrets.admin_username | string | `""` | The admin username that will be used for the psql command |
-| service.aws.secrets.admin_password | string | `""` | The admin password that will be used for the psql command |
 | service.config.database.dbname | string | `""` | Postgres database name |
 | service.config.database.host | string | `""` | Postgres database host |
 | service.config.database.port | int | `5432` | Postgres database port |
@@ -169,10 +236,6 @@ You will need to fill these targeted fields:
 | service.config.repoServer.maxConnections | int | `16384` |  |
 | service.config.repoServer.hsts.enable | bool | `true` | Whether to enable sending HSTS headers (>=0.12.0) |
 | service.config.secrets.superApiKey | string | `""` | Lowercase uuidv4 to use as admin apikey of the service (default: auto-generated) |
-| service.deploySetupHooks | bool | `true` | Whether to run the post-deploy setup hooks |
-| service.azure.dev_db | bool | `false` | Whether we deploy for dev db in Azure |
-| service.azure.secrets.admin_username | string | `""` | The admin username that will be used for the psql command |
-| service.azure.secrets.admin_password | string | `""` | The admin password that will be used for the psql command |
 | service.gcp.deployProxy | bool | `false` | Whether to use CloudSQL Proxy (note: requires GCP service account to be attached) |
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
 | service.gcp.proxy.image.isRepositoryPublic | bool | `true` | Whether the repository is public |

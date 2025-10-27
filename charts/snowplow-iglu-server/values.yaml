@@ -9,9 +9,6 @@ global:
 fullnameOverride: ""
 
 service:
-  # -- Whether to run the post-deploy setup hooks
-  deploySetupHooks: true
-
   # -- Map of annotations to add to the service.
   annotations: {}
 
@@ -95,19 +92,6 @@ service:
   aws:
     # -- EC2 TargetGroup ARN to bind the service onto
     targetGroupARN: ""
-    # -- Whether we deploy for dev db
-    dev_db: false
-    prod_dbname: ""
-    secrets:
-      admin_username: ""
-      admin_password: ""
-
-  azure:
-    # -- Whether we deploy for dev db
-    dev_db: false
-    secrets:
-      admin_username: ""
-      dev_username: ""
 
   gcp:
     # -- Name of the Network Endpoint Group to bind onto
@@ -174,3 +158,19 @@ dockerconfigjson:
   server: "https://index.docker.io/v1/"
   # -- Email address for user of the private repository
   email: ""
+
+hooks:
+  # -- Whether to run the post-deploy setup hooks to create database and user
+  deploySetupHooks: false
+  deployDestroyHooks: false
+  deployDBUser: false
+  deployDBUserGrants: false
+  deployDB: false
+  # -- Whether to run the pre-delete destroy hooks to drop database and user
+  destroyDBUser: false
+  destroyDB: false
+  # -- Default database name and admin credentials for hooks to use
+  defaultDBName: "postgres"
+  secrets:
+    admin_username: ""
+    admin_password: ""

@@ -78,3 +78,10 @@ app.kubernetes.io/version: {{ .Chart.Version | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
+
+{{/*
+PostgreSQL connection parameters for hooks
+*/}}
+{{- define "iglu.hooks.psql.connection" -}}
+psql -h "${CONFIG_FORCE_iglu_database_host}" -U "${CONFIG_FORCE_iglu_database_admin_username}" -p "${CONFIG_FORCE_iglu_database_port}"
+{{- end }}
