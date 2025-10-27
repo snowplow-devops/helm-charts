@@ -1,3 +1,8 @@
+Version 0.3.5 (2025-10-27)
+---------------------------
+charts/snowplow-iglu-server: Refactor hooks system with multitenant support and enhanced configuration (#277)
+charts/snowplow-iglu-server: Add configurable PostgreSQL client image and connection timeout for hooks (#278)
+
 Version 0.3.4 (2025-10-24)
 ---------------------------
 charts/cert-manager-issuer: Add compatibility with charts/cert-manager-crds (v1.19.x)
