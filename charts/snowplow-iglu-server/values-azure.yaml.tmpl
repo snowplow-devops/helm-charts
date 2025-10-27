@@ -2,7 +2,6 @@ global:
   cloud: "azure"
 
 service:
-  deploySetupHooks: true
   port: 8080
   image:
     repository: "snowplow/iglu-server"
@@ -33,8 +32,10 @@ service:
     ingress-01:
       hostname: "iglu-server.example.com"
   
-  azure: 
-    dev_db: "<dev_db>"
-    secrets:
-      admin_username: "<admin_username>"
-      dev_username "<dev_username>"
+hooks: 
+  deploySetupHooks: true
+  deployDBUser: true
+  deployDBUserGrants: true
+  secrets:
+    admin_username: "<admin_username>"
+    admin_password "<admin_password>"

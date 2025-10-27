@@ -1,5 +1,79 @@
-{{- if .Values.service.deploySetupHooks }}
 {{- if eq (include "iglu.service.config.database.type" .) "postgres" }}
+
+{{- if .Values.hooks.deploySetupHooks }}
+
+{{- if or .Values.hooks.deployDB .Values.hooks.deployDBUser }}
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "iglu.hooks.name" . }}-db-init-hook
+  labels:
+    {{- include "snowplow.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-weight": "1"
+spec:
+  template:
+    metadata:
+      name: {{ include "iglu.hooks.name" . }}-db-init-hook
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ include "iglu.hooks.name" . }}-db-init-hook
+        image: postgres:15-alpine
+        imagePullPolicy: Always
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            export PGPASSWORD="${CONFIG_FORCE_iglu_database_admin_password}"
+            {{- if .Values.hooks.deployDBUser }}
+            echo "Creating ${CONFIG_FORCE_iglu_database_username} user"
+            {{ include "iglu.hooks.psql.connection" . }} \
+                -d "${CONFIG_FORCE_iglu_database_default_dbname}" \
+                -c "CREATE USER \"${CONFIG_FORCE_iglu_database_username}\" WITH PASSWORD '${CONFIG_FORCE_iglu_database_password}';" && echo "OK"
+            {{- else }}
+            echo "Skipping ${CONFIG_FORCE_iglu_database_username} user creation as it is expected to exist already"
+            {{- end }}
+            {{- if .Values.hooks.deployDB }}
+            echo "Creating ${CONFIG_FORCE_iglu_database_dbname} database"
+            {{ include "iglu.hooks.psql.connection" . }} \
+                -d "${CONFIG_FORCE_iglu_database_default_dbname}" \
+                -c "CREATE DATABASE \"${CONFIG_FORCE_iglu_database_dbname}\" WITH OWNER \"${CONFIG_FORCE_iglu_database_username}\";" && echo "OK"
+            {{- else }}
+            echo "Skipping ${CONFIG_FORCE_iglu_database_dbname} database creation as it is expected to exist already"
+            {{- end }}
+            {{- if .Values.hooks.deployDBUserGrants }}
+            echo "Granting privileges to ${CONFIG_FORCE_iglu_database_username} user"
+            {{ include "iglu.hooks.psql.connection" . }} \
+                 -d "${CONFIG_FORCE_iglu_database_dbname}" \
+                 -c "GRANT ALL PRIVILEGES ON DATABASE \"${CONFIG_FORCE_iglu_database_dbname}\" TO \"${CONFIG_FORCE_iglu_database_username}\"; GRANT USAGE, CREATE ON SCHEMA public TO \"${CONFIG_FORCE_iglu_database_username}\";"
+            echo "OK"
+            {{- end }}
+        env:
+        - name: "CONFIG_FORCE_iglu_database_admin_password"
+          value: "{{ .Values.hooks.secrets.admin_password }}"
+        - name: "CONFIG_FORCE_iglu_database_admin_username"
+          value: "{{ .Values.hooks.secrets.admin_username }}"
+        - name: "CONFIG_FORCE_iglu_database_default_dbname"
+          value: "{{ .Values.hooks.defaultDBName }}"
+        - name: "CONFIG_FORCE_iglu_database_host"
+          value: "{{ .Values.service.config.database.host }}"
+        - name: "CONFIG_FORCE_iglu_database_dbname"
+          value: "{{ .Values.service.config.database.dbname }}"
+        - name: "CONFIG_FORCE_iglu_database_port"
+          value: "{{ .Values.service.config.database.port }}"
+        - name: "CONFIG_FORCE_iglu_database_username"
+          value: "{{ .Values.service.config.database.secrets.username }}"
+        - name: "CONFIG_FORCE_iglu_database_password"
+          value: "{{ .Values.service.config.database.secrets.password }}"
+        envFrom:
+        - secretRef:
+            name: {{ include "iglu.app.secret.name" . }}
+{{- end }}
+
+---
 
 apiVersion: batch/v1
 kind: Job
@@ -46,116 +120,73 @@ spec:
         envFrom:
         - secretRef:
             name: {{ include "iglu.app.secret.name" . }}
-
-{{- if .Values.service.azure.dev_db }}
-
----
-
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: {{ include "iglu.hooks.name" . }}-dev-db-user-setup
-  labels:
-    {{- include "snowplow.labels" $ | nindent 4 }}
-  annotations:
-    "helm.sh/hook": post-install
-    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
-    "helm.sh/hook-weight": "1" 
-spec:
-  template:
-    metadata:
-      name: {{ include "iglu.hooks.name" . }}-dev-db-user-setup
-    spec:
-      restartPolicy: Never
-      containers:
-      - name: {{ include "iglu.hooks.name" . }}-dev-db-user-setup
-        image: postgres:15-alpine
-        imagePullPolicy: Always
-        command: ["/bin/bash", "-c"]
-        args:
-          - |
-            export PGPASSWORD="${CONFIG_FORCE_iglu_database_admin_password}" 
-            psql -h "${CONFIG_FORCE_iglu_database_host}" \
-                 -U "${CONFIG_FORCE_iglu_database_admin_username}" \
-                 -d "${CONFIG_FORCE_iglu_database_dbname}" \
-                 -c "CREATE USER ${CONFIG_FORCE_iglu_database_dev_username} WITH PASSWORD '${CONFIG_FORCE_iglu_database_dev_password}';" && echo "OK"
-            psql -h "${CONFIG_FORCE_iglu_database_host}" \
-                 -U "${CONFIG_FORCE_iglu_database_admin_username}" \
-                 -d "${CONFIG_FORCE_iglu_database_dbname}" \
-                 -c "GRANT ALL PRIVILEGES ON DATABASE ${CONFIG_FORCE_iglu_database_dbname} TO ${CONFIG_FORCE_iglu_database_dev_username};" && echo "OK"
-            psql -h "${CONFIG_FORCE_iglu_database_host}" \
-                 -U "${CONFIG_FORCE_iglu_database_admin_username}" \
-                 -d "${CONFIG_FORCE_iglu_database_dbname}" \
-                 -c "GRANT USAGE, CREATE ON SCHEMA public TO ${CONFIG_FORCE_iglu_database_dev_username};" && echo "OK"
-        env:
-        - name: "CONFIG_FORCE_iglu_database_admin_password"
-          value: "{{ .Values.service.azure.secrets.admin_password }}"
-        - name: "CONFIG_FORCE_iglu_database_admin_username"
-          value: "{{ .Values.service.azure.secrets.admin_username }}"
-        - name: "CONFIG_FORCE_iglu_database_dev_username"
-          value: "{{ .Values.service.config.database.secrets.username }}"
-        - name: "CONFIG_FORCE_iglu_database_dev_password"
-          value: "{{ .Values.service.config.database.secrets.password }}"
-        - name: "CONFIG_FORCE_iglu_database_host"
-          value: "{{ .Values.service.config.database.host }}"
-        - name: "CONFIG_FORCE_iglu_database_dbname"
-          value: "{{ .Values.service.config.database.dbname }}"
-        - name: "CONFIG_FORCE_iglu_database_port"
-          value: "{{ .Values.service.config.database.port }}"
-        envFrom:
-        - secretRef:
-            name: {{ include "iglu.app.secret.name" . }}
 {{- end }}
 
-{{- if .Values.service.aws.dev_db }}
-
 ---
+
+{{- if .Values.hooks.deployDestroyHooks }}
 
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "iglu.hooks.name" . }}-create-dev-db
+  name: {{ include "iglu.hooks.name" . }}-db-destroy-hook
   labels:
     {{- include "snowplow.labels" $ | nindent 4 }}
   annotations:
-    "helm.sh/hook": post-install
+    "helm.sh/hook": pre-delete
     "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
     "helm.sh/hook-weight": "1"
 spec:
   template:
     metadata:
-      name: {{ include "iglu.hooks.name" . }}-create-dev-db
+      name: {{ include "iglu.hooks.name" . }}-db-destroy-hook
     spec:
       restartPolicy: Never
       containers:
-      - name: {{ include "iglu.hooks.name" . }}-create-dev-db
+      - name: {{ include "iglu.hooks.name" . }}-db-destroy-hook
         image: postgres:15-alpine
         imagePullPolicy: Always
         command: ["/bin/bash", "-c"]
         args:
           - |
             export PGPASSWORD="${CONFIG_FORCE_iglu_database_admin_password}"
-            psql -h "${CONFIG_FORCE_iglu_database_host}" \
-                 -d "${CONFIG_FORCE_iglu_database_prod_dbname}" \
-                 -U "${CONFIG_FORCE_iglu_database_admin_username}" \
-                 -p "${CONFIG_FORCE_iglu_database_port}" \
-                 -c "CREATE DATABASE ${CONFIG_FORCE_iglu_database_dbname};" && echo "OK"
+            {{- if or .Values.hooks.destroyDB .Values.hooks.destroyDBUser }}
+            echo "Destroying database resources"
+            {{- if .Values.hooks.destroyDB }}
+            {{ include "iglu.hooks.psql.connection" . }} \
+                -d "${CONFIG_FORCE_iglu_database_default_dbname}" \
+                -c "ALTER DATABASE \"${CONFIG_FORCE_iglu_database_dbname}\" OWNER TO \"${CONFIG_FORCE_iglu_database_admin_username}\";"
+            {{ include "iglu.hooks.psql.connection" . }} \
+                -d "${CONFIG_FORCE_iglu_database_default_dbname}" \
+                -c "DROP DATABASE \"${CONFIG_FORCE_iglu_database_dbname}\" WITH (FORCE);"
+            {{- end }}
+            {{- if .Values.hooks.destroyDBUser }}
+            {{ include "iglu.hooks.psql.connection" . }} \
+                -d "${CONFIG_FORCE_iglu_database_default_dbname}" \
+                -c "DROP USER \"${CONFIG_FORCE_iglu_database_username}\";"
+            {{- end }}
+            echo "OK"
+            {{- else }}
+            echo "Skipping database and user destruction"
+            {{- end }}
         env:
         - name: "CONFIG_FORCE_iglu_database_admin_password"
-          value: "{{ .Values.service.aws.secrets.admin_password }}"
+          value: "{{ .Values.hooks.secrets.admin_password }}"
         - name: "CONFIG_FORCE_iglu_database_admin_username"
-          value: "{{ .Values.service.aws.secrets.admin_username }}"
-        - name: "CONFIG_FORCE_iglu_database_prod_dbname"
-          value: "{{ .Values.service.aws.prod_dbname }}"
+          value: "{{ .Values.hooks.secrets.admin_username }}"
+        - name: "CONFIG_FORCE_iglu_database_default_dbname"
+          value: "{{ .Values.hooks.defaultDBName }}"
         - name: "CONFIG_FORCE_iglu_database_host"
           value: "{{ .Values.service.config.database.host }}"
         - name: "CONFIG_FORCE_iglu_database_dbname"
           value: "{{ .Values.service.config.database.dbname }}"
         - name: "CONFIG_FORCE_iglu_database_port"
           value: "{{ .Values.service.config.database.port }}"
+        - name: "CONFIG_FORCE_iglu_database_username"
+          value: "{{ .Values.service.config.database.secrets.username }}"
         envFrom:
         - secretRef:
             name: {{ include "iglu.app.secret.name" . }}
 {{- end }}
-{{- end }}
+
 {{- end }}

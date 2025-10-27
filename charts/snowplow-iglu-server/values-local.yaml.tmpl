@@ -1,5 +1,4 @@
 service:
-  deploySetupHooks: true
   port: 8080
   image:
     repository: "snowplow/iglu-server"
@@ -26,3 +25,8 @@ service:
         username: "postgres"
         password: "<password>"
     patchesAllowed: false
+
+hooks:
+  deploySetupHooks: true
+  deployDB: true
+  deployDBUser: true
