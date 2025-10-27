@@ -22,8 +22,8 @@ spec:
       restartPolicy: Never
       containers:
       - name: {{ include "iglu.hooks.name" . }}-db-init-hook
-        image: postgres:15-alpine
-        imagePullPolicy: Always
+        image: {{ .Values.hooks.image.repository }}:{{ .Values.hooks.image.tag }}
+        imagePullPolicy: {{ .Values.hooks.image.pullPolicy }}
         command: ["/bin/bash", "-c"]
         args:
           - |
@@ -144,8 +144,8 @@ spec:
       restartPolicy: Never
       containers:
       - name: {{ include "iglu.hooks.name" . }}-db-destroy-hook
-        image: postgres:15-alpine
-        imagePullPolicy: Always
+        image: {{ .Values.hooks.image.repository }}:{{ .Values.hooks.image.tag }}
+        imagePullPolicy: {{ .Values.hooks.image.pullPolicy }}
         command: ["/bin/bash", "-c"]
         args:
           - |

@@ -165,7 +165,12 @@ hooks:
   deployDBUser: true
   deployDB: true
   deployDBUserGrants: true
-  defaultDBName: "postgres"  # Database to connect to for admin operations
+  image:
+    repository: "postgres"    # PostgreSQL client image repository
+    tag: "15-alpine"          # PostgreSQL client image tag
+    pullPolicy: "Always"      # Image pull policy for hook containers
+  connectionTimeout: 10       # Connection timeout in seconds for PostgreSQL connections
+  defaultDBName: "postgres"   # Database to connect to for admin operations
   secrets:
     admin_username: "postgres"
     admin_password: "your-admin-password"
@@ -219,6 +224,10 @@ service:
 | hooks.destroyDBUser | bool | `false` | Whether the destroy hook should drop the database user |
 | hooks.destroyDB | bool | `false` | Whether the destroy hook should drop the database |
 | hooks.defaultDBName | string | `"postgres"` | Default database name to connect to for administrative operations |
+| hooks.image.repository | string | `"postgres"` | PostgreSQL client image repository for hooks |
+| hooks.image.tag | string | `"15-alpine"` | PostgreSQL client image tag for hooks |
+| hooks.image.pullPolicy | string | `"Always"` | Image pull policy for hook containers |
+| hooks.connectionTimeout | int | `10` | Connection timeout in seconds for PostgreSQL connections |
 | hooks.secrets.admin_username | string | `""` | Admin username for database operations in hooks |
 | hooks.secrets.admin_password | string | `""` | Admin password for database operations in hooks |
 | service.annotations | object | `{}` | Map of annotations to add to the service |

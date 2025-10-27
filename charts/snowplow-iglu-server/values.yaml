@@ -169,6 +169,13 @@ hooks:
   # -- Whether to run the pre-delete destroy hooks to drop database and user
   destroyDBUser: false
   destroyDB: false
+  # -- PostgreSQL client image configuration for hooks
+  image:
+    repository: "postgres"
+    tag: "15-alpine"
+    pullPolicy: "Always"
+  # -- Connection timeout in seconds for PostgreSQL connections
+  connectionTimeout: 10
   # -- Default database name and admin credentials for hooks to use
   defaultDBName: "postgres"
   secrets:
