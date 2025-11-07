@@ -1,3 +1,7 @@
+Version 0.3.6 (2025-11-07)
+---------------------------
+charts/snowplow-iglu-server: Add support for deploying in GCP using private IP (#280)
+
 Version 0.3.5 (2025-10-27)
 ---------------------------
 charts/snowplow-iglu-server: Refactor hooks system with multitenant support and enhanced configuration (#277)

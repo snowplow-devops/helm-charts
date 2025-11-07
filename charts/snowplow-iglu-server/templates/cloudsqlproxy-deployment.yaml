@@ -34,6 +34,7 @@ spec:
         command:
         - "/cloud_sql_proxy"
         - "-instances={{ .Values.service.gcp.proxy.project }}:{{ .Values.service.gcp.proxy.region }}:{{ .Values.service.gcp.proxy.instanceName }}=tcp:0.0.0.0:{{ .Values.service.config.database.port }}"
+        - "-ip_address_types={{ .Values.service.gcp.proxy.ipAddressTypes }}"
 
         resources:
           {{- toYaml .Values.service.gcp.proxy.resources | nindent 10 }}
