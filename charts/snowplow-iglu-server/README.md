@@ -122,6 +122,7 @@ You will need to fill these targeted fields:
 - `service.gcp.proxy.project: <project>`
 - `service.gcp.proxy.region: <region>`
 - `service.gcp.proxy.instanceName: <db_instance_name>`
+- `service.gcp.proxy.ipAddressTypes: <PUBLIC|PRIVATE|PSC>` (optional, defaults to PUBLIC)
 - `cloudserviceaccount.deploy: true`
 - `cloudserviceaccount.name: <unique_name>`
 - `cloudserviceaccount.gcp.serviceAccount: <output_value_from_above>`
@@ -251,6 +252,7 @@ service:
 | service.gcp.proxy.image.repository | string | `"gcr.io/cloudsql-docker/gce-proxy"` |  |
 | service.gcp.proxy.image.tag | string | `"1.31.2"` |  |
 | service.gcp.proxy.instanceName | string | `""` | Name of the CloudSQL instance |
+| service.gcp.proxy.ipAddressTypes | string | `"PUBLIC"` | IP address types to use (options: PUBLIC, PRIVATE, PSC) |
 | service.gcp.proxy.port | int | `38000` | Port to bind proxy onto |
 | service.gcp.proxy.project | string | `""` | Project where CloudSQL instance is deployed |
 | service.gcp.proxy.region | string | `""` | Region where CloudSQL instance is deployed |
