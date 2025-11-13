@@ -48,6 +48,11 @@ spec:
       priorityClassName: {{ .Values.priorityClassName }}
       {{- end }}
 
+      {{- with .Values.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
 

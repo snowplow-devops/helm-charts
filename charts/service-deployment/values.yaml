@@ -330,6 +330,12 @@ persistentVolume:
   # -- Set to "-" or "" to disable dynamic provisioning, if undefined uses the default provisioner
   # storageClass: "-"
 
+# -- Pod security context configuration
+# This is particularly useful when using persistent volumes with non-root container users
+# Setting fsGroup ensures that mounted volumes have the correct group ownership
+securityContext: {}
+  # -- Set the fsGroup for all containers in the pod. This ensures mounted volumes are accessible to non-root users
+  # fsGroup: 1000
 
 # Hooks Configuration
 hooks:
