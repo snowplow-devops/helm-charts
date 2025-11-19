@@ -1,3 +1,7 @@
+Version 0.3.7 (2025-11-19)
+---------------------------
+charts/cluster-warmer: Add Docker authentication support for private registries
+
 Version 0.3.6 (2025-11-13)
 ---------------------------
 charts/service-deployment: Allow setting securityContext for pod
