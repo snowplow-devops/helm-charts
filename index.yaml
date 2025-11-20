@@ -592,6 +592,29 @@ entries:
     version: 0.1.0
   cluster-warmer:
   - apiVersion: v2
+    created: "2025-11-20T12:08:36.922616712Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    description: A Helm Chart to deploy pods to force scaling in a node-pool to keep
+      it warm
+    digest: 0c56c8af13442de65717bf121cc3e3cf2ee76cbfeff4d015c9b9f6aad175250d
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cluster-autoscaler
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: cluster-warmer
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cluster-warmer-0.4.0/cluster-warmer-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
     created: "2024-08-16T13:09:17.102358849Z"
     description: A Helm Chart to deploy pods to force scaling in a node-pool to keep
       it warm
@@ -3420,4 +3443,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2025-11-13T15:28:14.965259929Z"
+generated: "2025-11-20T12:08:36.923198007Z"
