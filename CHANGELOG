@@ -1,6 +1,7 @@
 Version 0.3.7 (2025-11-19)
 ---------------------------
 charts/cluster-warmer: Add Docker authentication support for private registries
+charts/cluster-warmer: Remove image.isRepositoryPublic to enforce authenticated pulls
 
 Version 0.3.6 (2025-11-13)
 ---------------------------
