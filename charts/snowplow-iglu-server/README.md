@@ -70,17 +70,6 @@ You will need to fill these targeted fields:
 
 ### GCP (GKE) settings
 
-#### NetworkEndpointGroup binding
-
-To manage the load balancer externally from the GKE cluster you can bind the deployment onto dynamically assigned Network Endpoint Groups (NEGs).
-
-1. Set the NEG name: `service.gcp.networkEndpointGroupName: <valid_value>`
-   - Will default to the Chart release name
-2. This will create Zonal NEGs in your account automatically (do not proceed until the NEGs appear - check your deployment events if this doesn't happen!)
-3. Create a Load Balancer as usual and map the NEGs created into your backend service (follow the `Create Load Balancer` flow in the GCP Console)
-
-*Note*: The HealthCheck you create should map to the same port you used for the service deployment.
-
 #### Backend: CloudSQL Postgres with proxy
 
 To ease deployment to a GKE cluster you can optionally leverage the built-in CloudSQL proxy - this will create a service deployment exposing your CloudSQL instance within your cluster.
@@ -247,7 +236,6 @@ service:
 | service.config.repoServer.hsts.enable | bool | `true` | Whether to enable sending HSTS headers (>=0.12.0) |
 | service.config.secrets.superApiKey | string | `""` | Lowercase uuidv4 to use as admin apikey of the service (default: auto-generated) |
 | service.gcp.deployProxy | bool | `false` | Whether to use CloudSQL Proxy (note: requires GCP service account to be attached) |
-| service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
 | service.gcp.proxy.image.isRepositoryPublic | bool | `true` | Whether the repository is public |
 | service.gcp.proxy.image.repository | string | `"gcr.io/cloudsql-docker/gce-proxy"` |  |
 | service.gcp.proxy.image.tag | string | `"1.31.2"` |  |

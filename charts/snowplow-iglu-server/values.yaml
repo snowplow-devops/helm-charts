@@ -94,9 +94,6 @@ service:
     targetGroupARN: ""
 
   gcp:
-    # -- Name of the Network Endpoint Group to bind onto
-    networkEndpointGroupName: ""
-
     # -- Whether to use CloudSQL Proxy (note: requires GCP service account to be attached)
     deployProxy: false
 
