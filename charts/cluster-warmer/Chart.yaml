@@ -1,7 +1,7 @@
 apiVersion: v2
 name: cluster-warmer
 description: A Helm Chart to deploy pods to force scaling in a node-pool to keep it warm
-version: 0.3.0
+version: 0.4.0
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts
 sources:
@@ -12,3 +12,7 @@ maintainers:
     email: jbeemster@users.noreply.github.com
 keywords:
   - cluster-autoscaler
+dependencies:
+  - name: dockerconfigjson
+    version: 0.1.0
+    repository: "https://snowplow-devops.github.io/helm-charts"

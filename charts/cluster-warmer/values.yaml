@@ -8,8 +8,6 @@ fullnameOverride: ""
 image:
   repository: "registry.k8s.io/pause"
   tag: "3.9"
-  # -- Whether the repository is public
-  isRepositoryPublic: true
   # -- The image pullPolicy to use
   pullPolicy: "IfNotPresent"
 
@@ -24,3 +22,15 @@ hpa:
 
 # --  Node labels for pod assignment.
 nodeSelector: {}
+
+dockerconfigjson:
+  # -- Name of the secret to use for the private repository
+  name: "snowplow-cw-dockerhub"
+  # -- Username for the private repository
+  username: ""
+  # -- Password for the private repository
+  password: ""
+  # -- Repository server URL
+  server: "https://index.docker.io/v1/"
+  # -- Email address for user of the private repository
+  email: ""

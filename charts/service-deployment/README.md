@@ -132,6 +132,7 @@ helm delete service-deployment
 | readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |
 | replicas | int | `1` | Number of replicas to deploy when HPA is disabled (`hpa.deploy: false`) |
 | resources | object | `{}` | Map of resource constraints for the service |
+| securityContext | object | `{}` | Pod security context configuration This is particularly useful when using persistent volumes with non-root container users Setting fsGroup ensures that mounted volumes have the correct group ownership |
 | service.annotations | object | `{}` | Map of annotations to add to the service |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
 | service.deploy | bool | `true` | Whether to setup service bindings (note: only NodePort is supported) |
