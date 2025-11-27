@@ -41,3 +41,6 @@ tags: {}
 # -- List of regexp patterns to exclude pods from Container Insights metrics collection
 # Example: [".*kclmon-cron.*", ".*metrics-relay.*"]
 excludedPodPatterns: []
+
+# -- Enable FullPodName dimension metrics for pod CPU and memory utilization
+fullPodNameMetrics: true
