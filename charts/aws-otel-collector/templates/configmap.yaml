@@ -12,7 +12,9 @@ data:
 
     receivers:
       awscontainerinsightreceiver:
+{{- if .Values.fullPodNameMetrics }}
         add_full_pod_name_metric_label: true
+{{- end }}
 
     processors:
       batch/metrics:
@@ -51,10 +53,12 @@ data:
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
               - pod_network_tx_bytes
+{{- if .Values.fullPodNameMetrics }}
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
               - pod_memory_utilization
+{{- end }}
           - dimensions: [[ClusterName]]
             metric_name_selectors:
               - cluster_node_count
@@ -75,7 +79,9 @@ data:
 
     receivers:
       awscontainerinsightreceiver:
+{{- if .Values.fullPodNameMetrics }}
         add_full_pod_name_metric_label: true
+{{- end }}
       prometheus:
         config:
           global:
@@ -147,10 +153,12 @@ data:
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
               - pod_network_tx_bytes
+{{- if .Values.fullPodNameMetrics }}
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
               - pod_memory_utilization
+{{- end }}
           - dimensions: [[ClusterName]]
             metric_name_selectors:
               - cluster_node_count
