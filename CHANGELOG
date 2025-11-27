@@ -1,3 +1,7 @@
+Version 0.3.8 (2025-11-27)
+---------------------------
+charts/aws-otel-collector: Optional FullPodName metrics
+
 Version 0.3.7 (2025-11-19)
 ---------------------------
 charts/cluster-warmer: Add Docker authentication support for private registries
