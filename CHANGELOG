@@ -1,3 +1,7 @@
+Version 0.3.9 (2025-11-28)
+--------------------------
+charts/aws-otel-collector: Remove logs that add no value from EMF processing path
+
 Version 0.3.8 (2025-11-27)
 ---------------------------
 charts/aws-otel-collector: Optional FullPodName metrics
