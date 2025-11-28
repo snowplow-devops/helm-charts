@@ -57,4 +57,5 @@ helm delete aws-otel-collector --namespace kube-system
 | serviceAccount.annotations | object | `{}` | Optional annotations to be applied to service account |
 | tags | object | `{}`| Tags to apply to log groups |
 | excludedPodPatterns | list | `[]` | List of regexp patterns to exclude pods from Container Insights metrics collection |
+| excludedNamespacePatterns | list | `[]` | List of regexp patterns for namespaces to exclude from metrics collection |
 | fullPodNameMetrics | bool | `true` | Enable FullPodName dimension metrics for pod CPU and memory utilization |

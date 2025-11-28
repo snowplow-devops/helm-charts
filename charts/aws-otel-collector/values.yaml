@@ -42,5 +42,9 @@ tags: {}
 # Example: [".*kclmon-cron.*", ".*metrics-relay.*"]
 excludedPodPatterns: []
 
+# -- List of regexp patterns for namespaces to EXCLUDE from metrics collection
+# Example: ["^kube-.*", "^monitoring$", "^.*-system$"]
+excludedNamespacePatterns: []
+
 # -- Enable FullPodName dimension metrics for pod CPU and memory utilization
 fullPodNameMetrics: true
