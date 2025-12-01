@@ -1,3 +1,7 @@
+Version 0.3.10 (2025-11-29)
+---------------------------
+charts/snowplow-iglu-server: Add support for deploying in GCP using private IP (#280)
+
 Version 0.3.9 (2025-11-28)
 --------------------------
 charts/aws-otel-collector: Remove logs that add no value from EMF processing path

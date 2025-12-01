@@ -54,9 +54,6 @@ Define default values for required values.
 {{- define "iglu.service.targetCPUUtilizationPercentage" -}}
 {{- mul .Values.service.targetCPUUtilizationPercentage .Values.service.minReplicas }}
 {{- end -}}
-{{- define "iglu.service.gcp.networkEndpointGroupName" -}}
-{{- default .Release.Name .Values.service.gcp.networkEndpointGroupName -}}
-{{- end -}}
 
 {{/*
 Create chart name and version to use as chart label.
