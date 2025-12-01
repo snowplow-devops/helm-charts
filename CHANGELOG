@@ -1,53 +1,53 @@
 Version 0.3.9 (2025-11-28)
 --------------------------
-charts/aws-otel-collector: Remove logs that add no value from EMF processing path
+charts/aws-otel-collector-0.10.0: Remove logs that add no value from EMF processing path (#288)
 
 Version 0.3.8 (2025-11-27)
 ---------------------------
-charts/aws-otel-collector: Optional FullPodName metrics
+charts/aws-otel-collector-0.9.0: Optional FullPodName metrics
 
 Version 0.3.7 (2025-11-19)
 ---------------------------
-charts/cluster-warmer: Add Docker authentication support for private registries
-charts/cluster-warmer: Remove image.isRepositoryPublic to enforce authenticated pulls
+charts/cluster-warmer-0.4.0: Add Docker authentication support for private registries
+charts/cluster-warmer-0.4.0: Remove image.isRepositoryPublic to enforce authenticated pulls
 
 Version 0.3.6 (2025-11-13)
 ---------------------------
-charts/service-deployment: Allow setting securityContext for pod
+charts/service-deployment-0.33.0: Allow setting securityContext for pod
 
 Version 0.3.5 (2025-10-27)
 ---------------------------
-charts/snowplow-iglu-server: Refactor hooks system with multitenant support and enhanced configuration (#277)
-charts/snowplow-iglu-server: Add configurable PostgreSQL client image and connection timeout for hooks (#278)
+charts/snowplow-iglu-server-0.12.0: Refactor hooks system with multitenant support and enhanced configuration (#277)
+charts/snowplow-iglu-server-0.12.0: Add configurable PostgreSQL client image and connection timeout for hooks (#278)
 
 Version 0.3.4 (2025-10-24)
 ---------------------------
-charts/cert-manager-issuer: Add compatibility with charts/cert-manager-crds (v1.19.x)
+charts/cert-manager-issuer-0.3.0: Add compatibility with charts/cert-manager-crds (v1.19.x)
 
 Version 0.3.3 (2025-10-23)
 ---------------------------
-charts/cert-manager-crds: Add compatibility with the latest cert-manager version (v1.19.x) (#274)
+charts/cert-manager-crds-0.2.0: Add compatibility with the latest cert-manager version (v1.19.x) (#274)
 
 Version 0.3.2 (2025-10-22)
 ---------------------------
-charts/service-deployment: Fix dockerconfigjson in hooks (#272)
+charts/service-deployment-0.32.0: Fix dockerconfigjson in hooks (#272)
 
 Version 0.3.1 (2025-10-21)
 ---------------------------
-charts/service-deployment: Add imagePullSecrets to hooks (#259)
-charts/service-deployment: Remove image.isRepositoryPublic to enforce authenticated pulls (#268)
+charts/service-deployment-0.31.0: Add imagePullSecrets to hooks (#259)
+charts/service-deployment-0.31.0: Remove image.isRepositoryPublic to enforce authenticated pulls (#268)
 
 Version 0.3.0 (2025-10-17)
 ---------------------------
-charts/multi-service-deployment: Initial release of multi-service deployment chart using common library
+charts/multi-service-deployment-0.1.0: Initial release of multi-service deployment chart using common library
 
 Version 0.2.0 (2025-10-17)
 ---------------------------
-charts/service-deployment: Add Traefik rate limit middleware (#265)
+charts/service-deployment-0.30.0: Add Traefik rate limit middleware (#265)
 
 Version 0.1.100 (2025-10-17)
 ---------------------------
-charts/aws-otel-collector: Add total bytes transmitted egress metric (#270)
+charts/aws-otel-collector-0.8.0: Add total bytes transmitted egress metric (#270)
 
 Version 0.1.99 (2025-10-15)
 ---------------------------
@@ -55,135 +55,143 @@ charts/common: Initial release of common library chart with reusable template he
 
 Version 0.1.98 (2025-10-15)
 ---------------------------
-charts/service-deployment: Add extraObjects for additional kubernetes objects (#261)
+charts/service-deployment-0.29.0: Add extraObjects for additional kubernetes objects (#261)
 
 Version 0.1.97 (2025-10-14)
 ---------------------------
-charts/cron-job: Allow each schedule to have specific env vars
+charts/cron-job-0.12.2: Allow each schedule to have specific env vars
 
 Version 0.1.96 (2025-09-22)
 ---------------------------
-charts/aws-otel-collector: Add pod exclusion filter support to reduce CloudWatch costs (#379)
+charts/aws-otel-collector-0.7.0: Add pod exclusion filter support to reduce CloudWatch costs (#379)
 
 Version 0.1.95 (2025-09-08)
 ---------------------------
-charts/service-deployment: Add vertical pod autoscaler support (#188)
+charts/service-deployment-0.28.0: Add vertical pod autoscaler support (#188)
+
+Version 0.1.94 (2025-09-02)
+---------------------------
+charts/service-deployment-0.27.0: Add arbitrary hooks support (#257)
 
 Version 0.1.94 (2025-08-21)
 ---------------------------
-charts/vertical-pod-autoscaler: Adds vertical pod autoscaler chart (#249)
+charts/vertical-pod-autoscaler-0.1.0: Adds vertical pod autoscaler chart (#249)
 
 Version 0.1.93 (2025-08-07)
 ---------------------------
-charts/service-deployment: database bootstrap job (#248)
+charts/service-deployment-0.26.0: Add database bootstrap job (#248)
 
 Version 0.1.92 (2025-07-11)
 ---------------------------
-charts/service-deployment: add optional tls secret name override (#245)
+charts/service-deployment-0.25.0: Add optional tls secret name override (#245)
 
 Version 0.1.91 (2025-06-05)
 ---------------------------
-charts/cron-job: Add backoff limit to created jobs (#243)
+charts/cron-job-0.12.1: Add backoff limit to created jobs (#243)
 
 Version 0.1.90 (2025-05-30)
 ---------------------------
-charts/cron-job: Add ability to have multiple schedules with shared resources (#239)
+charts/cron-job-0.12.0: Add ability to have multiple schedules with shared resources (#239)
 
 Version 0.1.89 (2025-05-28)
 ---------------------------
-charts/cron-job: Add ability to specify resources (#236)
-charts/cron-job: Add ability to specify fine-grained custom roles (#237)
+charts/cron-job-0.11.0: Add ability to specify resources (#236)
+charts/cron-job-0.11.0: Add ability to specify fine-grained custom roles (#237)
 
 Version 0.1.88 (2025-05-21)
 ---------------------------
-charts/cron-job: attach custom role to service account (#234)
+charts/cron-job-0.10.0: Attach custom role to service account (#234)
 
 Version 0.1.87 (2025-05-21)
 ---------------------------
-charts/cron-job: add ability to suspend schedule (#232)
+charts/cron-job-0.9.0: Add ability to suspend schedule (#232)
 
 Version 0.1.86 (2025-04-22)
 ---------------------------
-charts/network-policy: add network-policy chart (#225)
+charts/network-policy-0.1.0: Add network-policy chart (#225)
 
 Version 0.1.85 (2025-04-14)
 ---------------------------
-charts/service-deployment: add support for mounting separate deployment configMaps (#228)
+charts/service-deployment-0.24.0: Add support for mounting separate deployment configMaps (#228)
 
 Version 0.1.84 (2025-03-28)
 ---------------------------
-charts/cert-manager-issuer: add external issuer support (#222)
+charts/cert-manager-issuer-0.2.0: Add external issuer support (#222)
 
 Version 0.1.83 (2025-02-21)
 ---------------------------
-charts/service-deployment: enables setting single replica without HPA deployment (#218)
+charts/service-deployment-0.23.0: Enable setting single replica without HPA deployment (#218)
 
 Version 0.1.82 (2025-02-12)
 ---------------------------
-charts/snowplow-iglu-server: simplify checksum generation (#213)
-charts/service-deployment: simplify checksum generation (#214)
-charts/daemonset: simplify checksum generation (#215)
-charts/cron-job: simplify checksum generation (#216)
+charts/snowplow-iglu-server-0.11.0: Simplify checksum generation (#213)
+charts/service-deployment-0.22.0: Simplify checksum generation (#214)
+charts/daemonset-0.5.0: Simplify checksum generation (#215)
+charts/cron-job-0.8.0: Simplify checksum generation (#216)
+
+Version 0.1.81 (2024-12-18)
+---------------------------
+charts/aws-otel-collector-0.6.0: Limit Prometheus receiver to process only the required metrics (#211)
 
 Version 0.1.81 (2024-11-14)
 ---------------------------
-charts/aws-otel-collector: add reserved capacity for cpu and memory metrics (closes #209)
+charts/aws-otel-collector-0.5.0: Add reserved capacity for cpu and memory metrics (#209)
 
 Version 0.1.80 (2024-10-31)
 ---------------------------
-charts/snowplow-iglu-server: Change annotations to deploy hook job only on post-install and not on post-upgrade (closes #205)
+charts/snowplow-iglu-server-0.10.2: Change annotations to deploy hook job only on post-install and not on post-upgrade (#205)
 
 Version 0.1.79 (2024-10-29)
 ---------------------------
-charts/snowplow-iglu-server: Adds missiing variable to fix bug from previous version (closes #205)
+charts/snowplow-iglu-server-0.10.1: Add missiing variable to fix bug from previous version (#205)
 
 Version 0.1.78 (2024-10-28)
 ---------------------------
-charts/snowplow-iglu-server: Adds helm hook job to create dev database (closes #205)
+charts/snowplow-iglu-server-0.10.0: Add helm hook job to create dev database (#205)
 
 Version 0.1.77 (2024-10-25)
 ---------------------------
-charts/service-deployment: update hpa to supply metrics object instead of fixed CPU utilization threshold (closes #202)
+charts/service-deployment-0.21.0: Update hpa to supply metrics object instead of fixed CPU utilization threshold (closes #202)
 
 Version 0.1.76 (2024-10-23)
 ---------------------------
-charts/snowplow-iglu-server: add support for tolerations and topologySpreadConstraints (closes #194)
+charts/snowplow-iglu-server-0.9.0: Add support for tolerations and topologySpreadConstraints (#194)
 
 Version 0.1.75 (2024-08-30)
 ---------------------------
-charts/snowplow-iglu-server: Create Helm Hook Job for DB users and permissions (closes #196)
+charts/snowplow-iglu-server-0.8.0: Create Helm Hook Job for DB users and permissions (closes #196)
 
 Version 0.1.74 (2024-08-30)
 ---------------------------
-charts/aws-otel-collector: change default resource allocation (#198)
+charts/aws-otel-collector-0.4.1: Change default resource allocation (#198)
 
 Version 0.1.73 (2024-08-29)
 ---------------------------
-charts/aws-otel-collector add cluster_name label to prometheus scrap config (closes #192)
+charts/aws-otel-collector-0.4.0: Add cluster_name label to prometheus scrap config (#192)
 
 Version 0.1.72 (2024-08-27)
 ---------------------------
-charts/service-deployment add support for tolerations and topologySpreadConstraints (closes #165, closes #189)
+charts/service-deployment-0.20.0: Add support for tolerations and topologySpreadConstraints (closes #165, closes #189)
 
 Version 0.1.71 (2024-08-23)
 ---------------------------
-charts/aws-otel-collector add support for kube-state-metrics (closes #190)
+charts/aws-otel-collector-0.3.0: Add support for kube-state-metrics (#190)
 
 Version 0.1.70 (2024-08-15)
 ---------------------------
-charts/snowplow-iglu-server add global labels (closes #179)
-charts/priority-class add global labels (closes #180)
-charts/daemonset add global labels (closes #181)
-charts/cron-job add global labels (closes #182)
-charts/cluster-warmer add global labels (closes #183)
+charts/snowplow-iglu-server-0.7.0: Add global labels (#179)
+charts/priority-class-0.2.0: Add global labels (#180)
+charts/daemonset-0.4.0: Add global labels (#181)
+charts/cron-job-0.7.0: Add global labels (#182)
+charts/cluster-warmer-0.3.0: Add global labels (#183)
 
 Version 0.1.69 (2024-07-31)
 ---------------------------
-charts/service-deployment: Add missing global labels to Deployment (#185)
+charts/service-deployment-0.19.1: Add missing global labels to Deployment (#185)
 
 Version 0.1.68 (2024-07-30)
 ---------------------------
-charts/service-deployment: Add support for global labels applied to resources deployed by the chart (#177)
+charts/service-deployment-0.19.0: Add support for global labels applied to resources deployed by the chart (#177)
 
 Version 0.1.67 (2024-06-27)
 ---------------------------
@@ -191,11 +199,11 @@ charts/aws-otel-collector: Update otel-agent-config with new dimension 'ClusterN
 
 Version 0.1.66 (2024-03-27)
 ---------------------------
-charts/service-deployment: Add support for StatefulSet in deployment.Kind (#170)
+charts/service-deployment-0.18.0: Add support for StatefulSet in deployment.Kind (#170)
 
 Version 0.1.65 (2024-03-26)
 ---------------------------
-charts/service-deployment: Add support for IP allowlists on ingress (#167)
+charts/service-deployment-0.17.0: Add support for IP allowlists on ingress (#167)
 charts/snowplow-iglu-server: Add support for IP allowlists on ingress (#168)
 
 Version 0.1.64 (2024-02-14)
@@ -239,7 +247,7 @@ charts/service-deployment: Add rollingUpdate settings (#144)
 
 Version 0.1.56 (2023-11-30)
 ---------------------------
-charts/priority-class: Add priority class chart (#140)
+charts/priority-class-0.1.0: Add priority class chart (#140)
 
 Version 0.1.55 (2023-11-27)
 ---------------------------
@@ -270,7 +278,7 @@ charts/snowplow-iglu-server: Refactored Traefik support. Added Certificate handl
 
 Version 0.1.49 (2023-10-17)
 ---------------------------
-charts/cert-manager-issuer: Add helper chart for creating ClusterIssuers and Issuers.
+charts/cert-manager-issuer-0.1.0: Add helper chart for creating ClusterIssuers and Issuers
 
 Version 0.1.48 (2023-10-10)
 ---------------------------
@@ -290,7 +298,7 @@ charts/aws-otel-collector: Upgrade to work with containerd (#119)
 
 Version 0.1.44 (2023-09-20)
 ---------------------------
-charts/daemonset: Update Default dnsPolicy to the true default "ClusterFirst" (#117)
+charts/daemonset-0.3.2: Update Default dnsPolicy to the true default "ClusterFirst" (#117)
 
 Version 0.1.43 (2023-09-14)
 ---------------------------
@@ -298,11 +306,11 @@ charts/service-deployment: Add support for Azure managed identity (#111)
 
 Version 0.1.42 (2023-09-14)
 ---------------------------
-charts/daemonset: Add azure workload identity label (#114)
+charts/daemonset-0.3.1: Add Azure workload identity label (#114)
 
 Version 0.1.41 (2023-09-13)
 ---------------------------
-charts/daemonset: Add support for Azure managed identity (#112)
+charts/daemonset-0.3.0: Add support for Azure managed identity (#112)
 
 Version 0.1.40 (2023-09-12)
 ---------------------------
@@ -310,7 +318,7 @@ charts/cloudserviceaccount: Add support for Azure managed identity (#109)
 
 Version 0.1.39 (2023-09-07)
 ---------------------------
-charts/cert-manager-crds: Add cert-manager-crds Helm Chart (#103)
+charts/cert-manager-crds-0.1.0: Add cert-manager-crds Helm Chart (#103)
 
 Version 0.1.38 (2023-09-06)
 ---------------------------
