@@ -12,11 +12,22 @@ data:
 
     receivers:
       awscontainerinsightreceiver:
+{{- if .Values.fullPodNameMetrics }}
         add_full_pod_name_metric_label: true
+{{- end }}
 
     processors:
       batch/metrics:
         timeout: 60s
+{{- if .Values.excludedNamespacePatterns }}
+      filter/exclude_namespaces:
+        error_mode: ignore
+        metrics:
+          metric:
+{{- range .Values.excludedNamespacePatterns }}
+            - 'IsMatch(resource.attributes["Namespace"], "{{ . }}")'
+{{- end }}
+{{- end }}
 {{- if .Values.excludedPodPatterns }}
       filter/exclude_pods:
         error_mode: ignore
@@ -26,6 +37,39 @@ data:
             - 'IsMatch(resource.attributes["PodName"], "{{ . }}")'
 {{- end }}
 {{- end }}
+      filter/include_metrics:
+        metrics:
+          include:
+            match_type: strict
+            metric_names:
+              - pod_cpu_utilization
+              - pod_memory_utilization
+              - pod_number_of_running_containers
+              - pod_number_of_container_restarts
+              - pod_cpu_reserved_capacity
+              - pod_memory_reserved_capacity
+              - pod_network_tx_bytes
+              - cluster_node_count
+              - node_cpu_utilization
+              - node_memory_utilization
+      resource/strip_attributes:
+        attributes:
+          - key: kubernetes
+            action: delete
+          - key: Sources
+            action: delete
+          - key: Type
+            action: delete
+          - key: AutoScalingGroupName
+            action: delete
+          - key: InstanceId
+            action: delete
+          - key: InstanceType
+            action: delete
+          - key: Version
+            action: delete
+          - key: Service
+            action: delete
 
     exporters:
       awsemf:
@@ -36,7 +80,6 @@ data:
         resource_to_telemetry_conversion:
           enabled: true
         dimension_rollup_option: NoDimensionRollup
-        parse_json_encoded_attr_values: [Sources, kubernetes]
         {{- with .Values.tags }}
         tags:
           {{- toYaml . | nindent 10 }}
@@ -51,10 +94,12 @@ data:
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
               - pod_network_tx_bytes
+{{- if .Values.fullPodNameMetrics }}
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
               - pod_memory_utilization
+{{- end }}
           - dimensions: [[ClusterName]]
             metric_name_selectors:
               - cluster_node_count
@@ -65,7 +110,7 @@ data:
       pipelines:
         metrics:
           receivers: [awscontainerinsightreceiver]
-          processors: [{{- if .Values.excludedPodPatterns }}filter/exclude_pods, {{- end }}batch/metrics]
+          processors: [{{- if .Values.excludedNamespacePatterns }}filter/exclude_namespaces, {{- end }}{{- if .Values.excludedPodPatterns }}filter/exclude_pods, {{- end }}filter/include_metrics, resource/strip_attributes, batch/metrics]
           exporters: [awsemf]
 
       extensions: [health_check]
@@ -75,7 +120,9 @@ data:
 
     receivers:
       awscontainerinsightreceiver:
+{{- if .Values.fullPodNameMetrics }}
         add_full_pod_name_metric_label: true
+{{- end }}
       prometheus:
         config:
           global:
@@ -101,6 +148,15 @@ data:
     processors:
       batch/metrics:
         timeout: 60s
+{{- if .Values.excludedNamespacePatterns }}
+      filter/exclude_namespaces:
+        error_mode: ignore
+        metrics:
+          metric:
+{{- range .Values.excludedNamespacePatterns }}
+            - 'IsMatch(resource.attributes["Namespace"], "{{ . }}")'
+{{- end }}
+{{- end }}
 {{- if .Values.excludedPodPatterns }}
       filter/exclude_pods:
         error_mode: ignore
@@ -110,6 +166,39 @@ data:
             - 'IsMatch(resource.attributes["PodName"], "{{ . }}")'
 {{- end }}
 {{- end }}
+      filter/include_metrics:
+        metrics:
+          include:
+            match_type: strict
+            metric_names:
+              - pod_cpu_utilization
+              - pod_memory_utilization
+              - pod_number_of_running_containers
+              - pod_number_of_container_restarts
+              - pod_cpu_reserved_capacity
+              - pod_memory_reserved_capacity
+              - pod_network_tx_bytes
+              - cluster_node_count
+              - node_cpu_utilization
+              - node_memory_utilization
+      resource/strip_attributes:
+        attributes:
+          - key: kubernetes
+            action: delete
+          - key: Sources
+            action: delete
+          - key: Type
+            action: delete
+          - key: AutoScalingGroupName
+            action: delete
+          - key: InstanceId
+            action: delete
+          - key: InstanceType
+            action: delete
+          - key: Version
+            action: delete
+          - key: Service
+            action: delete
       resourcedetection/ec2:
         detectors: [ env ]
         timeout: 2s
@@ -132,7 +221,6 @@ data:
         resource_to_telemetry_conversion:
           enabled: true
         dimension_rollup_option: NoDimensionRollup
-        parse_json_encoded_attr_values: [Sources, kubernetes]
         {{- with .Values.tags }}
         tags:
           {{- toYaml . | nindent 10 }}
@@ -147,10 +235,12 @@ data:
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
               - pod_network_tx_bytes
+{{- if .Values.fullPodNameMetrics }}
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
               - pod_memory_utilization
+{{- end }}
           - dimensions: [[ClusterName]]
             metric_name_selectors:
               - cluster_node_count
@@ -182,7 +272,7 @@ data:
       pipelines:
         metrics:
           receivers: [awscontainerinsightreceiver]
-          processors: [{{- if .Values.excludedPodPatterns }}filter/exclude_pods, {{- end }}batch/metrics]
+          processors: [{{- if .Values.excludedNamespacePatterns }}filter/exclude_namespaces, {{- end }}{{- if .Values.excludedPodPatterns }}filter/exclude_pods, {{- end }}filter/include_metrics, resource/strip_attributes, batch/metrics]
           exporters: [awsemf]
         metrics/prometheus:
           receivers: [prometheus]
