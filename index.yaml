@@ -3460,6 +3460,29 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
+  traefik-crds:
+  - apiVersion: v1
+    appVersion: v27.0.2
+    created: "2025-12-03T14:58:28.247728347Z"
+    description: Traefik CRDs Helm chart for Kubernetes
+    digest: e815b7b8c539212f6ebd808c704bf817b56d484284972c8714f0b9563f8e3994
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - traefik
+    - crd
+    - ingress
+    maintainers:
+    - email: jamesarems@users.noreply.github.com
+      name: jamesarems
+      url: https://github.com/jamesarems
+    name: traefik-crds
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/traefik/traefik-helm-chart
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/traefik-crds-0.1.0/traefik-crds-0.1.0.tgz
+    version: 0.1.0
   vertical-pod-autoscaler:
   - apiVersion: v2
     appVersion: 1.4.1
@@ -3483,4 +3506,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2025-11-28T16:03:48.597462798Z"
+generated: "2025-12-03T14:58:28.248734254Z"
