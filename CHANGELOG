@@ -1,3 +1,8 @@
+Version 0.3.11 (2025-12-12)
+---------------------------
+charts/aws-otel-collector: Add explicit metrics that used to be tracked dynamically
+charts/aws-otel-collector: Add OOM killed metric
+
 Version 0.3.10 (2025-12-03)
 ---------------------------
 charts/traefik-crds-0.1.0: Initial release of Traefik CRDs chart (v27.0.2)
