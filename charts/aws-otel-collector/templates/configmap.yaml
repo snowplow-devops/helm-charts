@@ -43,7 +43,9 @@ data:
             match_type: strict
             metric_names:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -88,7 +90,9 @@ data:
           - dimensions: [[PodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -98,7 +102,9 @@ data:
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
 {{- end }}
           - dimensions: [[ClusterName]]
             metric_name_selectors:
@@ -172,7 +178,9 @@ data:
             match_type: strict
             metric_names:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -229,7 +237,9 @@ data:
           - dimensions: [[PodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -239,7 +249,9 @@ data:
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
 {{- end }}
           - dimensions: [[ClusterName]]
             metric_name_selectors:
