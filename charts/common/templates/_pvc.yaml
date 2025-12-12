@@ -2,7 +2,7 @@
 {{- $global := .Values.global -}}
 {{- $release := .Release -}}
 {{- range .Values.services }}
-{{- if and (.persistentVolume.enabled) (eq .deployment.kind "Deployment") }}
+{{- if and .persistentVolume .persistentVolume.enabled (eq .deployment.kind "Deployment") }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -21,6 +21,8 @@ This chart allows you to deploy multiple services (1 to N) in a single Helm rele
 - Hooks for lifecycle management
 - Cloud-specific service account bindings
 
+Additionally, the chart supports **shared ingress** for path-based routing, allowing a single hostname to route different URL paths to different services.
+
 This chart is ideal for deploying microservices that need to be managed together as a cohesive unit, sharing the same release lifecycle.
 
 ## Use Cases
@@ -66,6 +68,42 @@ services:
       port: 8000
 ```
 
+### Path-Based Routing with Shared Ingress
+Route different URL paths to different services using a single hostname:
+
+```yaml
+services:
+  - name: api-crud
+    image:
+      repository: mycompany/api
+      tag: v1.0.0
+    service:
+      deploy: true
+      port: 8000
+
+  - name: api-attributes
+    image:
+      repository: mycompany/api
+      tag: v1.0.0
+    service:
+      deploy: true
+      port: 8000
+
+sharedIngress:
+  - name: api-router
+    hostname: api.example.com
+    certificateIssuer: letsencrypt-prod
+    routes:
+      - path: /api/v1/attributes
+        pathType: Prefix
+        serviceName: api-attributes
+        port: 8000
+      - path: /
+        pathType: Prefix
+        serviceName: api-crud
+        port: 8000
+```
+
 ## Key Differences from service-deployment Chart
 
 | Feature | service-deployment | multi-service-deployment |
@@ -107,7 +145,25 @@ helm delete my-services
 |-----|------|---------|-------------|
 | global.cloud | string | `""` | Cloud provider (options: aws, gcp, azure) |
 | global.labels | object | `{}` | Labels applied to all resources |
+| sharedIngress | array | `[]` | Shared ingress definitions for path-based routing |
 | extraObjects | array | `[]` | Extra Kubernetes objects to deploy alongside services |
+
+### Shared Ingress Configuration
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| sharedIngress[].name | string | **required** | Name of the ingress resource |
+| sharedIngress[].hostname | string | **required** | Hostname for the ingress |
+| sharedIngress[].certificateIssuer | string | `""` | cert-manager cluster issuer name |
+| sharedIngress[].tlsSecretName | string | `""` | Override TLS secret name (default: `{name}-tls`) |
+| sharedIngress[].enableTraefik | bool | `true` | Use Traefik ingress class and annotations |
+| sharedIngress[].ingressClassName | string | `""` | Custom ingress class (when enableTraefik is false) |
+| sharedIngress[].annotations | object | `{}` | Additional annotations for the ingress |
+| sharedIngress[].routes | array | **required** | Array of path-based routing rules |
+| sharedIngress[].routes[].path | string | **required** | URL path to match |
+| sharedIngress[].routes[].pathType | string | `"Prefix"` | Path type: Prefix, Exact, or ImplementationSpecific |
+| sharedIngress[].routes[].serviceName | string | **required** | Target service name |
+| sharedIngress[].routes[].port | int | **required** | Target service port |
 
 ### Service Configuration
 
@@ -272,6 +328,4 @@ services:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://snowplow-devops.github.io/helm-charts | common | 0.1.0 |
-| https://snowplow-devops.github.io/helm-charts | dockerconfigjson | 0.1.0 |
-| https://snowplow-devops.github.io/helm-charts | cloudserviceaccount | 0.3.0 |
+| https://snowplow-devops.github.io/helm-charts | common | 0.3.0 |

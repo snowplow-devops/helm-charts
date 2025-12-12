@@ -43,7 +43,7 @@ spec:
       annotations:
         checksum/values: "{{ toJson . | sha256sum }}"
     spec:
-      {{- if .cloudserviceaccount.deploy }}
+      {{- if and .cloudserviceaccount .cloudserviceaccount.name }}
       serviceAccount: {{ .cloudserviceaccount.name }}
       serviceAccountName: {{ .cloudserviceaccount.name }}
       {{- else }}
@@ -57,7 +57,7 @@ spec:
       priorityClassName: {{ .priorityClassName }}
       {{- end }}
 
-      {{- if not .image.isRepositoryPublic }}
+      {{- if and .dockerconfigjson .dockerconfigjson.name }}
       imagePullSecrets:
       - name: {{ .dockerconfigjson.name }}
       {{- end }}
@@ -75,7 +75,7 @@ spec:
           optional: false
         name: {{ $v.name }}
       {{- end }}
-      {{- if and (.persistentVolume.enabled) (eq .deployment.kind "Deployment") }}
+      {{- if and .persistentVolume .persistentVolume.enabled (eq .deployment.kind "Deployment") }}
       - name: storage-volume
         persistentVolumeClaim:
           claimName: {{ .name }}
@@ -131,15 +131,15 @@ spec:
         resources:
           {{- toYaml .resources | nindent 10 }}
 
-        {{- if or (ne .readinessProbe.httpGet.path "") (.readinessProbe.exec.command) }}
+        {{- if and .readinessProbe (or (and .readinessProbe.httpGet (ne .readinessProbe.httpGet.path "")) (and .readinessProbe.exec .readinessProbe.exec.command)) }}
         readinessProbe:
-          {{- if ne .readinessProbe.httpGet.path "" }}
+          {{- if and .readinessProbe.httpGet (ne .readinessProbe.httpGet.path "") }}
           httpGet:
             path: {{ .readinessProbe.httpGet.path }}
             port: {{ .service.port }}
             scheme: HTTP
           {{- end }}
-          {{- if gt (len .readinessProbe.exec.command) 0 }}
+          {{- if and .readinessProbe.exec (gt (len .readinessProbe.exec.command) 0) }}
           exec:
             command:
           {{- range $v := .readinessProbe.exec.command }}
@@ -153,15 +153,15 @@ spec:
           successThreshold: {{ .readinessProbe.successThreshold }}
         {{- end }}
 
-        {{- if or (ne .livenessProbe.httpGet.path "") (.livenessProbe.exec.command) }}
+        {{- if and .livenessProbe (or (and .livenessProbe.httpGet (ne .livenessProbe.httpGet.path "")) (and .livenessProbe.exec .livenessProbe.exec.command)) }}
         livenessProbe:
-          {{- if ne .livenessProbe.httpGet.path "" }}
+          {{- if and .livenessProbe.httpGet (ne .livenessProbe.httpGet.path "") }}
           httpGet:
             path: {{ .livenessProbe.httpGet.path }}
             port: {{ default .service.port .livenessProbe.httpGet.port }}
             scheme: HTTP
           {{- end }}
-          {{- if gt (len .livenessProbe.exec.command) 0 }}
+          {{- if and .livenessProbe.exec (gt (len .livenessProbe.exec.command) 0) }}
           exec:
             command:
           {{- range $v := .livenessProbe.exec.command }}
@@ -191,17 +191,17 @@ spec:
           mountPropagation: {{ default "None" $v.mountPropagation }}
           readOnly: {{ default true $v.readOnly }}
         {{- end }}
-        {{- if and (.persistentVolume.enabled) (eq .deployment.kind "Deployment") }}
+        {{- if and .persistentVolume .persistentVolume.enabled (eq .deployment.kind "Deployment") }}
         - name: storage-volume
           mountPath: {{ .persistentVolume.mountPath }}
           subPath: "{{ .persistentVolume.subPath }}"
         {{- end }}
-        {{- if and (.persistentVolume.enabled) (eq .deployment.kind "StatefulSet") }}
+        {{- if and .persistentVolume .persistentVolume.enabled (eq .deployment.kind "StatefulSet") }}
         - name: {{ .name }}
           mountPath: {{ .persistentVolume.mountPath }}
           subPath: "{{ .persistentVolume.subPath }}"
         {{- end }}
-  {{- if and (.persistentVolume.enabled) (eq .deployment.kind "StatefulSet") }}
+  {{- if and .persistentVolume .persistentVolume.enabled (eq .deployment.kind "StatefulSet") }}
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: {{ .persistentVolume.statefulSetRetentionPolicy.whenDeleted }}
     whenScaled: {{ .persistentVolume.statefulSetRetentionPolicy.whenScaled }}
