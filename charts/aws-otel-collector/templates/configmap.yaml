@@ -54,6 +54,7 @@ data:
               - cluster_node_count
               - node_cpu_utilization
               - node_memory_utilization
+              - pod_container_status_terminated_reason_oom_killed
       resource/strip_attributes:
         attributes:
           - key: kubernetes
@@ -98,6 +99,7 @@ data:
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
               - pod_network_tx_bytes
+              - pod_container_status_terminated_reason_oom_killed
 {{- if .Values.fullPodNameMetrics }}
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
@@ -189,6 +191,7 @@ data:
               - cluster_node_count
               - node_cpu_utilization
               - node_memory_utilization
+              - pod_container_status_terminated_reason_oom_killed
       resource/strip_attributes:
         attributes:
           - key: kubernetes
@@ -245,6 +248,7 @@ data:
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
               - pod_network_tx_bytes
+              - pod_container_status_terminated_reason_oom_killed
 {{- if .Values.fullPodNameMetrics }}
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
