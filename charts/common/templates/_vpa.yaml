@@ -1,7 +1,7 @@
 {{- define "common.vpa" -}}
 {{- $global := .Values.global -}}
 {{- range .Values.services }}
-{{- if .vpa.enabled }}
+{{- if and .vpa .vpa.enabled }}
 ---
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler

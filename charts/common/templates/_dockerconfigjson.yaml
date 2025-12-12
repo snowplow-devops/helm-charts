@@ -1,7 +1,7 @@
 {{- define "common.dockerconfigjson" -}}
 {{- $release := .Release -}}
 {{- range .Values.services }}
-{{- if and .image (not .image.isRepositoryPublic) .dockerconfigjson }}
+{{- if and .dockerconfigjson .dockerconfigjson.deploy }}
 ---
 apiVersion: v1
 kind: Secret
@@ -10,7 +10,7 @@ metadata:
   name: {{ .dockerconfigjson.name }}
 type: kubernetes.io/dockerconfigjson
 data:
-  ".dockerconfigjson": {{ printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"%s\",\"auth\":\"%s\"}}}" .dockerconfigjson.server .dockerconfigjson.username .dockerconfigjson.password .dockerconfigjson.email (printf "%s:%s" .dockerconfigjson.username .dockerconfigjson.password | b64enc) | b64enc }}
+  ".dockerconfigjson": {{ printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"%s\",\"auth\":\"%s\"}}}" (.dockerconfigjson.server | default "https://index.docker.io/v1/") .dockerconfigjson.username .dockerconfigjson.password .dockerconfigjson.email (printf "%s:%s" .dockerconfigjson.username .dockerconfigjson.password | b64enc) | b64enc }}
 {{- end }}
 {{- end }}
 {{- end -}}

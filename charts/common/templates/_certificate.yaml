@@ -1,6 +1,7 @@
 {{- define "common.certificate" -}}
 {{- $global := .Values.global -}}
 {{- range .Values.services }}
+{{- if .service.ingress }}
 {{- range .service.ingress }}
 {{- if and (.certificateCreate | default true) (not .tlsSecretName) }}
 ---
@@ -20,6 +21,7 @@ spec:
   commonName: "{{ required "A valid hostname is required!" .hostname }}"
   dnsNames:
   - "{{ required "A valid hostname is required!" .hostname }}"
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

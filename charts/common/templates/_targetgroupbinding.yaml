@@ -2,7 +2,7 @@
 {{- $global := .Values.global -}}
 {{- range .Values.services }}
 {{- if .service.deploy }}
-{{- if and (eq $global.cloud "aws")  (ne .service.aws.targetGroupARN "") }}
+{{- if and (eq $global.cloud "aws") .service.aws (ne .service.aws.targetGroupARN "") }}
 ---
 apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding

@@ -2,7 +2,8 @@
 {{- $global := .Values.global -}}
 {{- $release := .Release -}}
 {{- range $service := .Values.services }}
-{{- range .service.ingress }}
+{{- if $service.service.ingress }}
+{{- range $service.service.ingress }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -41,6 +42,7 @@ spec:
                 name:  {{ $service.name }}
                 port:
                   number: {{ $service.service.port }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

@@ -156,6 +156,32 @@ services:
   #     aws:
   #       roleARN: "arn:aws:iam::123456789012:role/backend-role"
 
+# -- Shared Ingress for path-based routing to multiple services
+# Use this when you need a single hostname with different paths routing to different services
+sharedIngress:
+  []
+  # Example:
+  # - name: "api-router"
+  #   hostname: "api.example.com"
+  #   certificateIssuer: "letsencrypt-prod"  # cert-manager cluster issuer
+  #   tlsSecretName: ""                       # optional: override TLS secret name
+  #   enableTraefik: true                     # default: true
+  #   ingressClassName: ""                    # optional: override when enableTraefik is false
+  #   annotations: {}
+  #   routes:
+  #     - path: /api/v1/users
+  #       pathType: Prefix                    # Prefix, Exact, or ImplementationSpecific
+  #       serviceName: "user-service"
+  #       port: 8000
+  #     - path: /api/v1/orders
+  #       pathType: Prefix
+  #       serviceName: "order-service"
+  #       port: 8000
+  #     - path: /
+  #       pathType: Prefix
+  #       serviceName: "frontend"
+  #       port: 80
+
 # -- Extra Kubernetes objects to deploy alongside the services
 # This allows for additional resources like Middleware, NetworkPolicy, etc.
 extraObjects: []
