@@ -43,7 +43,9 @@ data:
             match_type: strict
             metric_names:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -52,6 +54,7 @@ data:
               - cluster_node_count
               - node_cpu_utilization
               - node_memory_utilization
+              - pod_container_status_terminated_reason_oom_killed
       resource/strip_attributes:
         attributes:
           - key: kubernetes
@@ -88,17 +91,22 @@ data:
           - dimensions: [[PodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
               - pod_network_tx_bytes
+              - pod_container_status_terminated_reason_oom_killed
 {{- if .Values.fullPodNameMetrics }}
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
 {{- end }}
           - dimensions: [[ClusterName]]
             metric_name_selectors:
@@ -172,7 +180,9 @@ data:
             match_type: strict
             metric_names:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -181,6 +191,7 @@ data:
               - cluster_node_count
               - node_cpu_utilization
               - node_memory_utilization
+              - pod_container_status_terminated_reason_oom_killed
       resource/strip_attributes:
         attributes:
           - key: kubernetes
@@ -229,17 +240,22 @@ data:
           - dimensions: [[PodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
               - pod_memory_reserved_capacity
               - pod_network_tx_bytes
+              - pod_container_status_terminated_reason_oom_killed
 {{- if .Values.fullPodNameMetrics }}
           - dimensions: [[FullPodName, Namespace, ClusterName]]
             metric_name_selectors:
               - pod_cpu_utilization
+              - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
+              - pod_memory_utilization_over_pod_limit
 {{- end }}
           - dimensions: [[ClusterName]]
             metric_name_selectors:
