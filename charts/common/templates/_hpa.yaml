@@ -20,8 +20,10 @@ spec:
   maxReplicas: {{ .hpa.maxReplicas }}
   metrics:
     {{- toYaml .hpa.metrics | nindent 4 }}
+  {{- if .hpa.behavior }}
   behavior:
     {{- toYaml .hpa.behavior | nindent 4 }}
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

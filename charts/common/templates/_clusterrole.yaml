@@ -1,7 +1,7 @@
 {{- define "common.clusterrole" -}}
 {{- $global := .Values.global -}}
 {{- range .Values.services }}
-{{- if .clusterrole.deploy }}
+{{- if and .clusterrole .clusterrole.deploy }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole

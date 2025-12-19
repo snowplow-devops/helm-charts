@@ -2,7 +2,7 @@ apiVersion: v2
 name: common
 description: A library chart containing common template helpers for Snowplow Helm charts
 type: library
-version: 0.2.0
+version: 0.3.0
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts
 sources:
