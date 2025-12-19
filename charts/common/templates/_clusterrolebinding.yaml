@@ -2,7 +2,7 @@
 {{- $global := .Values.global -}}
 {{- $release := .Release -}}
 {{- range .Values.services }}
-{{- if .clusterrole.deploy }}
+{{- if and .clusterrole .clusterrole.deploy }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
