@@ -1,8 +1,11 @@
 {{- include "common.deployment" . }}
+{{- include "common.serviceaccount" . }}
+{{- include "common.dockerconfigjson" . }}
 {{- include "common.service" . }}
 {{- include "common.configmaps" . }}
 {{- include "common.secret" . }}
 {{- include "common.ingress" . }}
+{{- include "common.sharedingress" . }}
 {{- include "common.certificate" . }}
 {{- include "common.hpa" . }}
 {{- include "common.vpa" . }}
