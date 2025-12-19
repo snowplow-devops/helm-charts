@@ -51,6 +51,19 @@ services:
       deploy: true
       port: 8080
     # ... additional configuration
+
+# Optional: Shared ingress for path-based routing to multiple services
+sharedIngress:
+  - name: my-shared-ingress
+    hostname: api.example.com
+    certificateIssuer: letsencrypt-prod
+    routes:
+      - path: /service-a
+        serviceName: service-a
+        port: 8080
+      - path: /service-b
+        serviceName: service-b
+        port: 8081
 ```
 
 ## Available Template Helpers
@@ -90,7 +103,8 @@ services:
 
 ### Network Resources
 
-- `common.ingress`: Generate Ingress resources
+- `common.ingress`: Generate Ingress resources (per-service)
+- `common.sharedingress`: Generate shared Ingress resources with path-based routing to multiple services
 - `common.certificate`: Generate cert-manager Certificate resources
 - `common.ipallowlist`: Generate Traefik Middleware for IP allowlisting
 - `common.targetgroupbinding`: Generate AWS TargetGroupBinding resources

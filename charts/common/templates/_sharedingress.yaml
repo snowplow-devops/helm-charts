@@ -1,0 +1,48 @@
+{{- define "common.sharedingress" -}}
+{{- $global := .Values.global -}}
+{{- $release := .Release -}}
+{{- range $ingress := .Values.sharedIngress }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ required "A valid name is required for sharedIngress!" $ingress.name }}
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+  {{- if $ingress.annotations }}
+    {{- toYaml $ingress.annotations | nindent 4 }}
+  {{- end }}
+  {{- if $ingress.certificateIssuer }}
+    cert-manager.io/cluster-issuer: {{ $ingress.certificateIssuer | quote }}
+  {{- end }}
+  {{- if $ingress.enableTraefik | default true }}
+    traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
+  {{- end }}
+spec:
+  {{- if $ingress.enableTraefik | default true }}
+  ingressClassName: traefik
+  {{- else if $ingress.ingressClassName }}
+  ingressClassName: {{ $ingress.ingressClassName }}
+  {{- end }}
+  tls:
+  - hosts:
+      - {{ required "A valid hostname is required for sharedIngress!" $ingress.hostname | quote }}
+    secretName: {{ if $ingress.tlsSecretName }}{{ $ingress.tlsSecretName }}{{ else }}{{ $ingress.name }}-tls{{ end }}
+  rules:
+    - host: {{ $ingress.hostname | quote }}
+      http:
+        paths:
+        {{- range $route := $ingress.routes }}
+          - path: {{ $route.path }}
+            pathType: {{ $route.pathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ required "serviceName is required for each route!" $route.serviceName }}
+                port:
+                  number: {{ required "port is required for each route!" $route.port }}
+        {{- end }}
+{{- end }}
+{{- end }}
