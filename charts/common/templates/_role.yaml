@@ -1,7 +1,7 @@
 {{- define "common.role" -}}
 {{- $global := .Values.global -}}
 {{- range .Values.services }}
-{{- if and .cloudserviceaccount.deploy .customRole.deploy }}
+{{- if and .cloudserviceaccount.deploy .customRole .customRole.deploy }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
