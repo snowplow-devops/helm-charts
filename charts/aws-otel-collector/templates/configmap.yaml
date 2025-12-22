@@ -46,6 +46,7 @@ data:
               - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
               - pod_memory_utilization_over_pod_limit
+              - pod_memory_working_set
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -94,6 +95,7 @@ data:
               - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
               - pod_memory_utilization_over_pod_limit
+              - pod_memory_working_set
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -183,6 +185,7 @@ data:
               - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
               - pod_memory_utilization_over_pod_limit
+              - pod_memory_working_set
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
@@ -243,6 +246,7 @@ data:
               - pod_cpu_utilization_over_pod_limit
               - pod_memory_utilization
               - pod_memory_utilization_over_pod_limit
+              - pod_memory_working_set
               - pod_number_of_running_containers
               - pod_number_of_container_restarts
               - pod_cpu_reserved_capacity
