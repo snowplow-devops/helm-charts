@@ -15,10 +15,97 @@ data:
 {{- if .Values.fullPodNameMetrics }}
         add_full_pod_name_metric_label: true
 {{- end }}
+      prometheus/cadvisor:
+        config:
+          scrape_configs:
+            - job_name: 'kubernetes-cadvisor'
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              kubernetes_sd_configs:
+                - role: node
+              relabel_configs:
+                - action: labelmap
+                  regex: __meta_kubernetes_node_label_(.+)
+                - target_label: __address__
+                  replacement: kubernetes.default.svc:443
+                - source_labels: [__meta_kubernetes_node_name]
+                  regex: (.+)
+                  target_label: __metrics_path__
+                  replacement: /api/v1/nodes/$${1}/proxy/metrics/cadvisor
+              metric_relabel_configs:
+                - source_labels: [__name__]
+                  regex: 'container_memory_working_set_bytes'
+                  action: keep
+                - source_labels: [pod]
+                  regex: ''
+                  action: drop
+{{- if .Values.fullPodNameMetrics }}
+                - source_labels: [pod]
+                  target_label: pod_full
+                  action: replace
+{{- end }}
+                - source_labels: [pod]
+                  target_label: pod_short
+                  action: replace
+                - source_labels: [pod_short]
+                  regex: '^(.*)-[a-f0-9]{5,10}-[a-z0-9]{5}$'
+                  replacement: '$1'
+                  target_label: pod_short
+                  action: replace
+                - source_labels: [pod_short]
+                  regex: '^(.*)-[a-f0-9]{8,10}$'
+                  replacement: '$1'
+                  target_label: pod_short
+                  action: replace
 
     processors:
       batch/metrics:
         timeout: 60s
+      k8sattributes:
+        auth_type: "serviceAccount"
+        passthrough: false
+        extract:
+          metadata:
+            - k8s.namespace.name
+            - k8s.pod.name
+            - k8s.node.name
+      metricstransform/cadvisor:
+        transforms:
+          - include: container_memory_working_set_bytes
+            match_type: strict
+            action: update
+            new_name: pod_memory_working_set
+            aggregation_type: sum
+            submatch_case: lower
+            operations:
+              - action: aggregate_labels
+                label_set: [pod_short{{- if .Values.fullPodNameMetrics }}, pod_full{{- end }}, namespace, node]
+                aggregation_type: sum
+              - action: add_label
+                new_label: Type
+                new_value: Pod
+      resource/cadvisor:
+        attributes:
+          - key: ClusterName
+            value: "{{ .Values.clusterName }}"
+            action: upsert
+          - key: Namespace
+            from_attribute: namespace
+            action: upsert
+          - key: PodName
+            from_attribute: pod_short
+            action: upsert
+{{- if .Values.fullPodNameMetrics }}
+          - key: FullPodName
+            from_attribute: pod_full
+            action: upsert
+{{- end }}
+          - key: NodeName
+            from_attribute: node
+            action: upsert
 {{- if .Values.excludedNamespacePatterns }}
       filter/exclude_namespaces:
         error_mode: ignore
@@ -122,6 +209,10 @@ data:
           receivers: [awscontainerinsightreceiver]
           processors: [{{- if .Values.excludedNamespacePatterns }}filter/exclude_namespaces, {{- end }}{{- if .Values.excludedPodPatterns }}filter/exclude_pods, {{- end }}filter/include_metrics, resource/strip_attributes, batch/metrics]
           exporters: [awsemf]
+        metrics/cadvisor:
+          receivers: [prometheus/cadvisor]
+          processors: [metricstransform/cadvisor, resource/cadvisor{{- if .Values.excludedNamespacePatterns }}, filter/exclude_namespaces{{- end }}{{- if .Values.excludedPodPatterns }}, filter/exclude_pods{{- end }}, batch/metrics]
+          exporters: [awsemf]
 
       extensions: [health_check]
 {{- else }}
@@ -133,6 +224,51 @@ data:
 {{- if .Values.fullPodNameMetrics }}
         add_full_pod_name_metric_label: true
 {{- end }}
+      prometheus/cadvisor:
+        config:
+          scrape_configs:
+            - job_name: 'kubernetes-cadvisor'
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                insecure_skip_verify: true
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              kubernetes_sd_configs:
+                - role: node
+              relabel_configs:
+                - action: labelmap
+                  regex: __meta_kubernetes_node_label_(.+)
+                - target_label: __address__
+                  replacement: kubernetes.default.svc:443
+                - source_labels: [__meta_kubernetes_node_name]
+                  regex: (.+)
+                  target_label: __metrics_path__
+                  replacement: /api/v1/nodes/$${1}/proxy/metrics/cadvisor
+              metric_relabel_configs:
+                - source_labels: [__name__]
+                  regex: 'container_memory_working_set_bytes'
+                  action: keep
+                - source_labels: [pod]
+                  regex: ''
+                  action: drop
+{{- if .Values.fullPodNameMetrics }}
+                - source_labels: [pod]
+                  target_label: pod_full
+                  action: replace
+{{- end }}
+                - source_labels: [pod]
+                  target_label: pod_short
+                  action: replace
+                - source_labels: [pod_short]
+                  regex: '^(.*)-[a-f0-9]{5,10}-[a-z0-9]{5}$'
+                  replacement: '$1'
+                  target_label: pod_short
+                  action: replace
+                - source_labels: [pod_short]
+                  regex: '^(.*)-[a-f0-9]{8,10}$'
+                  replacement: '$1'
+                  target_label: pod_short
+                  action: replace
       prometheus:
         config:
           global:
@@ -158,6 +294,48 @@ data:
     processors:
       batch/metrics:
         timeout: 60s
+      k8sattributes:
+        auth_type: "serviceAccount"
+        passthrough: false
+        extract:
+          metadata:
+            - k8s.namespace.name
+            - k8s.pod.name
+            - k8s.node.name
+      metricstransform/cadvisor:
+        transforms:
+          - include: container_memory_working_set_bytes
+            match_type: strict
+            action: update
+            new_name: pod_memory_working_set
+            aggregation_type: sum
+            submatch_case: lower
+            operations:
+              - action: aggregate_labels
+                label_set: [pod_short{{- if .Values.fullPodNameMetrics }}, pod_full{{- end }}, namespace, node]
+                aggregation_type: sum
+              - action: add_label
+                new_label: Type
+                new_value: Pod
+      resource/cadvisor:
+        attributes:
+          - key: ClusterName
+            value: "{{ .Values.clusterName }}"
+            action: upsert
+          - key: Namespace
+            from_attribute: namespace
+            action: upsert
+          - key: PodName
+            from_attribute: pod_short
+            action: upsert
+{{- if .Values.fullPodNameMetrics }}
+          - key: FullPodName
+            from_attribute: pod_full
+            action: upsert
+{{- end }}
+          - key: NodeName
+            from_attribute: node
+            action: upsert
 {{- if .Values.excludedNamespacePatterns }}
       filter/exclude_namespaces:
         error_mode: ignore
@@ -293,6 +471,10 @@ data:
         metrics:
           receivers: [awscontainerinsightreceiver]
           processors: [{{- if .Values.excludedNamespacePatterns }}filter/exclude_namespaces, {{- end }}{{- if .Values.excludedPodPatterns }}filter/exclude_pods, {{- end }}filter/include_metrics, resource/strip_attributes, batch/metrics]
+          exporters: [awsemf]
+        metrics/cadvisor:
+          receivers: [prometheus/cadvisor]
+          processors: [metricstransform/cadvisor, resource/cadvisor{{- if .Values.excludedNamespacePatterns }}, filter/exclude_namespaces{{- end }}{{- if .Values.excludedPodPatterns }}, filter/exclude_pods{{- end }}, batch/metrics]
           exporters: [awsemf]
         metrics/prometheus:
           receivers: [prometheus]
