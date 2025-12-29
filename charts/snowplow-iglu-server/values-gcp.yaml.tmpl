@@ -30,13 +30,13 @@ service:
     patchesAllowed: false
 
   gcp:
-    networkEndpointGroupName: "<network-endpoint-group-name>"
     deployProxy: true
     proxy:
       port: 38000
       project: "<project>"
       region: "<region>"
       instanceName: "<cloudsql-instance-name>"
+      ipAddressTypes: "PUBLIC"
       image:
         repository: "gcr.io/cloudsql-docker/gce-proxy"
         tag: "1.31.2"

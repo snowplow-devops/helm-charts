@@ -94,9 +94,6 @@ service:
     targetGroupARN: ""
 
   gcp:
-    # -- Name of the Network Endpoint Group to bind onto
-    networkEndpointGroupName: ""
-
     # -- Whether to use CloudSQL Proxy (note: requires GCP service account to be attached)
     deployProxy: false
 
@@ -109,6 +106,8 @@ service:
       region: ""
       # -- Name of the CloudSQL instance
       instanceName: ""
+      # -- IP address types to use (options: PUBLIC, PRIVATE, PSC; default: PUBLIC)
+      ipAddressTypes: "PUBLIC"
       image:
         repository: "gcr.io/cloudsql-docker/gce-proxy"
         tag: "1.31.2"
