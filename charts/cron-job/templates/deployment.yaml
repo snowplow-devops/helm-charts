@@ -16,6 +16,9 @@ spec:
   jobTemplate:
     spec:
       backoffLimit: {{ $.Values.backoffLimit }}
+      {{- if $.Values.activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ $.Values.activeDeadlineSeconds }}
+      {{- end }}
       template:
         metadata:
           labels:

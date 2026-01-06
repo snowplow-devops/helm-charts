@@ -20,6 +20,8 @@ failedJobsHistoryLimit: 1
 successfulJobsHistoryLimit: 1
 # -- The number of retries to attempt before marking the job as failed
 backoffLimit: 6
+# -- The number of seconds the job is allowed to run before being terminated (optional)
+#activeDeadlineSeconds: 600
 
 image:
   repository: "busybox"

@@ -1,3 +1,7 @@
+Version 0.3.13 (2026-01-06)
+---------------------------
+charts/cron-job-0.13.0: Add activeDeadlineSeconds support for job timeout configuration
+
 Version 0.3.12 (2025-12-16)
 ---------------------------
 charts/snowplow-iglu-server-0.13.0: Add support for deploying in GCP using private IP (#280)
