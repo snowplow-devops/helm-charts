@@ -1,6 +1,6 @@
 dependencies:
 - name: common
   repository: https://snowplow-devops.github.io/helm-charts
-  version: 0.2.0
-digest: sha256:ef4616f1d108ca0cf2b14aa3d571db08c29a339366750e98819c23109f445da5
-generated: "2025-10-16T14:04:54.807789-04:00"
+  version: 0.3.0
+digest: sha256:acdbc32b528c7fa9756596bad70ddcb7cd0305999d86537e55136720b864c3de
+generated: "2026-01-06T15:04:16.394579-05:00"
