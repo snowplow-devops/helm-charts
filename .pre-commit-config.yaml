@@ -1,0 +1,27 @@
+# Pre-commit hooks for Helm charts repository
+# See https://pre-commit.com for more information
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: ['--allow-multiple-documents']
+      - id: check-added-large-files
+      - id: check-merge-conflict
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.33.0
+    hooks:
+      - id: yamllint
+        args: ['-d', '{extends: default, rules: {line-length: {max: 120}, comments: {min-spaces-from-content: 1}}}']
+
+  - repo: local
+    hooks:
+      - id: helm-chart-testing
+        name: Helm Chart Linting
+        entry: bash -c 'ct lint --config ct.yaml --all'
+        language: system
+        pass_filenames: false
+        files: 'charts/.*\.(yaml|yml|tpl)$'
