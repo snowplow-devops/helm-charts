@@ -305,6 +305,21 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
+  name: system:vpa-target-reader-recommender
+  labels:
+    {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:vpa-target-reader
+subjects:
+- kind: ServiceAccount
+  name: {{ include "vertical-pod-autoscaler.recommender.name" . }}
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
   name: system:vpa-status-actor
   labels:
     {{- include "vertical-pod-autoscaler.labels" . | nindent 4 }}

@@ -68,6 +68,15 @@ spec:
       - name: tls-certs
         secret:
           secretName: {{ printf "%s-tls" (include "vertical-pod-autoscaler.admissionController.name" .) }}
+          {{- if .Values.vpa.admissionController.certManager.enabled }}
+          items:
+          - key: ca.crt
+            path: caCert.pem
+          - key: tls.crt
+            path: serverCert.pem
+          - key: tls.key
+            path: serverKey.pem
+          {{- end }}
       {{- with .Values.vpa.admissionController.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
