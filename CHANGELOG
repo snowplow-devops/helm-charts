@@ -1,6 +1,6 @@
 Version 0.3.16 (2026-01-08)
 ---------------------------
-charts/vertical-pod-autoscaler: Fix Certificate issue that is causing TLS errors (#299)
+charts/vertical-pod-autoscaler-0.1.1: Fix Certificate issue that is causing TLS errors (#299)
 
 Version 0.3.15 (2026-01-06)
 ---------------------------
