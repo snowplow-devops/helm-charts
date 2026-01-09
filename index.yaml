@@ -3605,6 +3605,28 @@ entries:
   vertical-pod-autoscaler:
   - apiVersion: v2
     appVersion: 1.4.1
+    created: "2026-01-09T10:38:49.798840026Z"
+    description: A Helm Chart to deploy Vertical Pod Autoscaler components
+    digest: 11527c96db7975029664d7bd10b9ded813a1c844cf2c817c3aec895f5291c3f2
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - vpa
+    - vertical-pod-autoscaler
+    - autoscaling
+    maintainers:
+    - email: ianarsenault@users.noreply.github.com
+      name: ianarsenault
+      url: https://github.com/ianarsenault
+    name: vertical-pod-autoscaler
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.1/vertical-pod-autoscaler-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 1.4.1
     created: "2025-08-26T13:21:00.080168734Z"
     description: A Helm Chart to deploy Vertical Pod Autoscaler components
     digest: 5e765d09f57004cca4a283c3a31416d353e0ee8dba7871fdd26538dbfa6bb9a5
@@ -3625,4 +3647,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-01-07T21:41:51.187489247Z"
+generated: "2026-01-09T10:38:49.79945111Z"
