@@ -1,0 +1,392 @@
+# Avalanche Helm Chart - Default Values
+# Override these in values-local.yaml or via --set flags
+
+# Global settings (Snowplow helm-charts convention)
+global:
+  # Cloud provider: aws, gcp, or azure
+  cloud: ""
+  # Global labels applied to all resources (merged into snowplow.labels)
+  labels: {}
+
+# Cloud service account configuration (OIDC-based IAM integration)
+cloudserviceaccount:
+  # Whether to create a service-account
+  deploy: false
+  # Name of the service-account to create
+  name: "avalanche-service-account"
+  aws:
+    # IAM Role ARN to bind to the k8s service account (set by DS4)
+    roleARN: ""
+  gcp:
+    # Service Account email to bind to the k8s service account
+    serviceAccount: ""
+  azure:
+    # Workload managed identity id
+    managedIdentityId: ""
+
+# Docker config for private registry authentication
+dockerconfigjson:
+  # Name of the secret for private repository
+  name: "avalanche-dockerhub"
+  # Username for private repository
+  username: ""
+  # Password for private repository
+  password: ""
+  # Repository server URL
+  server: "https://index.docker.io/v1/"
+  # Email address
+  email: ""
+
+# Per-component image settings
+# Note: imagePullPolicy and imageRegistry remain at per-component level, not in global
+images:
+  # Default image pull policy - use IfNotPresent for registry, Never for local images
+  pullPolicy: IfNotPresent
+  # Log level for all components
+  logLevel: info
+  # Registry prefix for Avalanche images
+  # - Set to "snowplow" for private DockerHub images
+  # - Override in values-local.yaml with pullPolicy: Never for local development
+  registry: "snowplow"
+
+# NATS configuration
+nats:
+  enabled: true
+  image:
+    repository: nats
+    tag: "2.10-alpine"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+  service:
+    type: ClusterIP
+    clientPort: 4222
+    monitoringPort: 8222
+
+# Injector configuration
+injector:
+  enabled: true
+  image:
+    repository: avalanche-injector-private
+    tag: latest
+  replicas: 1
+  componentId: "k8s-injector"
+  config:
+    type: "http"
+    name: "k8s-injector"
+    endpoint: "http://host.docker.internal:8085"
+    # Protocol for Snowplow event injector (http or https)
+    protocol: "http"
+    workers: 3
+    timeout: "5s"
+    # Skip TLS certificate verification (useful for testing with self-signed certs)
+    insecureSkipVerify: false
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Observer configuration
+observer:
+  enabled: true
+  image:
+    repository: avalanche-observer-private
+    tag: latest
+  replicas: 1
+  componentId: "k8s-observer"
+  config:
+    type: "mockserver"
+    name: "k8s-observer"
+    endpoint: "http://host.docker.internal:8085"
+    checkInterval: "1s"
+    tolerance: 0.05
+    # For snowplow-kinesis observer type:
+    # streamArn: ""  # AWS Kinesis stream ARN
+    # region: ""     # AWS region
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Correlator configuration
+correlator:
+  enabled: true
+  image:
+    repository: avalanche-correlator-private
+    tag: latest
+  replicas: 1
+  componentId: "k8s-correlator"
+  # Metrics write interval in seconds (how often to write aggregated stats to database)
+  # Lower values give more granular data but increase database load
+  metricsWriteIntervalSeconds: 30
+  config:
+    type: "default"
+    name: "k8s-correlator"
+    correlationWindow: "30s"
+    correlationTimeout: "5s"
+    checkInterval: "1s"
+    tolerance: 0.05
+  service:
+    type: ClusterIP
+    port: 8090
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# Adjudicator configuration
+adjudicator:
+  enabled: true
+  image:
+    repository: avalanche-adjudicator-private
+    tag: latest
+  replicas: 1
+  componentId: "k8s-adjudicator"
+  config:
+    type: "adjudicator"
+    name: "k8s-adjudicator"
+    failFastEnabled: true
+    failFastCheckInterval: "10s"
+    finalValidationEnabled: true
+    finalValidationTimeout: "30s"
+  rules:
+    default: |
+      // Default validation rule
+      correlation_rate >= 0.95 && error_rate <= 0.05
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Controller configuration
+controller:
+  enabled: true
+  image:
+    repository: avalanche-controller-private
+    tag: latest
+  replicas: 1
+  componentId: "k8s-controller"
+  apiPort: 8080
+  config:
+    type: "controller"
+    name: "k8s-controller"
+    maxConcurrentTests: 5
+    testTimeout: "30m"
+    testPlansDir: "/test-plans"
+  service:
+    type: NodePort
+    port: 8080
+    nodePort: 30080
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+# Aggregator configuration (injection timing metrics)
+aggregator:
+  enabled: false  # Disabled by default - enable when using InfluxDB
+  image:
+    repository: avalanche-aggregator-private
+    tag: latest
+  replicas: 1
+  componentId: "k8s-aggregator"
+  config:
+    type: "metrics-aggregator"
+    name: "k8s-aggregator"
+    sourceMeasurement: "injected_events"
+    outputMeasurement: "injection_stats_window"
+    windowDuration: "10s"
+    groupBy:
+      - run_id
+      - phase_id
+    fields:
+      total_duration_ms:
+        - p50
+        - p90
+        - p95
+        - p99
+        - max
+        - mean
+        - count
+      time_to_first_byte_ms:
+        - p50
+        - p95
+        - p99
+        - max
+      tcp_connection_time_ms:
+        - p50
+        - p95
+        - max
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Kubernetes Monitoring Aggregator configuration (Phase 12.3)
+# Aggregates kubernetes_monitoring metrics into window/phase/run statistics
+aggregatorKubernetes:
+  enabled: false  # Enabled automatically when observerKubernetes.enabled=true
+  image:
+    repository: avalanche-aggregator-private
+    tag: latest
+  replicas: 1
+  componentId: "kubernetes-aggregator"
+  config:
+    type: "metrics-aggregator"
+    name: "kubernetes-monitoring-aggregator"
+    sourceMeasurement: "kubernetes_monitoring"
+    # Multi-level output measurements
+    outputMeasurements:
+      window: "kubernetes_monitoring_window"
+      phase: "kubernetes_monitoring_phase"
+      run: "kubernetes_monitoring_run"
+    windowDuration: "30s"
+    groupBy:
+      - run_id
+      - phase_id
+      - namespace
+      - pod
+    fields:
+      pod_count:
+        - last
+        - max
+        - min
+      pod_ready_count:
+        - last
+        - min
+      pod_restart_count:
+        - last
+        - max
+      cpu_usage_millicores:
+        - mean
+        - max
+        - min
+        - p95
+      cpu_limit_millicores:
+        - last
+      memory_usage_bytes:
+        - mean
+        - max
+        - min
+        - p95
+      memory_limit_bytes:
+        - last
+      deployment_available_replicas:
+        - last
+        - min
+      deployment_desired_replicas:
+        - last
+      warning_event_count:
+        - last
+        - max
+      error_event_count:
+        - last
+        - max
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Database configuration (optional)
+database:
+  # Database type: memory, influxdb, timestream
+  type: ""
+  # InfluxDB configuration
+  influxdb:
+    url: ""
+    token: ""
+    org: "snowplow"
+    bucket: "avalanche-metrics"
+  # Timestream configuration
+  timestream:
+    database: ""
+    region: ""
+
+# AWS credentials (for Kinesis observer or Timestream)
+aws:
+  region: "eu-central-1"
+  accessKeyId: ""
+  secretAccessKey: ""
+  sessionToken: ""
+
+# Kubernetes Infrastructure Observer configuration (Phase 12.1)
+observerKubernetes:
+  enabled: false  # Disabled by default - enable when monitoring K8s infrastructure
+  image:
+    repository: avalanche-observer-private
+    tag: kubernetes
+  replicas: 1
+  componentId: "k8s-observer-kubernetes"
+  config:
+    type: "kubernetes"
+    name: "k8s-observer-kubernetes"
+    # Scope configuration
+    namespace: ""  # Empty string means cluster-wide (requires ClusterRole)
+    namespaces: []  # List of specific namespaces to monitor
+    labelSelector: ""  # Kubernetes label selector (e.g., "app=snowplow")
+    fieldSelector: ""  # Kubernetes field selector
+    # Polling configuration
+    pollInterval: "10s"
+    # Metrics to collect
+    metrics:
+      pods: true
+      deployments: true
+      events: true
+      resources: true  # Requires metrics-server
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Logging configuration
+logging:
+  # Fluent Bit DaemonSet for shipping logs to Loki (local development)
+  fluentbit:
+    # Enable Fluent Bit DaemonSet
+    enabled: false
+    # Loki endpoint (host.docker.internal for accessing host from Kubernetes)
+    lokiHost: "host.docker.internal"
+    lokiPort: 3100
+    # Fluent Bit image
+    image:
+      repository: fluent/fluent-bit
+      tag: "3.0"
+      pullPolicy: IfNotPresent
+    # Resource limits for DaemonSet pods
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+      limits:
+        memory: "128Mi"
+        cpu: "200m"

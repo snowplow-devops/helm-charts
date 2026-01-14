@@ -1,0 +1,50 @@
+{{- if .Values.logging.fluentbit.enabled }}
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ include "avalanche.fullname" . }}-fluentbit
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: logging
+spec:
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: logging
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: logging
+    spec:
+      serviceAccountName: {{ include "avalanche.fullname" . }}-fluentbit
+      containers:
+        - name: fluent-bit
+          image: {{ .Values.logging.fluentbit.image.repository }}:{{ .Values.logging.fluentbit.image.tag }}
+          imagePullPolicy: {{ .Values.logging.fluentbit.image.pullPolicy }}
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+              readOnly: true
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: fluent-bit-config
+              mountPath: /fluent-bit/etc/
+          resources:
+            {{- toYaml .Values.logging.fluentbit.resources | nindent 12 }}
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: fluent-bit-config
+          configMap:
+            name: {{ include "avalanche.fullname" . }}-fluentbit
+      tolerations:
+        - operator: Exists
+{{- end }}

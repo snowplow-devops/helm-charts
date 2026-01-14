@@ -1,0 +1,92 @@
+{{- if .Values.observerKubernetes.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: observer-kubernetes
+spec:
+  replicas: {{ .Values.observerKubernetes.replicas }}
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: observer-kubernetes
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: observer-kubernetes
+    spec:
+      # Note: observer-kubernetes has its own service account for K8s API access
+      serviceAccountName: {{ include "avalanche.fullname" . }}-observer-kubernetes
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      containers:
+        - name: observer-kubernetes
+          image: "{{ .Values.images.registry }}/{{ .Values.observerKubernetes.image.repository }}:{{ .Values.observerKubernetes.image.tag }}"
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          args:
+            - observer
+            - --config
+            - /configs/observer-kubernetes.yaml
+          env:
+            - name: AVALANCHE_LOG_LEVEL
+              value: {{ .Values.images.logLevel | quote }}
+            - name: AVALANCHE_NATS_URL
+              value: "nats://{{ include "avalanche.fullname" . }}-nats:4222"
+            - name: AVALANCHE_COMPONENT_ID
+              value: {{ .Values.observerKubernetes.componentId | quote }}
+            # Database configuration
+            {{- if eq .Values.database.type "influxdb" }}
+            - name: AVALANCHE_DB_TYPE
+              value: "influxdb"
+            - name: AVALANCHE_INFLUXDB_URL
+              value: {{ .Values.database.influxdb.url | quote }}
+            - name: AVALANCHE_INFLUXDB_TOKEN
+              value: {{ .Values.database.influxdb.token | quote }}
+            - name: AVALANCHE_INFLUXDB_ORG
+              value: {{ .Values.database.influxdb.org | quote }}
+            - name: AVALANCHE_INFLUXDB_BUCKET
+              value: {{ .Values.database.influxdb.bucket | quote }}
+            {{- else if eq .Values.database.type "timestream" }}
+            - name: AVALANCHE_DB_TYPE
+              value: "timestream"
+            - name: AVALANCHE_TIMESTREAM_ENABLED
+              value: "true"
+            - name: AVALANCHE_TIMESTREAM_DATABASE
+              value: {{ .Values.database.timestream.database | quote }}
+            - name: AVALANCHE_TIMESTREAM_REGION
+              value: {{ .Values.database.timestream.region | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /configs
+              readOnly: true
+          resources:
+            {{- toYaml .Values.observerKubernetes.resources | nindent 12 }}
+          # Liveness probe - check process can reach NATS (observer has no HTTP port)
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "nc -z {{ include "avalanche.fullname" . }}-nats 4222 || exit 1"
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "nc -z {{ include "avalanche.fullname" . }}-nats 4222 || exit 1"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "avalanche.fullname" . }}-config
+{{- end }}

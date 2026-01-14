@@ -1,0 +1,23 @@
+{{- if .Values.controller.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "avalanche.fullname" . }}-controller
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestration
+spec:
+  type: {{ .Values.controller.service.type }}
+  selector:
+    {{- include "avalanche.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestration
+  ports:
+    - name: api
+      port: {{ .Values.controller.service.port }}
+      targetPort: api
+      {{- if eq .Values.controller.service.type "NodePort" }}
+      nodePort: {{ .Values.controller.service.nodePort }}
+      {{- end }}
+      protocol: TCP
+{{- end }}

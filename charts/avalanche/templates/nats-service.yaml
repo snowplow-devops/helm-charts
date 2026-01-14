@@ -1,0 +1,24 @@
+{{- if .Values.nats.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "avalanche.fullname" . }}-nats
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: messaging
+spec:
+  type: {{ .Values.nats.service.type }}
+  selector:
+    {{- include "avalanche.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: messaging
+  ports:
+    - name: client
+      port: {{ .Values.nats.service.clientPort }}
+      targetPort: client
+      protocol: TCP
+    - name: monitoring
+      port: {{ .Values.nats.service.monitoringPort }}
+      targetPort: monitoring
+      protocol: TCP
+{{- end }}
