@@ -249,7 +249,7 @@ aggregator:
 # Kubernetes Monitoring Aggregator configuration (Phase 12.3)
 # Aggregates kubernetes_monitoring metrics into window/phase/run statistics
 aggregatorKubernetes:
-  enabled: false  # Enabled automatically when observerKubernetes.enabled=true
+  enabled: false  # Set to true when observerKubernetes.enabled=true (must be enabled manually)
   image:
     repository: avalanche-aggregator-private
     tag: latest
