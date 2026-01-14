@@ -1,0 +1,71 @@
+{{- if .Values.observerKubernetes.enabled }}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: observer-kubernetes
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: observer-kubernetes
+rules:
+  # Pod metrics - required for pod status and health monitoring
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/status
+    verbs: ["get", "list", "watch"]
+  # Deployment metrics - required for deployment status monitoring
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - deployments/status
+      - replicasets
+      - replicasets/status
+    verbs: ["get", "list", "watch"]
+  # Event metrics - required for monitoring warnings and errors
+  - apiGroups: [""]
+    resources:
+      - events
+    verbs: ["get", "list", "watch"]
+  # Node metrics - optional, for cluster-wide resource monitoring
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - nodes/status
+    verbs: ["get", "list", "watch"]
+  # Namespace access - for namespace-scoped queries
+  - apiGroups: [""]
+    resources:
+      - namespaces
+    verbs: ["get", "list", "watch"]
+  # Metrics-server access - for CPU/memory utilization
+  - apiGroups: ["metrics.k8s.io"]
+    resources:
+      - pods
+      - nodes
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: observer-kubernetes
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+    namespace: {{ .Release.Namespace }}
+{{- end }}

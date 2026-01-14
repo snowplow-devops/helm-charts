@@ -1,0 +1,55 @@
+{{- if .Values.nats.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avalanche.fullname" . }}-nats
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: messaging
+spec:
+  replicas: {{ .Values.nats.replicas }}
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: messaging
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: messaging
+    spec:
+      containers:
+        - name: nats
+          image: {{ .Values.nats.image.repository }}:{{ .Values.nats.image.tag }}
+          imagePullPolicy: {{ .Values.nats.image.pullPolicy }}
+          args:
+            - "--js"
+            - "-m"
+            - "{{ .Values.nats.service.monitoringPort }}"
+          ports:
+            - name: client
+              containerPort: {{ .Values.nats.service.clientPort }}
+              protocol: TCP
+            - name: monitoring
+              containerPort: {{ .Values.nats.service.monitoringPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: monitoring
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: monitoring
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+          resources:
+            {{- toYaml .Values.nats.resources | nindent 12 }}
+{{- end }}

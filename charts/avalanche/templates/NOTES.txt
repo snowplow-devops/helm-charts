@@ -1,0 +1,61 @@
+=======================================================================
+  Avalanche has been deployed!
+=======================================================================
+
+Release: {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+
+Components deployed:
+{{- if .Values.nats.enabled }}
+  - NATS (messaging)
+{{- end }}
+{{- if .Values.injector.enabled }}
+  - Injector (load generation) - {{ .Values.injector.replicas }} replica(s)
+{{- end }}
+{{- if .Values.observer.enabled }}
+  - Observer (monitoring) - {{ .Values.observer.replicas }} replica(s)
+{{- end }}
+{{- if .Values.correlator.enabled }}
+  - Correlator (correlation) - {{ .Values.correlator.replicas }} replica(s)
+{{- end }}
+{{- if .Values.adjudicator.enabled }}
+  - Adjudicator (validation) - {{ .Values.adjudicator.replicas }} replica(s)
+{{- end }}
+{{- if .Values.controller.enabled }}
+  - Controller (orchestration) - {{ .Values.controller.replicas }} replica(s)
+{{- end }}
+
+=======================================================================
+  Access Information
+=======================================================================
+
+{{- if .Values.controller.enabled }}
+Controller API:
+{{- if eq .Values.controller.service.type "NodePort" }}
+  URL: http://localhost:{{ .Values.controller.service.nodePort }}
+  Health: curl http://localhost:{{ .Values.controller.service.nodePort }}/health
+{{- else }}
+  Port-forward: kubectl port-forward svc/{{ include "avalanche.fullname" . }}-controller {{ .Values.controller.service.port }}:{{ .Values.controller.service.port }} -n {{ .Release.Namespace }}
+  URL: http://localhost:{{ .Values.controller.service.port }}
+{{- end }}
+{{- end }}
+
+NATS (internal):
+  URL: {{ include "avalanche.natsUrl" . }}
+
+=======================================================================
+  Useful Commands
+=======================================================================
+
+# View all pods
+kubectl get pods -n {{ .Release.Namespace }}
+
+# View pod logs
+kubectl logs -f deployment/{{ include "avalanche.fullname" . }}-controller -n {{ .Release.Namespace }}
+kubectl logs -f deployment/{{ include "avalanche.fullname" . }}-injector -n {{ .Release.Namespace }}
+
+# Scale injector replicas
+helm upgrade {{ .Release.Name }} ./helm/avalanche --set injector.replicas=3
+
+# Uninstall
+helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}

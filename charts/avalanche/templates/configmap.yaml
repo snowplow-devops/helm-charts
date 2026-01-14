@@ -1,0 +1,201 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "avalanche.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+data:
+  log_level: {{ .Values.images.logLevel | quote }}
+  nats_url: {{ include "avalanche.natsUrl" . | quote }}
+
+  {{- if .Values.injector.enabled }}
+  injector.yaml: |
+    type: {{ .Values.injector.config.type | quote }}
+    name: {{ .Values.injector.config.name | quote }}
+    config:
+      endpoint: {{ .Values.injector.config.endpoint | quote }}
+      {{- if .Values.injector.config.protocol }}
+      protocol: {{ .Values.injector.config.protocol | quote }}
+      {{- end }}
+      {{- if .Values.injector.config.workers }}
+      workers: {{ .Values.injector.config.workers }}
+      {{- end }}
+      {{- if .Values.injector.config.timeout }}
+      timeout: {{ .Values.injector.config.timeout | quote }}
+      {{- end }}
+      {{- if .Values.injector.config.insecureSkipVerify }}
+      insecure_skip_verify: {{ .Values.injector.config.insecureSkipVerify }}
+      {{- end }}
+  {{- end }}
+
+  {{- if .Values.observer.enabled }}
+  observer.yaml: |
+    type: {{ .Values.observer.config.type | quote }}
+    name: {{ .Values.observer.config.name | quote }}
+    config:
+      {{- if .Values.observer.config.endpoint }}
+      endpoint: {{ .Values.observer.config.endpoint | quote }}
+      {{- end }}
+      {{- if .Values.observer.config.checkInterval }}
+      check_interval: {{ .Values.observer.config.checkInterval | quote }}
+      {{- end }}
+      {{- if .Values.observer.config.tolerance }}
+      tolerance: {{ .Values.observer.config.tolerance }}
+      {{- end }}
+      {{- if .Values.observer.config.streamArn }}
+      stream_arn: {{ .Values.observer.config.streamArn | quote }}
+      {{- end }}
+      {{- if .Values.observer.config.region }}
+      region: {{ .Values.observer.config.region | quote }}
+      {{- end }}
+  {{- end }}
+
+  {{- if .Values.correlator.enabled }}
+  correlator.yaml: |
+    type: {{ .Values.correlator.config.type | quote }}
+    name: {{ .Values.correlator.config.name | quote }}
+    config:
+      correlation_window: {{ .Values.correlator.config.correlationWindow | quote }}
+      correlation_timeout: {{ .Values.correlator.config.correlationTimeout | quote }}
+      check_interval: {{ .Values.correlator.config.checkInterval | quote }}
+      tolerance: {{ .Values.correlator.config.tolerance }}
+  {{- end }}
+
+  {{- if .Values.adjudicator.enabled }}
+  adjudicator.yaml: |
+    type: {{ .Values.adjudicator.config.type | quote }}
+    name: {{ .Values.adjudicator.config.name | quote }}
+    config:
+      fail_fast_enabled: {{ .Values.adjudicator.config.failFastEnabled }}
+      fail_fast_check_interval: {{ .Values.adjudicator.config.failFastCheckInterval | quote }}
+      final_validation_enabled: {{ .Values.adjudicator.config.finalValidationEnabled }}
+      final_validation_timeout: {{ .Values.adjudicator.config.finalValidationTimeout | quote }}
+  {{- end }}
+
+  {{- if .Values.controller.enabled }}
+  controller.yaml: |
+    type: {{ .Values.controller.config.type | quote }}
+    name: {{ .Values.controller.config.name | quote }}
+    config:
+      max_concurrent_tests: {{ .Values.controller.config.maxConcurrentTests }}
+      test_timeout: {{ .Values.controller.config.testTimeout | quote }}
+      api_port: {{ .Values.controller.apiPort }}
+      test_plans_dir: {{ .Values.controller.config.testPlansDir | quote }}
+  {{- end }}
+
+  {{- if .Values.aggregator.enabled }}
+  aggregator.yaml: |
+    type: {{ .Values.aggregator.config.type | quote }}
+    name: {{ .Values.aggregator.config.name | quote }}
+    config:
+      source_measurement: {{ .Values.aggregator.config.sourceMeasurement | quote }}
+      output_measurement: {{ .Values.aggregator.config.outputMeasurement | quote }}
+      window_duration: {{ .Values.aggregator.config.windowDuration | quote }}
+      group_by:
+        {{- range .Values.aggregator.config.groupBy }}
+        - {{ . }}
+        {{- end }}
+      fields:
+        {{- range $field, $aggs := .Values.aggregator.config.fields }}
+        {{ $field }}:
+          {{- range $aggs }}
+          - {{ . }}
+          {{- end }}
+        {{- end }}
+  {{- end }}
+
+  {{- if .Values.aggregatorKubernetes.enabled }}
+  aggregator-kubernetes.yaml: |
+    type: {{ .Values.aggregatorKubernetes.config.type | quote }}
+    name: {{ .Values.aggregatorKubernetes.config.name | quote }}
+    config:
+      source_measurement: {{ .Values.aggregatorKubernetes.config.sourceMeasurement | quote }}
+      {{- if .Values.aggregatorKubernetes.config.outputMeasurements }}
+      output_measurements:
+        window: {{ .Values.aggregatorKubernetes.config.outputMeasurements.window | quote }}
+        phase: {{ .Values.aggregatorKubernetes.config.outputMeasurements.phase | quote }}
+        run: {{ .Values.aggregatorKubernetes.config.outputMeasurements.run | quote }}
+      {{- end }}
+      window_duration: {{ .Values.aggregatorKubernetes.config.windowDuration | quote }}
+      group_by:
+        {{- range .Values.aggregatorKubernetes.config.groupBy }}
+        - {{ . }}
+        {{- end }}
+      fields:
+        {{- range $field, $aggs := .Values.aggregatorKubernetes.config.fields }}
+        {{ $field }}:
+          {{- range $aggs }}
+          - {{ . }}
+          {{- end }}
+        {{- end }}
+  {{- end }}
+
+  # External stub configurations for Kubernetes test orchestration
+  # These are used by the controller to coordinate with external component pods
+  {{- if .Values.injector.enabled }}
+  external-injector.yaml: |
+    type: "external"
+    name: {{ .Values.injector.config.name | quote }}
+    config:
+      timeout: "30s"
+  {{- end }}
+
+  {{- if .Values.observer.enabled }}
+  external-observer.yaml: |
+    type: "external"
+    name: {{ .Values.observer.config.name | quote }}
+    config:
+      timeout: "30s"
+  {{- end }}
+
+  {{- if .Values.correlator.enabled }}
+  external-correlator.yaml: |
+    type: "external"
+    name: {{ .Values.correlator.config.name | quote }}
+    config:
+      timeout: "30s"
+  {{- end }}
+
+  {{- if .Values.adjudicator.enabled }}
+  external-adjudicator.yaml: |
+    type: "external"
+    name: {{ .Values.adjudicator.config.name | quote }}
+    config:
+      timeout: "30s"
+  {{- end }}
+
+  {{- if .Values.observerKubernetes.enabled }}
+  observer-kubernetes.yaml: |
+    type: {{ .Values.observerKubernetes.config.type | quote }}
+    name: {{ .Values.observerKubernetes.config.name | quote }}
+    config:
+      {{- if .Values.observerKubernetes.config.namespace }}
+      namespace: {{ .Values.observerKubernetes.config.namespace | quote }}
+      {{- end }}
+      {{- if .Values.observerKubernetes.config.namespaces }}
+      namespaces:
+        {{- range .Values.observerKubernetes.config.namespaces }}
+        - {{ . | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.observerKubernetes.config.labelSelector }}
+      label_selector: {{ .Values.observerKubernetes.config.labelSelector | quote }}
+      {{- end }}
+      {{- if .Values.observerKubernetes.config.fieldSelector }}
+      field_selector: {{ .Values.observerKubernetes.config.fieldSelector | quote }}
+      {{- end }}
+      poll_interval: {{ .Values.observerKubernetes.config.pollInterval | quote }}
+      metrics:
+        pods: {{ .Values.observerKubernetes.config.metrics.pods }}
+        deployments: {{ .Values.observerKubernetes.config.metrics.deployments }}
+        events: {{ .Values.observerKubernetes.config.metrics.events }}
+        resources: {{ .Values.observerKubernetes.config.metrics.resources }}
+
+  external-observer-kubernetes.yaml: |
+    type: "external"
+    name: {{ .Values.observerKubernetes.config.name | quote }}
+    config:
+      timeout: "30s"
+      underlying_type: "kubernetes"
+  {{- end }}
