@@ -1,0 +1,14 @@
+{{- if .Values.adjudicator.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "avalanche.fullname" . }}-rules
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+data:
+  {{- range $name, $content := .Values.adjudicator.rules }}
+  {{ $name }}.cel: |
+{{ $content | indent 4 }}
+  {{- end }}
+{{- end }}

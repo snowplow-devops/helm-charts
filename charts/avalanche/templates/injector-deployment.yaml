@@ -1,0 +1,83 @@
+{{- if .Values.injector.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avalanche.fullname" . }}-injector
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: load-generator
+spec:
+  replicas: {{ .Values.injector.replicas }}
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: load-generator
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: load-generator
+    spec:
+      {{- if .Values.cloudserviceaccount.deploy }}
+      serviceAccount: {{ .Values.cloudserviceaccount.name }}
+      serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+      {{- else }}
+      serviceAccount: ""
+      serviceAccountName: ""
+      {{- end }}
+      automountServiceAccountToken: true
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      containers:
+        - name: injector
+          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.injector.image) }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          args:
+            - "injector"
+            - "--config=/configs/injector.yaml"
+            - "--nats-url={{ include "avalanche.natsUrl" . }}"
+            - "--component-id={{ .Values.injector.componentId }}"
+          env:
+            - name: AVALANCHE_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "avalanche.fullname" . }}-config
+                  key: log_level
+            - name: AVALANCHE_NATS_URL
+              value: {{ include "avalanche.natsUrl" . | quote }}
+            {{- include "avalanche.databaseEnv" . | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /configs
+              readOnly: true
+          # Liveness probe - check process is running and can reach NATS
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - wget -q --spider http://{{ include "avalanche.fullname" . }}-nats:8222/healthz
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          # Readiness probe - component is ready when NATS is reachable
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - wget -q --spider http://{{ include "avalanche.fullname" . }}-nats:8222/healthz
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.injector.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "avalanche.fullname" . }}-config
+      restartPolicy: Always
+{{- end }}

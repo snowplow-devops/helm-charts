@@ -1,0 +1,27 @@
+{{/*
+NOTE: The Correlator in standalone/container mode does not expose an HTTP API.
+It communicates purely via NATS messaging. This service is defined but disabled
+by default. If a future version adds HTTP API support, this can be re-enabled.
+
+To enable: set correlator.service.enabled=true in values.yaml
+*/}}
+{{- if and .Values.correlator.enabled (default false .Values.correlator.service.enabled) }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "avalanche.fullname" . }}-correlator
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: correlation
+spec:
+  type: {{ .Values.correlator.service.type }}
+  selector:
+    {{- include "avalanche.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: correlation
+  ports:
+    - name: api
+      port: {{ .Values.correlator.service.port }}
+      targetPort: api
+      protocol: TCP
+{{- end }}

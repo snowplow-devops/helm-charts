@@ -1,0 +1,92 @@
+{{- if .Values.controller.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avalanche.fullname" . }}-controller
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestration
+spec:
+  replicas: {{ .Values.controller.replicas }}
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: orchestration
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: orchestration
+    spec:
+      {{- if .Values.cloudserviceaccount.deploy }}
+      serviceAccount: {{ .Values.cloudserviceaccount.name }}
+      serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+      {{- else }}
+      serviceAccount: ""
+      serviceAccountName: ""
+      {{- end }}
+      automountServiceAccountToken: true
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      containers:
+        - name: controller
+          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.controller.image) }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          args:
+            - "controller"
+            - "--config=/configs/controller.yaml"
+            - "--nats-url={{ include "avalanche.natsUrl" . }}"
+            - "--api-port={{ .Values.controller.apiPort }}"
+          ports:
+            - name: api
+              containerPort: {{ .Values.controller.apiPort }}
+              protocol: TCP
+          env:
+            - name: AVALANCHE_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "avalanche.fullname" . }}-config
+                  key: log_level
+            - name: AVALANCHE_NATS_URL
+              value: {{ include "avalanche.natsUrl" . | quote }}
+            - name: AVALANCHE_API_PORT
+              value: {{ .Values.controller.apiPort | quote }}
+            - name: AVALANCHE_METRICS_ENABLED
+              value: "true"
+            {{- include "avalanche.databaseEnv" . | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /configs
+              readOnly: true
+            - name: test-plans
+              mountPath: /test-plans
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: api
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources:
+            {{- toYaml .Values.controller.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "avalanche.fullname" . }}-config
+        - name: test-plans
+          configMap:
+            name: {{ include "avalanche.fullname" . }}-test-plans
+            optional: true
+      restartPolicy: Always
+{{- end }}
