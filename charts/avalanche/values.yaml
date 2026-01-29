@@ -195,6 +195,20 @@ controller:
     type: NodePort
     port: 8080
     nodePort: 30080
+  # Ingress configuration for external access via Traefik
+  ingress:
+    enabled: false  # Set to true to create an Ingress resource
+    # Enable Traefik ingress class and entrypoints (default: true)
+    enableTraefik: true
+    # Additional annotations for the Ingress
+    annotations: {}
+    # Hostname for the Ingress (e.g., my-uuid.svc.snplow.net)
+    hostname: ""
+    # Path for the Ingress
+    path: /
+    pathType: Prefix
+    # TLS secret name (defaults to {hostname-with-dashes}-tls)
+    tlsSecretName: ""
   resources:
     requests:
       memory: "128Mi"

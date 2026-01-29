@@ -48,6 +48,7 @@ spec:
             - name: AVALANCHE_NATS_URL
               value: {{ include "avalanche.natsUrl" . | quote }}
             {{- include "avalanche.databaseEnv" . | nindent 12 }}
+            {{- include "avalanche.awsEnv" . | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /configs

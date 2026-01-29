@@ -61,6 +61,7 @@ spec:
             - name: AVALANCHE_TIMESTREAM_REGION
               value: {{ .Values.database.timestream.region | quote }}
             {{- end }}
+            {{- include "avalanche.awsEnv" . | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /configs
