@@ -20,9 +20,9 @@ spec:
   ingressClassName: traefik
   {{- end }}
   tls:
-  - hosts:
-      - {{ $hostname | quote }}
-    secretName: {{ if .Values.controller.ingress.tlsSecretName }}{{ .Values.controller.ingress.tlsSecretName }}{{ else }}{{ $hostname | replace "." "-" | lower | trunc 63 }}-tls{{ end }}
+    - hosts:
+        - {{ $hostname | quote }}
+      secretName: {{ if .Values.controller.ingress.tlsSecretName }}{{ .Values.controller.ingress.tlsSecretName }}{{ else }}{{ $hostname | replace "." "-" | lower | trunc 63 }}-tls{{ end }}
   rules:
     - host: {{ $hostname | quote }}
       http:
