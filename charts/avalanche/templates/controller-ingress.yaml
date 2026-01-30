@@ -12,7 +12,9 @@ metadata:
   {{- with .Values.controller.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- if or (not (hasKey .Values.controller.ingress "enableTraefik")) .Values.controller.ingress.enableTraefik }}
+  {{- $enableTraefik := or (not (hasKey .Values.controller.ingress "enableTraefik")) .Values.controller.ingress.enableTraefik }}
+  {{- $hasEntrypointsAnnotation := and .Values.controller.ingress.annotations (hasKey .Values.controller.ingress.annotations "traefik.ingress.kubernetes.io/router.entrypoints") }}
+  {{- if and $enableTraefik (not $hasEntrypointsAnnotation) }}
     traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
   {{- end }}
 spec:
