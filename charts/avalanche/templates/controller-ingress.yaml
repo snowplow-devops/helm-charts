@@ -24,7 +24,7 @@ spec:
   tls:
     - hosts:
         - {{ $hostname | quote }}
-      secretName: {{ if .Values.controller.ingress.tlsSecretName }}{{ .Values.controller.ingress.tlsSecretName }}{{ else }}{{ $hostname | replace "." "-" | lower | trunc 63 }}-tls{{ end }}
+      secretName: {{ if .Values.controller.ingress.tlsSecretName }}{{ .Values.controller.ingress.tlsSecretName }}{{ else }}{{ printf "%s-tls" ($hostname | replace "." "-" | lower) | trunc 63 | trimSuffix "-" }}{{ end }}
   rules:
     - host: {{ $hostname | quote }}
       http:
