@@ -344,10 +344,15 @@ database:
     region: ""
 
 # AWS credentials (for Kinesis observer or Timestream)
+# For local deployments: Set accessKeyId and secretAccessKey to create a Kubernetes Secret
+# For DS4/EKS deployments: Leave credentials empty - IRSA provides credentials via service account
 aws:
   region: "eu-central-1"
+  # Local only: AWS access key ID (creates Secret when set)
   accessKeyId: ""
+  # Local only: AWS secret access key
   secretAccessKey: ""
+  # Local only: AWS session token (optional, for temporary credentials)
   sessionToken: ""
 
 # Kubernetes Infrastructure Observer configuration (Phase 12.1)

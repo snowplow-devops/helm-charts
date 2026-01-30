@@ -3,7 +3,7 @@ name: avalanche
 description: A Helm chart for Avalanche - Progressive load testing framework for Snowplow infrastructure
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 type: application
-version: 0.2.0
+version: 0.2.1
 appVersion: "1.0.0"
 keywords:
   - avalanche
