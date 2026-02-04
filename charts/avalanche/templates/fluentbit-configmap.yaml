@@ -18,7 +18,7 @@ data:
         Name              tail
         Tag               kube.*
         Path              /var/log/containers/*_{{ .Release.Namespace }}_*.log
-        Parser            docker
+        Parser            cri
         Refresh_Interval  5
         Mem_Buf_Limit     5MB
         Skip_Long_Lines   On
@@ -47,5 +47,13 @@ data:
         Format      json
         Time_Key    time
         Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_Keep   On
+
+    [PARSER]
+        Name        cri
+        Format      regex
+        Regex       ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+        Time_Key    time
+        Time_Format %Y-%m-%dT%H:%M:%S.%L%z
         Time_Keep   On
 {{- end }}
