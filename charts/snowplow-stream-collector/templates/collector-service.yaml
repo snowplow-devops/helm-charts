@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  {{- if eq .Values.cloud "gcp" }}
+  annotations:
+  {{- if .Values.service.ssl.enable }}
+    cloud.google.com/app-protocols:  '{"https-port": "HTTPS", "http-port": "HTTP"}'
+    cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.service.ssl.port }}":{"name": "{{ include "service.gcp.networkEndpointGroupName" . }}"}}}'
+  {{- else }}
+    cloud.google.com/app-protocols:  '{"http-port": "HTTP"}'
+    cloud.google.com/neg: '{"exposed_ports": {"{{ .Values.service.port }}":{"name": "{{ include "service.gcp.networkEndpointGroupName" . }}"}}}'
+  {{- end }}
+  {{- end }}
+spec:
+  type: NodePort
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+  - name: http-port
+    port: {{ .Values.service.port }}
+    protocol: TCP
+    targetPort: {{ .Values.service.port }}
+  {{- if .Values.service.ssl.enable }}
+  - name: https-port
+    port: {{ .Values.service.ssl.port }}
+    protocol: TCP
+    targetPort: {{ .Values.service.ssl.port }}
+  {{- end }}
