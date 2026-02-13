@@ -18,6 +18,8 @@ concurrencyPolicy: "Forbid"
 restartPolicy: "Never"
 failedJobsHistoryLimit: 1
 successfulJobsHistoryLimit: 1
+# -- TTL (in seconds) for cleaning up finished jobs (both failed and successful)
+# ttlSecondsAfterFinished: 604800  # 7 days
 # -- The number of retries to attempt before marking the job as failed
 backoffLimit: 6
 # -- The number of seconds the job is allowed to run before being terminated (optional)

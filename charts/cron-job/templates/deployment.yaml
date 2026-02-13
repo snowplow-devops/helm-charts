@@ -15,6 +15,9 @@ spec:
 
   jobTemplate:
     spec:
+      {{- if $.Values.ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ $.Values.ttlSecondsAfterFinished }}
+      {{- end }}
       backoffLimit: {{ $.Values.backoffLimit }}
       {{- if $.Values.activeDeadlineSeconds }}
       activeDeadlineSeconds: {{ $.Values.activeDeadlineSeconds }}
