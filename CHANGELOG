@@ -1,3 +1,7 @@
+Version 0.3.18 (2026-02-13)
+---------------------------
+charts/cron-job-0.14.0: Add ttlSecondsAfterFinished support for completed/failed jobs to be garbage collected (#303)
+
 Version 0.3.17 (2026-01-14)
 ---------------------------
 charts/avalanche-0.1.0: Add Avalanche chart - progressive load testing framework for Snowplow infrastructure (#301)

@@ -46,6 +46,7 @@ helm delete cron-job
 | restartPolicy | string | `"Never"` |  |
 | failedJobsHistoryLimit | int | `1` |  |
 | successfulJobsHistoryLimit | int | `1` |  |
+| ttlSecondsAfterFinished | int | `nil` | TTL (in seconds) for cleaning up finished jobs (both failed and successful) |
 | backoffLimit | int | `6` | The number of retries to attempt before marking the job as failed |
 | activeDeadlineSeconds | int | `nil` | The number of seconds the job is allowed to run before being terminated (optional) |
 | image.repository | string | `"busybox"` |  |
