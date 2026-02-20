@@ -1,0 +1,17 @@
+{{- if .Values.service.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "iglu.app.name" . }}
+  labels:
+    {{- include "snowplow.labels" $ | nindent 4 }}
+spec:
+  {{- if .Values.service.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.service.podDisruptionBudget.minAvailable }}
+  {{- else if .Values.service.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.service.podDisruptionBudget.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ include "iglu.app.name" . }}
+{{- end }}

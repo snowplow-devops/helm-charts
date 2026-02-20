@@ -57,6 +57,14 @@ service:
       cpu: 400m
       memory: 512Mi
 
+  podDisruptionBudget:
+    # -- Whether to deploy a PodDisruptionBudget
+    enabled: false
+    # -- Minimum number (or percentage) of pods that must remain available. Mutually exclusive with maxUnavailable.
+    minAvailable: 1
+    # -- Maximum number (or percentage) of pods that may be unavailable. Mutually exclusive with minAvailable.
+    # maxUnavailable: 1
+
   config:
     # -- Map of additional environment variables to use within the deployment
     env:
