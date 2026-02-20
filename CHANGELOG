@@ -1,3 +1,7 @@
+Version 0.3.19 (2026-02-20)
+---------------------------
+charts/pod-disruption-budget-0.1.0: Add standalone PodDisruptionBudget chart
+
 Version 0.3.18 (2026-02-13)
 ---------------------------
 charts/cron-job-0.14.0: Add ttlSecondsAfterFinished support for completed/failed jobs to be garbage collected (#303)
