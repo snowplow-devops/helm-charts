@@ -1,6 +1,7 @@
 Version 0.3.19 (2026-02-20)
 ---------------------------
-charts/pod-disruption-budget-0.1.0: Add standalone PodDisruptionBudget chart
+charts/service-deployment-0.34.0: Add inline PodDisruptionBudget support
+charts/snowplow-iglu-server-0.14.0: Add inline PodDisruptionBudget support
 
 Version 0.3.18 (2026-02-13)
 ---------------------------

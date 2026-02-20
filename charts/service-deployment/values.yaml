@@ -152,6 +152,14 @@ vpa:
   #         cpu: 1
   #         memory: 2Gi
 
+podDisruptionBudget:
+  # -- Whether to deploy a PodDisruptionBudget
+  enabled: false
+  # -- Minimum number (or percentage) of pods that must remain available. Mutually exclusive with maxUnavailable.
+  minAvailable: 1
+  # -- Maximum number (or percentage) of pods that may be unavailable. Mutually exclusive with minAvailable.
+  # maxUnavailable: 1
+
 service:
   # -- Whether to setup service bindings (note: only NodePort is supported)
   deploy: true
