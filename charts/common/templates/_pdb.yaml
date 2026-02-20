@@ -1,0 +1,25 @@
+{{- define "common.pdb" -}}
+{{- $global := .Values.global -}}
+{{- range .Values.services }}
+{{- if .podDisruptionBudget.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .name }}
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .podDisruptionBudget.minAvailable }}
+  {{- else if .podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .podDisruptionBudget.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+{{- end }}
+{{- end }}
+{{- end }}
