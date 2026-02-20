@@ -2,6 +2,7 @@ Version 0.3.19 (2026-02-20)
 ---------------------------
 charts/service-deployment-0.34.0: Add inline PodDisruptionBudget support
 charts/snowplow-iglu-server-0.14.0: Add inline PodDisruptionBudget support
+charts/common-0.4.0: Add PodDisruptionBudget template helper
 
 Version 0.3.18 (2026-02-13)
 ---------------------------
