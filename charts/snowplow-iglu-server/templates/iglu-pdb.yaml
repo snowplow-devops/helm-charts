@@ -6,10 +6,10 @@ metadata:
   labels:
     {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
-  {{- if .Values.service.podDisruptionBudget.minAvailable }}
-  minAvailable: {{ .Values.service.podDisruptionBudget.minAvailable }}
-  {{- else if .Values.service.podDisruptionBudget.maxUnavailable }}
+  {{- if not (kindIs "invalid" .Values.service.podDisruptionBudget.maxUnavailable) }}
   maxUnavailable: {{ .Values.service.podDisruptionBudget.maxUnavailable }}
+  {{- else }}
+  minAvailable: {{ .Values.service.podDisruptionBudget.minAvailable }}
   {{- end }}
   selector:
     matchLabels:
