@@ -9,6 +9,7 @@
 {{- include "common.certificate" . }}
 {{- include "common.hpa" . }}
 {{- include "common.vpa" . }}
+{{- include "common.pdb" . }}
 {{- include "common.pvc" . }}
 {{- include "common.targetgroupbinding" . }}
 {{- include "common.ipallowlist" . }}
