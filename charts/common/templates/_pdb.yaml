@@ -12,10 +12,12 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  {{- if .podDisruptionBudget.minAvailable }}
+  {{- if not (kindIs "invalid" .podDisruptionBudget.minAvailable) }}
   minAvailable: {{ .podDisruptionBudget.minAvailable }}
-  {{- else if .podDisruptionBudget.maxUnavailable }}
+  {{- else if not (kindIs "invalid" .podDisruptionBudget.maxUnavailable) }}
   maxUnavailable: {{ .podDisruptionBudget.maxUnavailable }}
+  {{- else }}
+  {{- fail (printf "PodDisruptionBudget for service '%s' must set either podDisruptionBudget.minAvailable or podDisruptionBudget.maxUnavailable" .name) }}
   {{- end }}
   selector:
     matchLabels:
