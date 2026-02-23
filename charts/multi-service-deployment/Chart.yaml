@@ -1,7 +1,7 @@
 apiVersion: v2
 name: multi-service-deployment
 description: A Helm Chart to deploy multiple services with a single release using the common library
-version: 0.2.0
+version: 0.3.0
 icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
 home: https://github.com/snowplow-devops/helm-charts
 sources:
@@ -14,5 +14,5 @@ keywords:
   - multi-service
 dependencies:
   - name: common
-    version: 0.3.0
+    version: 0.4.0
     repository: "https://snowplow-devops.github.io/helm-charts"

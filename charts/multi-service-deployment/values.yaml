@@ -61,6 +61,10 @@ services:
   #   vpa:
   #     enabled: false
   #     spec: {}
+  #   podDisruptionBudget:
+  #     enabled: false
+  #     minAvailable: 1
+  #     # maxUnavailable: 1
   #   service:
   #     deploy: true
   #     port: 8000
