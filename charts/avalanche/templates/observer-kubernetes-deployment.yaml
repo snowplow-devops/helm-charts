@@ -26,7 +26,7 @@ spec:
       - name: {{ .Values.dockerconfigjson.name }}
       containers:
         - name: observer-kubernetes
-          image: "{{ .Values.images.registry }}/{{ .Values.observerKubernetes.image.repository }}:{{ .Values.observerKubernetes.image.tag }}"
+          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.observerKubernetes.image) }}
           imagePullPolicy: {{ .Values.images.pullPolicy }}
           args:
             - observer
@@ -61,6 +61,7 @@ spec:
             - name: AVALANCHE_TIMESTREAM_REGION
               value: {{ .Values.database.timestream.region | quote }}
             {{- end }}
+            {{- include "avalanche.awsEnv" . | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /configs

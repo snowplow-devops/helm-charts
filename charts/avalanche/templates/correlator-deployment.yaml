@@ -54,6 +54,7 @@ spec:
               value: {{ .Values.correlator.metricsWriteIntervalSeconds | quote }}
             {{- end }}
             {{- include "avalanche.databaseEnv" . | nindent 12 }}
+            {{- include "avalanche.awsEnv" . | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /configs

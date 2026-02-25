@@ -1,0 +1,39 @@
+{{- if and .Values.controller.enabled .Values.controller.ingress.enabled }}
+{{- $hostname := required "controller.ingress.hostname is required when ingress is enabled" .Values.controller.ingress.hostname }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $hostname | replace "." "-" | lower | trunc 63 }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: orchestration
+  annotations:
+  {{- with .Values.controller.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- $enableTraefik := or (not (hasKey .Values.controller.ingress "enableTraefik")) .Values.controller.ingress.enableTraefik }}
+  {{- $hasEntrypointsAnnotation := and .Values.controller.ingress.annotations (hasKey .Values.controller.ingress.annotations "traefik.ingress.kubernetes.io/router.entrypoints") }}
+  {{- if and $enableTraefik (not $hasEntrypointsAnnotation) }}
+    traefik.ingress.kubernetes.io/router.entrypoints: "web, websecure"
+  {{- end }}
+spec:
+  {{- if or (not (hasKey .Values.controller.ingress "enableTraefik")) .Values.controller.ingress.enableTraefik }}
+  ingressClassName: traefik
+  {{- end }}
+  tls:
+    - hosts:
+        - {{ $hostname | quote }}
+      secretName: {{ if .Values.controller.ingress.tlsSecretName }}{{ .Values.controller.ingress.tlsSecretName }}{{ else }}{{ printf "%s-tls" ($hostname | replace "." "-" | lower) | trunc 63 | trimSuffix "-" }}{{ end }}
+  rules:
+    - host: {{ $hostname | quote }}
+      http:
+        paths:
+          - path: {{ .Values.controller.ingress.path | default "/" }}
+            pathType: {{ .Values.controller.ingress.pathType | default "Prefix" }}
+            backend:
+              service:
+                name: {{ include "avalanche.fullname" . }}-controller
+                port:
+                  number: {{ .Values.controller.service.port }}
+{{- end }}
