@@ -6,7 +6,13 @@ metadata:
   labels:
     {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
+  # ipWhiteList for Traefik v2.x, ipAllowList for Traefik v3.x
   ipWhiteList:
+    sourceRange:
+      {{- range $ip := .Values.service.ingressIPAllowlist }}
+      - "{{ $ip }}"
+      {{- end }}
+  ipAllowList:
     sourceRange:
       {{- range $ip := .Values.service.ingressIPAllowlist }}
       - "{{ $ip }}"
