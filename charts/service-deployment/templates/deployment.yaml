@@ -33,6 +33,9 @@ spec:
         {{- end }}
       annotations:
         checksum/values: "{{ toJson .Values | sha256sum }}"
+        {{- if .Values.deployment.podAnnotations }}
+        {{- toYaml .Values.deployment.podAnnotations | nindent 8 }}
+        {{- end }}
     spec:
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccount: {{ .Values.cloudserviceaccount.name }}
