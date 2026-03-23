@@ -794,6 +794,28 @@ entries:
     version: 0.1.0
   common:
   - apiVersion: v2
+    created: "2026-03-23T16:49:54.136939284Z"
+    description: A library chart containing common template helpers for Snowplow Helm
+      charts
+    digest: 589ebfe319ed5fa36a3b97a38ffe81eb3d2d774cf26837c3cebaea27ff804c06
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - library
+    - common
+    - templates
+    maintainers:
+    - email: jparavisini@users.noreply.github.com
+      name: jparavisini
+      url: https://github.com/jparavisini
+    name: common
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    type: library
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/common-0.5.0/common-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
     created: "2026-02-23T10:37:21.911018221Z"
     description: A library chart containing common template helpers for Snowplow Helm
       charts
@@ -1790,6 +1812,33 @@ entries:
     - https://github.com/snowplow-devops/helm-charts/releases/download/priority-class-0.1.0/priority-class-0.1.0.tgz
     version: 0.1.0
   service-deployment:
+  - apiVersion: v2
+    created: "2026-03-23T16:49:54.323680546Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to setup a generic deployment with optional service/hpa/vpa
+      bindings
+    digest: 75086922aab4918c92cf849e01ca12ec2c1bd2137e3dc0e10fdb6b170950f091
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - service
+    - deployment
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: service-deployment
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/service-deployment-0.35.0/service-deployment-0.35.0.tgz
+    version: 0.35.0
   - apiVersion: v2
     created: "2026-02-23T10:37:22.074611926Z"
     dependencies:
@@ -2927,6 +2976,35 @@ entries:
   snowplow-iglu-server:
   - apiVersion: v2
     appVersion: 0.13.0
+    created: "2026-03-23T16:49:54.520029803Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to deploy the Snowplow Iglu Server project
+    digest: 7536fa3828e37e36eb575f10919099f5db5136f41992f6220ad286dbe3b19218
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - snowplow
+    - iglu
+    - schemas
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: snowplow-iglu-server
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/snowplow-incubator/iglu-server
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.15.0/snowplow-iglu-server-0.15.0.tgz
+    version: 0.15.0
+  - apiVersion: v2
+    appVersion: 0.13.0
     created: "2026-02-23T10:37:22.259769271Z"
     dependencies:
     - name: dockerconfigjson
@@ -3834,4 +3912,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-02-25T14:53:40.26332894Z"
+generated: "2026-03-23T16:49:54.520943694Z"
