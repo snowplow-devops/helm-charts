@@ -12,13 +12,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  # ipWhiteList for Traefik v2.x, ipAllowList for Traefik v3.x
   ipWhiteList:
-    sourceRange:
-      {{- range $ip := .service.ingressIPAllowlist }}
-      - "{{ $ip }}"
-      {{- end }}
-  ipAllowList:
     sourceRange:
       {{- range $ip := .service.ingressIPAllowlist }}
       - "{{ $ip }}"
