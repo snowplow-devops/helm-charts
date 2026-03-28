@@ -1,0 +1,6 @@
+dependencies:
+- name: service-deployment
+  repository: https://snowplow-devops.github.io/helm-charts
+  version: 0.1.3
+digest: sha256:35026d3c11ba320ee596d29b3a24e4764c3dc43e975b4305b7fd643bafd9bb41
+generated: "2022-07-29T10:22:47.587589+02:00"
