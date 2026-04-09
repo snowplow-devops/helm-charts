@@ -1,3 +1,7 @@
+Version 0.3.27 (2026-04-09)
+---------------------------
+charts/multi-service-deployment-0.6.0: Bump common hart dependency for podAnnotation support
+
 Version 0.3.26 (2026-04-09)
 ---------------------------
 charts/common-0.7.0: Add podAnnotation support to deployment
