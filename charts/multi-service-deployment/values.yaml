@@ -102,6 +102,7 @@ services:
   #         maxUnavailable: "25%"
   #         maxSurge: "25%"
   #     podLabels: {}
+  #     podAnnotations: {}
   #   priorityClassName: ""
   #   tolerations: []
   #   topologySpreadConstraints: {}
