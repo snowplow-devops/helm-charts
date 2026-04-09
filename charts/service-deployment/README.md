@@ -87,6 +87,7 @@ helm delete service-deployment
 | config.sharedNamespaceConfigMaps | list | `[]` | List of config maps from same namespace to reference and mount in the deployment |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
 | deployment.kind | string | `"Deployment"` | Can be either a "Deployment" or "StatefulSet" |
+| deployment.podAnnotations | object | `{}` | Map of annotations that will be added to each pod in the deployment |
 | deployment.podLabels | object | `{}` | Map of labels that will be added to each pod in the deployment |
 | deployment.scaleToZero | bool | `false` | When enabled, disables the HPA and scales the deployment to zero replicas |
 | deployment.strategy | object | `{"rollingUpdate":{"maxSurge":"25%","maxUnavailable":"25%"},"type":"RollingUpdate"}` | How to replace existing pods with new ones |
