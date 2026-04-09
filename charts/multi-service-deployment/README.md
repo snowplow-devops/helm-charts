@@ -188,6 +188,8 @@ Each service in the `services` array supports all configuration options from the
 | services[].hpa.maxReplicas | int | `20` | Maximum replicas |
 | services[].vpa.enabled | bool | `false` | Whether to enable VPA |
 | services[].deployment.kind | string | `"Deployment"` | Deployment kind (Deployment or StatefulSet) |
+| services[].deployment.podAnnotations | object | `{}` | Map of annotations that will be added to each pod |
+| services[].deployment.podLabels | object | `{}` | Map of labels that will be added to each pod |
 | services[].deployment.replicas | int | `1` | Number of replicas (when HPA disabled) |
 | services[].persistentVolume.enabled | bool | `false` | Whether to create PVC |
 | services[].hooks | object | `{}` | Helm hooks configuration |
@@ -328,4 +330,4 @@ services:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://snowplow-devops.github.io/helm-charts | common | 0.3.0 |
+| https://snowplow-devops.github.io/helm-charts | common | 0.7.0 |
