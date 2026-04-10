@@ -1,3 +1,7 @@
+Version 0.3.28 (2026-04-10)
+---------------------------
+charts/service-deployment-0.38.0: Add basic-auth support
+
 Version 0.3.27 (2026-04-09)
 ---------------------------
 charts/multi-service-deployment-0.6.0: Bump common hart dependency for podAnnotation support
