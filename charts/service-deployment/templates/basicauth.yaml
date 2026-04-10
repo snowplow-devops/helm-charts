@@ -1,0 +1,21 @@
+{{- if and .Values.service.basicAuth.enabled .Values.service.ingress -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "app.fullname" . }}-basic-auth
+  labels:
+    {{- include "snowplow.labels" $ | nindent 4 }}
+type: Opaque
+data:
+  users: {{ required "service.basicAuth.users is required when basicAuth is enabled" .Values.service.basicAuth.users | b64enc | quote }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "app.fullname" . }}-basic-auth
+  labels:
+    {{- include "snowplow.labels" $ | nindent 4 }}
+spec:
+  basicAuth:
+    secret: {{ include "app.fullname" . }}-basic-auth
+{{- end -}}
