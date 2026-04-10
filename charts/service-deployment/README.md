@@ -151,6 +151,8 @@ helm delete service-deployment
 | service.rateLimit.sourceCriterion.ipStrategy.excludedIPs | list | `[]` | List of IPs/CIDRs that bypass rate limiting entirely (e.g., internal networks, monitoring) |
 | service.rateLimit.sourceCriterion.requestHeaderName | string | `""` | Header name to use for rate limiting (required when type is "requestHeaderName") |
 | service.rateLimit.sourceCriterion.type | string | `"ipStrategy"` | Type of source criterion: "ipStrategy" (default), "requestHeaderName", or "requestHost" |
+| service.basicAuth.enabled | bool | `false` | Enable basic authentication |
+| service.basicAuth.users | string | `""` | htpasswd-formatted users string (bcrypt hash, e.g. "user:$2y$05$...") |
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
 | tolerations | list |`[]` | Tolerations labels for pod assignment with matching taints |
