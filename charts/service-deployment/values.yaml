@@ -169,6 +169,12 @@ service:
   targetPort: 80
   # -- Protocol that the service leverages (note: TCP or UDP)
   protocol: "TCP"
+  # -- Additional ports to expose on the Kubernetes Service
+  additionalPorts: []
+  #  - name: gossip
+  #    port: 7946
+  #    targetPort: 7946
+  #    protocol: TCP
   aws:
     # -- EC2 TargetGroup ARN to bind the service onto
     targetGroupARN: ""

@@ -22,4 +22,10 @@ spec:
     port: {{ .Values.service.port }}
     protocol: {{ .Values.service.protocol }}
     targetPort: {{ .Values.service.targetPort }}
+  {{- range .Values.service.additionalPorts }}
+  - name: {{ .name }}
+    port: {{ .port }}
+    protocol: {{ .protocol | default "TCP" }}
+    targetPort: {{ .targetPort | default .port }}
+  {{- end }}
 {{- end }}
