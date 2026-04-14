@@ -140,6 +140,7 @@ helm delete service-deployment
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
 | service.ingress | object | `{}` | A map of ingress rules to deploy |
 | service.ingressIPAllowlist | list | `[]` | List of IP addresses/CIDRs to restrict ingress traffic to |
+| service.additionalPorts | list | `[]` | Additional ports to expose on the Kubernetes Service (e.g. `[{name: "gossip", port: 7946, targetPort: 7946, protocol: "TCP"}]`) |
 | service.port | int | `8000` | Port to bind and expose the service on |
 | service.protocol | string | `"TCP"` | Protocol that the service leverages (note: TCP or UDP) |
 | service.rateLimit.average | int | `100` | Average number of requests per period allowed |
