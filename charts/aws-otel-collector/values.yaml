@@ -8,7 +8,7 @@ clusterName: ""
 image:
   # -- Image to use for deploying
   repository: public.ecr.aws/aws-observability/aws-otel-collector
-  tag: v0.33.1
+  tag: v0.47.0
   pullPolicy: IfNotPresent
 
 resources:

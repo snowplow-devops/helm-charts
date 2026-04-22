@@ -1,3 +1,7 @@
+Version 0.3.30 (2026-04-21)
+---------------------------
+charts/aws-otel-collector-0.12.0: Add RBAC for endpointslices and bump to v0.47.0
+
 Version 0.3.29 (2026-04-14)
 ---------------------------
 charts/service-deployment-0.39.0: Add additionalPorts support
