@@ -21,6 +21,13 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
 
+        # Required for awscontainerinsightreceiver to access the containerd socket
+        # (owned root:root 0660 on the host) so cAdvisor can enrich container stats
+        # with pod-level metadata. Without this, aws-otel-collector v0.47.0+ fails
+        # with "No pod metric collected" and no pod_* metrics are emitted.
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+
         env:
         - name: K8S_NODE_NAME
           valueFrom:
