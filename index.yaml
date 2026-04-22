@@ -158,6 +158,26 @@ entries:
     version: 0.1.0
   aws-otel-collector:
   - apiVersion: v1
+    appVersion: v0.47.0
+    created: "2026-04-22T15:27:30.803054029Z"
+    description: A Helm chart to deploy aws-otel-collector project
+    digest: 7c5ddcecc338fe454d58fb54c0c72988510ede3de846298feb9da0cbb979f554
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - eks
+    - telemetry
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: aws-otel-collector
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/aws-otel-collector-0.12.0/aws-otel-collector-0.12.0.tgz
+    version: 0.12.0
+  - apiVersion: v1
     appVersion: v0.33.1
     created: "2025-12-12T10:56:58.642409589Z"
     description: A Helm chart to deploy aws-otel-collector project
@@ -4162,4 +4182,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-14T15:15:13.946185713Z"
+generated: "2026-04-22T15:27:30.803744919Z"
