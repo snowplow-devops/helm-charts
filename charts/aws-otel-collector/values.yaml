@@ -14,9 +14,17 @@ image:
 # -- Pod/container securityContext for the collector. Defaults to running as root
 # (uid/gid 0) so awscontainerinsightreceiver can read the containerd socket on
 # EKS nodes (root:root 0660). Required for pod-level metrics on collector v0.47.0+.
+# Remaining fields tighten the context to satisfy restricted PodSecurity scanners
+# without giving up the root UID needed for the socket.
 securityContext:
   runAsUser: 0
   runAsGroup: 0
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  privileged: false
+  capabilities:
+    drop:
+      - ALL
 
 resources:
   limits:
