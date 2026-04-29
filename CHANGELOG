@@ -1,3 +1,9 @@
+Version 0.3.32 (2026-04-29)
+---------------------------
+charts/common-0.8.0: Replace deprecated ipWhiteList with ipAllowList in Traefik Middleware
+charts/service-deployment-0.40.0: Replace deprecated ipWhiteList with ipAllowList in Traefik Middleware
+charts/snowplow-iglu-server-0.17.0: Replace deprecated ipWhiteList with ipAllowList in Traefik Middleware
+
 Version 0.3.31 (2026-04-22)
 ---------------------------
 charts/aws-otel-collector-0.13.0: Add securityContext (runAsUser/runAsGroup=0) so v0.47.0+ can read containerd socket and emit pod-level metrics
