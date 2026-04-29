@@ -12,7 +12,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  ipWhiteList:
+  ipAllowList:
     sourceRange:
       {{- range $ip := .service.ingressIPAllowlist }}
       - "{{ $ip }}"

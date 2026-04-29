@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "snowplow.labels" $ | nindent 4 }}
 spec:
-  ipWhiteList:
+  ipAllowList:
     sourceRange:
       {{- range $ip := .Values.service.ingressIPAllowlist }}
       - "{{ $ip }}"
