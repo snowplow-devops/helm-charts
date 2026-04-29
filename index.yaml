@@ -1790,6 +1790,29 @@ entries:
     version: 0.1.0
   multi-service-deployment:
   - apiVersion: v2
+    created: "2026-04-29T14:47:41.848357593Z"
+    dependencies:
+    - name: common
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.8.0
+    description: A Helm Chart to deploy multiple services with a single release using
+      the common library
+    digest: 3f9d4b1ff5aff89ebc4813540e87c0fe123c3432d723a0b5a643c7c37c2874e6
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - service
+    - deployment
+    - multi-service
+    maintainers:
+    - name: jparavisini
+    name: multi-service-deployment
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/multi-service-deployment-0.7.0/multi-service-deployment-0.7.0.tgz
+    version: 0.7.0
+  - apiVersion: v2
     created: "2026-04-09T21:28:40.696103601Z"
     dependencies:
     - name: common
@@ -4280,4 +4303,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-29T13:23:21.137412966Z"
+generated: "2026-04-29T14:47:41.848882451Z"
