@@ -66,6 +66,62 @@ nats://{{ include "avalanche.fullname" . }}-nats:{{ .Values.nats.service.clientP
 {{- end }}
 
 {{/*
+Resolve component resources: per-component override wins, otherwise the value
+from the active sizing preset (`.Values.presets.<sizingPreset>.<component>.resources`).
+A non-empty `<component>.resources` map counts as an override.
+
+Usage:
+  resources:
+    {{- include "avalanche.componentResources" (dict "ctx" . "component" "injector") | nindent 12 }}
+*/}}
+{{- define "avalanche.componentResources" -}}
+{{- $ctx := .ctx -}}
+{{- $component := .component -}}
+{{- $override := (index $ctx.Values $component "resources") | default dict -}}
+{{- $preset := index $ctx.Values.presets $ctx.Values.sizingPreset $component -}}
+{{- if gt (len $override) 0 -}}
+{{- toYaml $override -}}
+{{- else -}}
+{{- toYaml $preset.resources -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Resolve component replicas: per-component override wins (any non-zero integer),
+otherwise the value from the active sizing preset.
+
+Usage:
+  replicas: {{ include "avalanche.componentReplicas" (dict "ctx" . "component" "injector") }}
+*/}}
+{{- define "avalanche.componentReplicas" -}}
+{{- $ctx := .ctx -}}
+{{- $component := .component -}}
+{{- $override := (index $ctx.Values $component "replicas") | default 0 -}}
+{{- $preset := index $ctx.Values.presets $ctx.Values.sizingPreset $component -}}
+{{- if gt ($override | int) 0 -}}
+{{- $override -}}
+{{- else -}}
+{{- $preset.replicas -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Resolve injector workers: `.Values.injector.config.workers` override wins (any
+non-zero integer), otherwise the value from the active sizing preset.
+
+Usage in configmap.yaml:
+  workers: {{ include "avalanche.injectorWorkers" . }}
+*/}}
+{{- define "avalanche.injectorWorkers" -}}
+{{- $override := .Values.injector.config.workers | default 0 -}}
+{{- if gt ($override | int) 0 -}}
+{{- $override -}}
+{{- else -}}
+{{- index .Values.presets .Values.sizingPreset "injector" "workers" -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Image name helper - supports both local and registry images
 If images.registry is empty, uses local image format: repository:tag
 If images.registry is set, uses registry format: registry/repository:tag
