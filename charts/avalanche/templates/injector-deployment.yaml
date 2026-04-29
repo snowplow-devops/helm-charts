@@ -8,7 +8,7 @@ metadata:
     {{- include "snowplow.labels" . | nindent 4 }}
     app.kubernetes.io/component: load-generator
 spec:
-  replicas: {{ .Values.injector.replicas }}
+  replicas: {{ include "avalanche.componentReplicas" (dict "ctx" . "component" "injector") }}
   selector:
     matchLabels:
       {{- include "avalanche.selectorLabels" . | nindent 6 }}
@@ -91,7 +91,7 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           resources:
-            {{- toYaml .Values.injector.resources | nindent 12 }}
+            {{- include "avalanche.componentResources" (dict "ctx" . "component" "injector") | nindent 12 }}
       volumes:
         - name: config
           configMap:

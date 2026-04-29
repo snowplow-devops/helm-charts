@@ -8,7 +8,7 @@ metadata:
     {{- include "snowplow.labels" . | nindent 4 }}
     app.kubernetes.io/component: orchestration
 spec:
-  replicas: {{ .Values.controller.replicas }}
+  replicas: {{ include "avalanche.componentReplicas" (dict "ctx" . "component" "controller") }}
   selector:
     matchLabels:
       {{- include "avalanche.selectorLabels" . | nindent 6 }}
@@ -80,7 +80,7 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 3
           resources:
-            {{- toYaml .Values.controller.resources | nindent 12 }}
+            {{- include "avalanche.componentResources" (dict "ctx" . "component" "controller") | nindent 12 }}
       volumes:
         - name: config
           configMap:
