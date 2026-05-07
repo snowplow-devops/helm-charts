@@ -1,3 +1,7 @@
+Version 0.3.35 (2026-05-07)
+---------------------------
+charts/multi-service-deployment-0.8.0: Add rate limiting middleware support via common dependency bump (closes #328)
+
 Version 0.3.34 (2026-05-07)
 ---------------------------
 charts/common-0.9.0: Add rate limiting Traefik Middleware support (closes #328)
