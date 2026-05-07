@@ -1,3 +1,7 @@
+Version 0.3.34 (2026-05-07)
+---------------------------
+charts/common-0.9.0: Add rate limiting Traefik Middleware support (closes #328)
+
 Version 0.3.33 (2026-04-29)
 ---------------------------
 charts/multi-service-deployment-0.7.0: Bump common dependency for ipAllowList Traefik Middleware update
