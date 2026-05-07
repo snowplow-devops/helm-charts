@@ -1,0 +1,39 @@
+{{- define "common.ratelimit" -}}
+{{- $global := .Values.global -}}
+{{- range $service := .Values.services }}
+{{- if and $service.service.rateLimit $service.service.rateLimit.enabled $service.service.ingress }}
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ $service.name }}-rate-limit
+  labels:
+    {{- with $global.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  rateLimit:
+    average: {{ $service.service.rateLimit.average }}
+    burst: {{ $service.service.rateLimit.burst }}
+    period: {{ $service.service.rateLimit.period | quote }}
+    {{- if and $service.service.rateLimit.sourceCriterion $service.service.rateLimit.sourceCriterion.enabled }}
+    sourceCriterion:
+      {{- $type := $service.service.rateLimit.sourceCriterion.type | default "ipStrategy" }}
+      {{- if eq $type "ipStrategy" }}
+      ipStrategy:
+        depth: {{ $service.service.rateLimit.sourceCriterion.ipStrategy.depth | default 1 }}
+        {{- if $service.service.rateLimit.sourceCriterion.ipStrategy.excludedIPs }}
+        excludedIPs:
+          {{- range $ip := $service.service.rateLimit.sourceCriterion.ipStrategy.excludedIPs }}
+          - "{{ $ip }}"
+          {{- end }}
+        {{- end }}
+      {{- else if eq $type "requestHeaderName" }}
+      requestHeaderName: {{ required "requestHeaderName is required when type is requestHeaderName" $service.service.rateLimit.sourceCriterion.requestHeaderName }}
+      {{- else if eq $type "requestHost" }}
+      requestHost: true
+      {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
