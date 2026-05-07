@@ -107,6 +107,7 @@ sharedIngress:
 - `common.sharedingress`: Generate shared Ingress resources with path-based routing to multiple services
 - `common.certificate`: Generate cert-manager Certificate resources
 - `common.ipallowlist`: Generate Traefik Middleware for IP allowlisting
+- `common.ratelimit`: Generate Traefik Middleware for rate limiting
 - `common.targetgroupbinding`: Generate AWS TargetGroupBinding resources
 
 ### RBAC Resources

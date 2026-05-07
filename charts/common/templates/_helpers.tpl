@@ -49,3 +49,22 @@ Define the default NEG name for GCP deployments.
 {{- default .Release.Name .Values.service.gcp.networkEndpointGroupName -}}
 {{- end -}}
 
+{{/*
+Generate Traefik middleware list for ingress annotations.
+Usage: {{ include "common.traefik.middlewares" (dict "service" $service "namespace" $.Release.Namespace) }}
+*/}}
+{{- define "common.traefik.middlewares" -}}
+{{- $service := .service -}}
+{{- $namespace := .namespace -}}
+{{- $middlewares := list -}}
+{{- if $service.service.ingressIPAllowlist -}}
+  {{- $middlewares = append $middlewares (printf "%s-%s-ipallowlist@kubernetescrd" $namespace $service.name) -}}
+{{- end -}}
+{{- if and $service.service.rateLimit $service.service.rateLimit.enabled -}}
+  {{- $middlewares = append $middlewares (printf "%s-%s-rate-limit@kubernetescrd" $namespace $service.name) -}}
+{{- end -}}
+{{- if $middlewares -}}
+{{- join ", " $middlewares | quote -}}
+{{- end -}}
+{{- end }}
+
