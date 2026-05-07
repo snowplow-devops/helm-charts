@@ -183,6 +183,16 @@ Each service in the `services` array supports all configuration options from the
 | services[].service.port | int | `8000` | Service port |
 | services[].service.targetPort | int | `80` | Container target port |
 | services[].service.ingress | object | `{}` | Ingress configuration |
+| services[].service.ingressIPAllowlist | list | `[]` | List of IPs/CIDRs allowed to reach the service via ingress (Traefik Middleware) |
+| services[].service.rateLimit.enabled | bool | `false` | Enable rate limiting via Traefik Middleware |
+| services[].service.rateLimit.average | int | `100` | Average number of requests per period allowed |
+| services[].service.rateLimit.burst | int | `200` | Maximum number of requests allowed in a burst |
+| services[].service.rateLimit.period | string | `"1m"` | Time period for rate limiting (e.g., "1m", "1s", "1h") |
+| services[].service.rateLimit.sourceCriterion.enabled | bool | `false` | Enable source-based rate limiting (false = global rate limit) |
+| services[].service.rateLimit.sourceCriterion.type | string | `"ipStrategy"` | Type of source criterion: "ipStrategy", "requestHeaderName", or "requestHost" |
+| services[].service.rateLimit.sourceCriterion.ipStrategy.depth | int | `1` | Depth of IP extraction for X-Forwarded-For header |
+| services[].service.rateLimit.sourceCriterion.ipStrategy.excludedIPs | list | `[]` | List of IPs/CIDRs that bypass rate limiting |
+| services[].service.rateLimit.sourceCriterion.requestHeaderName | string | `""` | Header name to use when type is "requestHeaderName" |
 | services[].hpa.deploy | bool | `true` | Whether to deploy HPA |
 | services[].hpa.minReplicas | int | `1` | Minimum replicas |
 | services[].hpa.maxReplicas | int | `20` | Maximum replicas |
@@ -330,4 +340,4 @@ services:
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://snowplow-devops.github.io/helm-charts | common | 0.7.0 |
+| https://snowplow-devops.github.io/helm-charts | common | 0.9.0 |

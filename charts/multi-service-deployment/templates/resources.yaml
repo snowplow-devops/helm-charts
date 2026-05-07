@@ -13,6 +13,7 @@
 {{- include "common.pvc" . }}
 {{- include "common.targetgroupbinding" . }}
 {{- include "common.ipallowlist" . }}
+{{- include "common.ratelimit" . }}
 {{- include "common.hooks" . }}
 {{- include "common.role" . }}
 {{- include "common.rolebinding" . }}
