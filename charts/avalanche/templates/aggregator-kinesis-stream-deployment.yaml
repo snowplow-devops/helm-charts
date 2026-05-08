@@ -1,24 +1,24 @@
-{{- if .Values.aggregatorKubernetes.enabled }}
+{{- if .Values.aggregatorKinesisStream.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "avalanche.fullname" . }}-aggregator-kubernetes
+  name: {{ include "avalanche.fullname" . }}-aggregator-kinesis-stream
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "snowplow.labels" . | nindent 4 }}
-    app.kubernetes.io/component: aggregator-kubernetes
+    app.kubernetes.io/component: aggregator-kinesis-stream
 spec:
-  replicas: {{ .Values.aggregatorKubernetes.replicas }}
+  replicas: {{ .Values.aggregatorKinesisStream.replicas }}
   selector:
     matchLabels:
       {{- include "avalanche.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: aggregator-kubernetes
+      app.kubernetes.io/component: aggregator-kinesis-stream
   template:
     metadata:
       labels:
         {{- include "snowplow.labels" . | nindent 8 }}
         {{- include "avalanche.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: aggregator-kubernetes
+        app.kubernetes.io/component: aggregator-kinesis-stream
     spec:
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccount: {{ .Values.cloudserviceaccount.name }}
@@ -32,17 +32,13 @@ spec:
       - name: {{ .Values.dockerconfigjson.name }}
       containers:
         - name: aggregator
-          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.aggregatorKubernetes.image) }}
+          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.aggregatorKinesisStream.image) }}
           imagePullPolicy: {{ .Values.images.pullPolicy }}
           args:
             - "aggregator"
-            # Always run in standalone mode with own config from ConfigMap.
-            # The kubernetes aggregator has static config (source measurement,
-            # output measurements, window duration) that doesn't benefit from
-            # managed mode config distribution.
-            - "--config=/configs/aggregator-kubernetes.yaml"
+            - "--config=/configs/aggregator-kinesis-stream.yaml"
             - "--nats-url={{ include "avalanche.natsUrl" . }}"
-            - "--component-id={{ .Values.aggregatorKubernetes.componentId }}"
+            - "--component-id={{ .Values.aggregatorKinesisStream.componentId }}"
           env:
             - name: AVALANCHE_LOG_LEVEL
               valueFrom:
@@ -57,7 +53,6 @@ spec:
             - name: config
               mountPath: /configs
               readOnly: true
-          # Liveness probe - check process is running and can reach NATS
           livenessProbe:
             exec:
               command:
@@ -68,7 +63,6 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
-          # Readiness probe - component is ready when NATS is reachable
           readinessProbe:
             exec:
               command:
@@ -79,7 +73,7 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
           resources:
-            {{- toYaml .Values.aggregatorKubernetes.resources | nindent 12 }}
+            {{- toYaml .Values.aggregatorKinesisStream.resources | nindent 12 }}
       volumes:
         - name: config
           configMap:

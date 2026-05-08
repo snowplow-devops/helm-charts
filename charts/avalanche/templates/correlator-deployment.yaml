@@ -36,7 +36,9 @@ spec:
           imagePullPolicy: {{ .Values.images.pullPolicy }}
           args:
             - "correlator"
+            {{- if .Values.legacyMode }}
             - "--config=/configs/correlator.yaml"
+            {{- end }}
             - "--nats-url={{ include "avalanche.natsUrl" . }}"
             - "--component-id={{ .Values.correlator.componentId }}"
           # Note: Correlator in standalone/container mode communicates via NATS only
@@ -49,6 +51,10 @@ spec:
                   key: log_level
             - name: AVALANCHE_NATS_URL
               value: {{ include "avalanche.natsUrl" . | quote }}
+            {{- if not .Values.legacyMode }}
+            - name: AVALANCHE_MANAGED
+              value: "true"
+            {{- end }}
             {{- if .Values.correlator.metricsWriteIntervalSeconds }}
             - name: AVALANCHE_METRICS_WRITE_INTERVAL_SECONDS
               value: {{ .Values.correlator.metricsWriteIntervalSeconds | quote }}

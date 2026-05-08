@@ -1,42 +1,47 @@
 {{- if .Values.observerKubernetes.enabled }}
+{{- if .Values.observerKubernetes.api.enabled }}
+# observer-kubernetes (api): native K8s observer reading pod / deployment /
+# event / resource metrics from the in-cluster Kubernetes API + metrics-server.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes-api
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "snowplow.labels" . | nindent 4 }}
-    app.kubernetes.io/component: observer-kubernetes
+    app.kubernetes.io/component: observer-kubernetes-api
 spec:
   replicas: {{ .Values.observerKubernetes.replicas }}
   selector:
     matchLabels:
       {{- include "avalanche.selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: observer-kubernetes
+      app.kubernetes.io/component: observer-kubernetes-api
   template:
     metadata:
       labels:
         {{- include "snowplow.labels" . | nindent 8 }}
         {{- include "avalanche.selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: observer-kubernetes
+        app.kubernetes.io/component: observer-kubernetes-api
     spec:
-      # Note: observer-kubernetes has its own service account for K8s API access
       serviceAccountName: {{ include "avalanche.fullname" . }}-observer-kubernetes
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
       containers:
-        - name: observer-kubernetes
+        - name: observer-kubernetes-api
           image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.observerKubernetes.image) }}
           imagePullPolicy: {{ .Values.images.pullPolicy }}
           args:
             - observer
             - --config
-            - /configs/observer-kubernetes.yaml
+            - /configs/observer-kubernetes-api.yaml
           env:
             - name: AVALANCHE_LOG_LEVEL
               value: {{ .Values.images.logLevel | quote }}
             - name: AVALANCHE_NATS_URL
               value: "nats://{{ include "avalanche.fullname" . }}-nats:4222"
+            # api observer keeps the unsuffixed componentId for backwards
+            # compatibility with existing test plans (which reference
+            # external-observer-kubernetes.yaml with name=k8s-observer-kubernetes).
             - name: AVALANCHE_COMPONENT_ID
               value: {{ .Values.observerKubernetes.componentId | quote }}
             # Database configuration
@@ -68,7 +73,6 @@ spec:
               readOnly: true
           resources:
             {{- toYaml .Values.observerKubernetes.resources | nindent 12 }}
-          # Liveness probe - check NATS health endpoint (consistent with other components)
           livenessProbe:
             exec:
               command:
@@ -90,4 +94,101 @@ spec:
         - name: config
           configMap:
             name: {{ include "avalanche.fullname" . }}-config
+{{- end }}
+
+{{- if .Values.observerKubernetes.cloudwatch.enabled }}
+---
+# observer-kubernetes (cloudwatch): reads pod-level Container Insights and/or
+# AWS/Kinesis stream metrics via IRSA. Independent from the api observer above
+# — both can run simultaneously, sharing the same SA.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes-cloudwatch
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: observer-kubernetes-cloudwatch
+spec:
+  replicas: {{ .Values.observerKubernetes.replicas }}
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: observer-kubernetes-cloudwatch
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: observer-kubernetes-cloudwatch
+    spec:
+      serviceAccountName: {{ include "avalanche.fullname" . }}-observer-kubernetes
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      containers:
+        - name: observer-kubernetes-cloudwatch
+          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.observerKubernetes.image) }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          args:
+            - observer
+            - --config
+            - /configs/observer-kubernetes-cloudwatch.yaml
+          env:
+            - name: AVALANCHE_LOG_LEVEL
+              value: {{ .Values.images.logLevel | quote }}
+            - name: AVALANCHE_NATS_URL
+              value: "nats://{{ include "avalanche.fullname" . }}-nats:4222"
+            - name: AVALANCHE_COMPONENT_ID
+              value: "{{ .Values.observerKubernetes.componentId }}-cloudwatch"
+            # Database configuration
+            {{- if eq .Values.database.type "influxdb" }}
+            - name: AVALANCHE_DB_TYPE
+              value: "influxdb"
+            - name: AVALANCHE_INFLUXDB_URL
+              value: {{ .Values.database.influxdb.url | quote }}
+            - name: AVALANCHE_INFLUXDB_TOKEN
+              value: {{ .Values.database.influxdb.token | quote }}
+            - name: AVALANCHE_INFLUXDB_ORG
+              value: {{ .Values.database.influxdb.org | quote }}
+            - name: AVALANCHE_INFLUXDB_BUCKET
+              value: {{ .Values.database.influxdb.bucket | quote }}
+            {{- else if eq .Values.database.type "timestream" }}
+            - name: AVALANCHE_DB_TYPE
+              value: "timestream"
+            - name: AVALANCHE_TIMESTREAM_ENABLED
+              value: "true"
+            - name: AVALANCHE_TIMESTREAM_DATABASE
+              value: {{ .Values.database.timestream.database | quote }}
+            - name: AVALANCHE_TIMESTREAM_REGION
+              value: {{ .Values.database.timestream.region | quote }}
+            {{- end }}
+            {{- include "avalanche.awsEnv" . | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /configs
+              readOnly: true
+          resources:
+            {{- toYaml .Values.observerKubernetes.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - wget -q --spider http://{{ include "avalanche.fullname" . }}-nats:8222/healthz
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - wget -q --spider http://{{ include "avalanche.fullname" . }}-nats:8222/healthz
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "avalanche.fullname" . }}-config
+{{- end }}
 {{- end }}
