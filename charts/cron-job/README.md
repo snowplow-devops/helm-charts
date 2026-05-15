@@ -1,73 +1,67 @@
 # cron-job
 
-A helm chart to configure a cron job.
+![Version: 0.15.0](https://img.shields.io/badge/Version-0.15.0-informational?style=flat-square)
 
-## TL;DR
+A Helm Chart to deploy an arbitrary container as a cron job.
 
-```bash
-helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts
-helm install cron-job snowplow-devops/cron-job
-```
+**Homepage:** <https://github.com/snowplow-devops/helm-charts>
 
-## Introduction
+## Maintainers
 
-This chart creates a cron job of an arbitrary input container and input variables configured on the environment.
+| Name | Email | Url |
+| ---- | ------ | --- |
+| jbeemster | <jbeemster@users.noreply.github.com> | <https://github.com/jbeemster> |
 
-## Installing the Chart
+## Source Code
 
-Install or upgrading the chart with default configuration:
+* <https://github.com/snowplow-devops/helm-charts>
 
-```bash
-helm upgrade --install cron-job snowplow-devops/cron-job
-```
+## Requirements
 
-_Note_: As default the chart simply deploys an example busybox to illustrate running a simple command - take note of the default `values.yaml` and alter to suit your needs!
+| Repository | Name | Version |
+|------------|------|---------|
+| https://snowplow-devops.github.io/helm-charts | cloudserviceaccount | 0.3.0 |
+| https://snowplow-devops.github.io/helm-charts | dockerconfigjson | 0.1.0 |
 
-To see example input you should also dig through the `values.yaml` to understand the full range of options available.
-
-## Uninstalling the Chart
-
-To uninstall/delete the `cron-job` release:
-
-```bash
-helm delete cron-job
-```
-
-## Configuration
+## Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
-| global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
-| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
-| schedules | list | `[]` | List of cron schedules. Each schedule must have unique `name`, `crontab`, and optional `suspend` and `env` fields |
-| schedules[].env | object | `{}` | Schedule-specific environment variables that extend/override global config.env |
-| concurrencyPolicy | string | `"Forbid"` |  |
-| restartPolicy | string | `"Never"` |  |
-| failedJobsHistoryLimit | int | `1` |  |
-| successfulJobsHistoryLimit | int | `1` |  |
-| ttlSecondsAfterFinished | int | `nil` | TTL (in seconds) for cleaning up finished jobs (both failed and successful) |
 | backoffLimit | int | `6` | The number of retries to attempt before marking the job as failed |
-| activeDeadlineSeconds | int | `nil` | The number of seconds the job is allowed to run before being terminated (optional) |
-| image.repository | string | `"busybox"` |  |
-| image.tag | string | `"latest"` |  |
-| image.isRepositoryPublic | bool | `true` | Whether the repository is public |
-| image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
-| config.command | list | `[]` |  |
+| cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
+| cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
+| cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |
+| cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
+| cloudserviceaccount.name | string | `"snowplow-cron-job-service-account"` | Name of the service-account to create |
+| concurrencyPolicy | string | `"Forbid"` |  |
 | config.args | list | `[]` |  |
+| config.command | list | `[]` |  |
 | config.env | object | `{}` | Map of environment variables to use within the job |
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
+| config.workingDir | string | `""` | Optional working directory for the container process. Useful when readOnlyRootFilesystem is true and the job writes to its CWD; point at a writable mount declared via extraVolumes / extraVolumeMounts. |
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
-| resources | object | `{}` | Map of resource constraints for the deployment |
+| containerSecurityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Container security context configuration These defaults follow kubesec.io best practices for hardened deployments.  runAsUser / runAsGroup are intentionally not pinned. Different container images bake in different non-root USER directives, and forcing a specific UID can prevent the image's user from accessing its own files. The image's USER directive selects the runtime UID; runAsNonRoot: true still enforces the non-root invariant. Override per-deployment if you need a specific UID.  readOnlyRootFilesystem defaults to false so existing deployments are not broken on upgrade; set it to true per-deployment once writable paths (e.g. /tmp) are mounted as emptyDirs. |
+| customRole.definition | list | `[]` | Array of role definitions to setup for the custom role |
+| customRole.deploy | bool | `false` | Whether to deploy the custom role and bind it to the cloudserviceaccount |
+| dockerconfigjson.email | string | `""` | Email address for user of the private repository |
 | dockerconfigjson.name | string | `"snowplow-cron-job-dockerhub"` | Name of the secret to use for the private repository |
-| dockerconfigjson.username | string | `""` | Username for the private repository |
 | dockerconfigjson.password | string | `""` | Password for the private repository |
 | dockerconfigjson.server | string | `"https://index.docker.io/v1/"` | Repository server URL |
-| dockerconfigjson.email | string | `""` | Email address for user of the private repository |
-| cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |
-| cloudserviceaccount.name | string | `"snowplow-cron-job-service-account"` | Name of the service-account to create |
-| cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
-| cloudserviceaccount.gcp.serviceAccount | string | `""` | Service Account email to bind to the k8s service account |
-| cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
-| customRole.deploy | bool | `false` | Whether to deploy the custom role and bind it to the cloudserviceaccount |
-| customRole.definition | list | `[]` | Array of role definitions to setup for the custom role |
+| dockerconfigjson.username | string | `""` | Username for the private repository |
+| extraVolumeMounts | list | `[]` | Additional volume mounts to attach to the container. Pair with extraVolumes above. |
+| extraVolumes | list | `[]` | Additional volumes to attach to the pod spec. Useful with readOnlyRootFilesystem: true — declare writable scratch space (e.g. emptyDir on /tmp) without disabling the hardened default. |
+| failedJobsHistoryLimit | int | `1` |  |
+| fullnameOverride | string | `""` | Overrides the full-name given to the deployment resources (default: .Release.Name) |
+| global.cloud | string | `""` | Cloud specific bindings (options: aws, gcp, azure) |
+| global.labels | object | `{}` | Global labels deployed to all resources deployed by the chart |
+| image.isRepositoryPublic | bool | `true` | Whether the repository is public |
+| image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
+| image.repository | string | `"busybox"` |  |
+| image.tag | string | `"latest"` |  |
+| resources | object | `{}` | Map of resource constraints for the deployment |
+| restartPolicy | string | `"Never"` |  |
+| schedules | list | `[]` |  |
+| successfulJobsHistoryLimit | int | `1` |  |
+
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)
