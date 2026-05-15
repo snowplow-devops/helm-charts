@@ -60,11 +60,10 @@ service:
   # -- Container security context configuration
   # These defaults follow kubesec.io best practices for hardened deployments.
   #
-  # runAsUser / runAsGroup are intentionally not pinned. Different container
-  # images bake in different non-root USER directives, and forcing a specific
-  # UID can prevent the image's user from accessing its own files. The image's
-  # USER directive selects the runtime UID; runAsNonRoot: true still enforces
-  # the non-root invariant. Override per-deployment if you need a specific UID.
+  # runAsUser is pinned to 65534 (nobody) because the upstream
+  # snowplow/iglu-server distroless image declares USER nobody — a non-numeric
+  # value that the kubelet cannot verify against runAsNonRoot. Pinning the
+  # numeric UID lets runAsNonRoot pass without changing the runtime user.
   #
   # readOnlyRootFilesystem defaults to false so existing deployments are not
   # broken on upgrade; set it to true per-deployment once writable paths
@@ -72,6 +71,7 @@ service:
   containerSecurityContext:
     allowPrivilegeEscalation: false
     runAsNonRoot: true
+    runAsUser: 65534
     readOnlyRootFilesystem: false
     capabilities:
       drop:

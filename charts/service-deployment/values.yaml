@@ -9,8 +9,8 @@ global:
 fullnameOverride: ""
 
 image:
-  repository: "nginx"
-  tag: "latest"
+  repository: "nginxinc/nginx-unprivileged"
+  tag: "stable"
   # -- The image pullPolicy to use
   pullPolicy: "IfNotPresent"
 
