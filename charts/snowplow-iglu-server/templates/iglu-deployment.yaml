@@ -43,11 +43,17 @@ spec:
           optional: false
         name: {{ include "iglu.app.config.name" . }}-volume
       {{- end }}
+      {{- with .Values.service.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
 
       containers:
       - name: {{ include "iglu.app.name" . }}
         image: {{ .Values.service.image.repository}}:{{ .Values.service.image.tag}}
         imagePullPolicy: {{ default "IfNotPresent" .Values.service.image.pullPolicy }}
+
+        securityContext:
+          {{- toYaml .Values.service.containerSecurityContext | nindent 10 }}
 
         args:
         - "--config"
@@ -123,4 +129,7 @@ spec:
         - mountPath: /etc/config
           mountPropagation: None
           name: {{ include "iglu.app.config.name" . }}-volume
+        {{- end }}
+        {{- with .Values.service.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}

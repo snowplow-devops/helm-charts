@@ -77,6 +77,9 @@ spec:
         persistentVolumeClaim:
           claimName: {{ include "app.fullname" . }}
       {{- end }}
+      {{- with .Values.extraVolumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
 
       {{- if .Values.affinity }}
       affinity:
@@ -96,6 +99,13 @@ spec:
       - name: "{{ include "app.fullname" . }}"
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy }}
+
+        securityContext:
+          {{- toYaml .Values.containerSecurityContext | nindent 10 }}
+
+        {{- if .Values.config.workingDir }}
+        workingDir: {{ .Values.config.workingDir | quote }}
+        {{- end }}
 
         {{- if .Values.config.command }}
         command:
@@ -197,6 +207,9 @@ spec:
         - name: {{ include "app.fullname" . }}
           mountPath: {{ .Values.persistentVolume.mountPath }}
           subPath: "{{ .Values.persistentVolume.subPath }}"
+        {{- end }}
+        {{- with .Values.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
         {{- end }}
   {{- if and (.Values.persistentVolume.enabled) (eq .Values.deployment.kind "StatefulSet") }}
   persistentVolumeClaimRetentionPolicy:
