@@ -1033,6 +1033,31 @@ entries:
     version: 0.1.0
   cron-job:
   - apiVersion: v2
+    created: "2026-05-15T11:28:27.844266302Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to deploy an arbitrary container as a cron job.
+    digest: 2ff4e28a98ccb013c9294d5deb062d263e94e9bd2bad802edb18971a214c3592
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cron
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: cron-job
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cron-job-0.15.0/cron-job-0.15.0.tgz
+    version: 0.15.0
+  - apiVersion: v2
     created: "2026-02-13T12:51:15.110438063Z"
     dependencies:
     - name: dockerconfigjson
@@ -2055,6 +2080,33 @@ entries:
     - https://github.com/snowplow-devops/helm-charts/releases/download/priority-class-0.1.0/priority-class-0.1.0.tgz
     version: 0.1.0
   service-deployment:
+  - apiVersion: v2
+    created: "2026-05-15T11:28:28.005043685Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to setup a generic deployment with optional service/hpa/vpa
+      bindings
+    digest: f78174bdcbc3dfd155c8a528f2cab16e1cbd3da85ab2c9566bf8c972ad7c2c89
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - service
+    - deployment
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: service-deployment
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/service-deployment-0.41.0/service-deployment-0.41.0.tgz
+    version: 0.41.0
   - apiVersion: v2
     created: "2026-04-29T13:23:20.871766757Z"
     dependencies:
@@ -3354,6 +3406,35 @@ entries:
   snowplow-iglu-server:
   - apiVersion: v2
     appVersion: 0.13.0
+    created: "2026-05-15T11:28:28.150192604Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to deploy the Snowplow Iglu Server project
+    digest: cd606a4f84bc20f1b6cddb8599f397d6f713afefbdf084ce8b285d26c104fac3
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - snowplow
+    - iglu
+    - schemas
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: snowplow-iglu-server
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/snowplow-incubator/iglu-server
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.18.0/snowplow-iglu-server-0.18.0.tgz
+    version: 0.18.0
+  - apiVersion: v2
+    appVersion: 0.13.0
     created: "2026-04-29T13:23:21.136631186Z"
     dependencies:
     - name: dockerconfigjson
@@ -4348,4 +4429,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-05-07T22:05:18.730051491Z"
+generated: "2026-05-15T11:28:28.150973128Z"
