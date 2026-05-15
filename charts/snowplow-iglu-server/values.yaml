@@ -57,6 +57,41 @@ service:
       cpu: 400m
       memory: 512Mi
 
+  # -- Container security context configuration
+  # These defaults follow kubesec.io best practices for hardened deployments.
+  #
+  # runAsUser / runAsGroup are intentionally not pinned. Different container
+  # images bake in different non-root USER directives, and forcing a specific
+  # UID can prevent the image's user from accessing its own files. The image's
+  # USER directive selects the runtime UID; runAsNonRoot: true still enforces
+  # the non-root invariant. Override per-deployment if you need a specific UID.
+  #
+  # readOnlyRootFilesystem defaults to false so existing deployments are not
+  # broken on upgrade; set it to true per-deployment once writable paths
+  # (e.g. /tmp) are mounted as emptyDirs.
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    readOnlyRootFilesystem: false
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+  # -- Additional volumes to attach to the pod spec.
+  # Useful with readOnlyRootFilesystem: true — declare writable scratch space
+  # (e.g. emptyDir on /tmp) without disabling the hardened default.
+  extraVolumes: []
+  #  - name: tmp
+  #    emptyDir: {}
+
+  # -- Additional volume mounts to attach to the container.
+  # Pair with extraVolumes above.
+  extraVolumeMounts: []
+  #  - name: tmp
+  #    mountPath: /tmp
+
   podDisruptionBudget:
     # -- Whether to deploy a PodDisruptionBudget
     enabled: false
