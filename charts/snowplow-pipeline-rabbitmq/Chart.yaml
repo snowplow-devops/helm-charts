@@ -1,0 +1,24 @@
+apiVersion: v2
+name: snowplow-pipeline-rabbitmq
+description: A Helm Chart to deploy a RabbitMQ powered Snowplow Pipeline
+version: 0.0.1
+icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+home: https://github.com/snowplow-devops/helm-charts
+sources:
+  - https://github.com/snowplow-devops/helm-charts
+  - https://github.com/snowplow/snowplow
+maintainers:
+  - name: jbeemster
+    url: https://github.com/jbeemster
+    email: jbeemster@users.noreply.github.com
+keywords:
+  - snowplow
+dependencies:
+  - name: service-deployment
+    version: 0.1.3
+    repository: "https://snowplow-devops.github.io/helm-charts"
+    alias: collector
+  - name: service-deployment
+    version: 0.1.3
+    repository: "https://snowplow-devops.github.io/helm-charts"
+    alias: enrich

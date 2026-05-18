@@ -1,0 +1,20 @@
+collector {
+  interface: "0.0.0.0"
+  port: 8080
+
+  streams {
+    good: "not used"
+    bad: "not used"
+
+    sink {
+      hostName: "rmq1-rabbitmq.default.svc.cluster.local"
+      portNumber: 5672
+      userName: "admin"
+      password: "secretpassword"
+      virtualHost: "/"
+      exchangeName: "raw-queue"
+      routingKey: "raw-queue"
+      queueName: "raw-queue"
+    }
+  }
+}
