@@ -53,6 +53,16 @@ spec:
             - name: AVALANCHE_MANAGED
               value: "true"
             {{- end }}
+            {{- if .Values.injector.gomaxprocs }}
+            # QA-523 experiment: pin GOMAXPROCS to the cgroup CPU limit.
+            # Go defaults to runtime.NumCPU() which is the node's core count,
+            # not the cgroup limit — on a 2-core-limited pod scheduled on an
+            # 8-core node, the runtime spawns 8 OS threads that the kernel
+            # CFS-throttles, starving the single rateController goroutine
+            # and capping the achievable injection rate around 100 RPS.
+            - name: GOMAXPROCS
+              value: {{ .Values.injector.gomaxprocs | quote }}
+            {{- end }}
             {{- include "avalanche.databaseEnv" . | nindent 12 }}
             {{- include "avalanche.awsEnv" . | nindent 12 }}
           volumeMounts:
