@@ -1,3 +1,7 @@
+Version 0.3.37 (2026-05-26)
+---------------------------
+charts/aws-otel-collector-0.14.0: Bump version used to 0.48.0 (#335)
+
 Version 0.3.36 (2026-05-14)
 ---------------------------
 charts/service-deployment-0.41.0: Add containerSecurityContext with kubesec.io hardened defaults; add extraVolumes, extraVolumeMounts and config.workingDir
