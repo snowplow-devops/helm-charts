@@ -8,7 +8,7 @@ clusterName: ""
 image:
   # -- Image to use for deploying
   repository: public.ecr.aws/aws-observability/aws-otel-collector
-  tag: v0.47.0
+  tag: v0.48.0
   pullPolicy: IfNotPresent
 
 # -- Pod/container securityContext for the collector. Defaults to running as root
