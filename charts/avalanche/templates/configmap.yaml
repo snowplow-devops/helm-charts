@@ -9,12 +9,21 @@ data:
   log_level: {{ .Values.images.logLevel | quote }}
   nats_url: {{ include "avalanche.natsUrl" . | quote }}
 
+  # Full component configs — used in legacy mode by pods directly (via --config flag)
+  # and in managed mode by the controller (read from disk, distributed over NATS).
+  # Pods in managed mode don't read these files — they receive config via NATS
+  # from the controller's distributeConfigs() step.
+
   {{- if .Values.injector.enabled }}
   injector.yaml: |
     type: {{ .Values.injector.config.type | quote }}
     name: {{ .Values.injector.config.name | quote }}
     config:
+      {{- if .Values.mockTarget.enabled }}
+      endpoint: "http://{{ include "avalanche.fullname" . }}-mock-target:{{ .Values.mockTarget.port }}"
+      {{- else }}
       endpoint: {{ .Values.injector.config.endpoint | quote }}
+      {{- end }}
       {{- if .Values.injector.config.protocol }}
       protocol: {{ .Values.injector.config.protocol | quote }}
       {{- end }}
@@ -27,10 +36,31 @@ data:
       {{- if .Values.injector.config.insecureSkipVerify }}
       insecure_skip_verify: {{ .Values.injector.config.insecureSkipVerify }}
       {{- end }}
+      {{- if .Values.injector.config.generator }}
+      generator:
+        {{- if .Values.injector.config.generator.preset }}
+        preset: {{ .Values.injector.config.generator.preset | quote }}
+        {{- end }}
+        {{- if hasKey .Values.injector.config.generator "seed" }}
+        seed: {{ .Values.injector.config.generator.seed }}
+        {{- end }}
+      {{- end }}
   {{- end }}
 
   {{- if .Values.observer.enabled }}
   observer.yaml: |
+    {{- if .Values.mockTarget.enabled }}
+    type: "mockserver"
+    name: {{ .Values.observer.config.name | quote }}
+    config:
+      endpoint: "http://{{ include "avalanche.fullname" . }}-mock-target:{{ .Values.mockTarget.port }}"
+      {{- if .Values.observer.config.checkInterval }}
+      check_interval: {{ .Values.observer.config.checkInterval | quote }}
+      {{- end }}
+      {{- if hasKey .Values.observer.config "tolerance" }}
+      tolerance: {{ .Values.observer.config.tolerance }}
+      {{- end }}
+    {{- else }}
     type: {{ .Values.observer.config.type | quote }}
     name: {{ .Values.observer.config.name | quote }}
     config:
@@ -40,7 +70,7 @@ data:
       {{- if .Values.observer.config.checkInterval }}
       check_interval: {{ .Values.observer.config.checkInterval | quote }}
       {{- end }}
-      {{- if .Values.observer.config.tolerance }}
+      {{- if hasKey .Values.observer.config "tolerance" }}
       tolerance: {{ .Values.observer.config.tolerance }}
       {{- end }}
       {{- if .Values.observer.config.streamArn }}
@@ -49,6 +79,7 @@ data:
       {{- if .Values.observer.config.region }}
       region: {{ .Values.observer.config.region | quote }}
       {{- end }}
+    {{- end }}
   {{- end }}
 
   {{- if .Values.correlator.enabled }}
@@ -73,6 +104,7 @@ data:
       final_validation_timeout: {{ .Values.adjudicator.config.finalValidationTimeout | quote }}
   {{- end }}
 
+  # Controller config is generated in both modes (controller always needs its full config)
   {{- if .Values.controller.enabled }}
   controller.yaml: |
     type: {{ .Values.controller.config.type | quote }}
@@ -84,6 +116,7 @@ data:
       test_plans_dir: {{ .Values.controller.config.testPlansDir | quote }}
   {{- end }}
 
+  # Aggregator configs are generated in both modes (aggregators always need full config)
   {{- if .Values.aggregator.enabled }}
   aggregator.yaml: |
     type: {{ .Values.aggregator.config.type | quote }}
@@ -131,8 +164,35 @@ data:
         {{- end }}
   {{- end }}
 
+  {{- if .Values.aggregatorKinesisStream.enabled }}
+  aggregator-kinesis-stream.yaml: |
+    type: {{ .Values.aggregatorKinesisStream.config.type | quote }}
+    name: {{ .Values.aggregatorKinesisStream.config.name | quote }}
+    config:
+      source_measurement: {{ .Values.aggregatorKinesisStream.config.sourceMeasurement | quote }}
+      {{- if .Values.aggregatorKinesisStream.config.outputMeasurements }}
+      output_measurements:
+        window: {{ .Values.aggregatorKinesisStream.config.outputMeasurements.window | quote }}
+        phase: {{ .Values.aggregatorKinesisStream.config.outputMeasurements.phase | quote }}
+        run: {{ .Values.aggregatorKinesisStream.config.outputMeasurements.run | quote }}
+      {{- end }}
+      window_duration: {{ .Values.aggregatorKinesisStream.config.windowDuration | quote }}
+      group_by:
+        {{- range .Values.aggregatorKinesisStream.config.groupBy }}
+        - {{ . }}
+        {{- end }}
+      fields:
+        {{- range $field, $aggs := .Values.aggregatorKinesisStream.config.fields }}
+        {{ $field }}:
+          {{- range $aggs }}
+          - {{ . }}
+          {{- end }}
+        {{- end }}
+  {{- end }}
+
   # External stub configurations for Kubernetes test orchestration
   # These are used by the controller to coordinate with external component pods
+  # Generated in both modes
   {{- if .Values.injector.enabled }}
   external-injector.yaml: |
     type: "external"
@@ -165,8 +225,19 @@ data:
       timeout: "30s"
   {{- end }}
 
+  # Observer Kubernetes configs (QA-822). The api and cloudwatch observers
+  # are independent — each only renders if its sub-toggle is enabled. Both
+  # can run side-by-side: the api observer keeps the base componentId (for
+  # backwards compatibility with existing test plans that reference
+  # external-observer-kubernetes.yaml), the cloudwatch observer's
+  # componentId is suffixed with "-cloudwatch" so its NATS subjects are
+  # distinct.
   {{- if .Values.observerKubernetes.enabled }}
-  observer-kubernetes.yaml: |
+
+  {{- if .Values.observerKubernetes.api.enabled }}
+  # api observer keeps the unsuffixed name for backwards compatibility with
+  # existing test plans that reference external-observer-kubernetes.yaml.
+  observer-kubernetes-api.yaml: |
     type: {{ .Values.observerKubernetes.config.type | quote }}
     name: {{ .Values.observerKubernetes.config.name | quote }}
     config:
@@ -186,6 +257,12 @@ data:
       field_selector: {{ .Values.observerKubernetes.config.fieldSelector | quote }}
       {{- end }}
       poll_interval: {{ .Values.observerKubernetes.config.pollInterval | quote }}
+      {{- if .Values.observerKubernetes.config.podNamePattern }}
+      pod_name_pattern: {{ .Values.observerKubernetes.config.podNamePattern | quote }}
+      {{- end }}
+      {{- if .Values.observerKubernetes.config.podNameReplacement }}
+      pod_name_replacement: {{ .Values.observerKubernetes.config.podNameReplacement | quote }}
+      {{- end }}
       metrics:
         pods: {{ .Values.observerKubernetes.config.metrics.pods }}
         deployments: {{ .Values.observerKubernetes.config.metrics.deployments }}
@@ -198,4 +275,49 @@ data:
     config:
       timeout: "30s"
       underlying_type: "kubernetes"
+  {{- end }}
+
+  {{- if .Values.observerKubernetes.cloudwatch.enabled }}
+  observer-kubernetes-cloudwatch.yaml: |
+    type: "cloudwatch"
+    name: "{{ .Values.observerKubernetes.config.name }}-cloudwatch"
+    config:
+      poll_interval: {{ .Values.observerKubernetes.cloudwatch.pollInterval | quote }}
+      targets:
+        {{- range .Values.observerKubernetes.cloudwatch.targets }}
+        - kind: {{ default "container_insights" .kind | quote }}
+          region: {{ .region | quote }}
+          {{- if or (eq (default "container_insights" .kind) "container_insights") .clusterName }}
+          {{- if .clusterName }}
+          cluster_name: {{ .clusterName | quote }}
+          {{- end }}
+          {{- if .namespace }}
+          namespace: {{ .namespace | quote }}
+          {{- end }}
+          {{- if .podNameInclude }}
+          pod_name_include: {{ .podNameInclude | quote }}
+          {{- end }}
+          {{- if .podNameExclude }}
+          pod_name_exclude: {{ .podNameExclude | quote }}
+          {{- end }}
+          {{- /* Per-target podNamePattern / podNameReplacement override
+                 the cloudwatch-level defaults. Defaults are applied via
+                 `default` so a target with neither set still gets the
+                 stable role-tag mapping. */}}
+          pod_name_pattern: {{ default $.Values.observerKubernetes.cloudwatch.podNamePattern .podNamePattern | quote }}
+          pod_name_replacement: {{ default $.Values.observerKubernetes.cloudwatch.podNameReplacement .podNameReplacement | quote }}
+          {{- end }}
+          {{- if .streamName }}
+          stream_name: {{ .streamName | quote }}
+          {{- end }}
+        {{- end }}
+
+  external-observer-kubernetes-cloudwatch.yaml: |
+    type: "external"
+    name: "{{ .Values.observerKubernetes.config.name }}-cloudwatch"
+    config:
+      timeout: "30s"
+      underlying_type: "cloudwatch"
+  {{- end }}
+
   {{- end }}

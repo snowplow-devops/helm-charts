@@ -1,0 +1,64 @@
+{{- if .Values.mockTarget.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avalanche.fullname" . }}-mock-target
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: mock-target
+spec:
+  replicas: {{ .Values.mockTarget.replicas }}
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mock-target
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mock-target
+    spec:
+      {{- if .Values.cloudserviceaccount.deploy }}
+      serviceAccount: {{ .Values.cloudserviceaccount.name }}
+      serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+      {{- else }}
+      serviceAccount: ""
+      serviceAccountName: ""
+      {{- end }}
+      automountServiceAccountToken: true
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      containers:
+        - name: mock-target
+          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.mockTarget.image) }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.mockTarget.port }}
+              protocol: TCP
+          env:
+            - name: AVALANCHE_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "avalanche.fullname" . }}-config
+                  key: log_level
+            - name: AVALANCHE_MOCK_TARGET_PORT
+              value: {{ .Values.mockTarget.port | quote }}
+          livenessProbe:
+            httpGet:
+              path: /stats
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /stats
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.mockTarget.resources | nindent 12 }}
+      restartPolicy: Always
+{{- end }}

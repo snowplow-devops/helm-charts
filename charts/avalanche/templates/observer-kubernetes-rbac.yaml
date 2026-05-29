@@ -1,4 +1,10 @@
 {{- if .Values.observerKubernetes.enabled }}
+# Single ServiceAccount shared by both observer-kubernetes-api and
+# observer-kubernetes-cloudwatch deployments. Carries:
+#  - the ClusterRoleBinding below (when api.enabled) for the K8s API observer
+#  - the IRSA annotation (when cloudwatch.enabled and serviceAccount.iamRoleArn
+#    is set) for the CloudWatch observer
+# Both privileges co-exist harmlessly: a pod that doesn't need one ignores it.
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -7,6 +13,11 @@ metadata:
   labels:
     {{- include "snowplow.labels" . | nindent 4 }}
     app.kubernetes.io/component: observer-kubernetes
+  {{- if and .Values.observerKubernetes.cloudwatch.enabled .Values.observerKubernetes.serviceAccount.iamRoleArn }}
+  annotations:
+    eks.amazonaws.com/role-arn: {{ .Values.observerKubernetes.serviceAccount.iamRoleArn | quote }}
+  {{- end }}
+{{- if .Values.observerKubernetes.api.enabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -68,4 +79,5 @@ subjects:
   - kind: ServiceAccount
     name: {{ include "avalanche.fullname" . }}-observer-kubernetes
     namespace: {{ .Release.Namespace }}
+{{- end }}
 {{- end }}
