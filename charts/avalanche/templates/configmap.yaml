@@ -41,7 +41,7 @@ data:
         {{- if .Values.injector.config.generator.preset }}
         preset: {{ .Values.injector.config.generator.preset | quote }}
         {{- end }}
-        {{- if .Values.injector.config.generator.seed }}
+        {{- if hasKey .Values.injector.config.generator "seed" }}
         seed: {{ .Values.injector.config.generator.seed }}
         {{- end }}
       {{- end }}
@@ -57,7 +57,7 @@ data:
       {{- if .Values.observer.config.checkInterval }}
       check_interval: {{ .Values.observer.config.checkInterval | quote }}
       {{- end }}
-      {{- if .Values.observer.config.tolerance }}
+      {{- if hasKey .Values.observer.config "tolerance" }}
       tolerance: {{ .Values.observer.config.tolerance }}
       {{- end }}
     {{- else }}
@@ -70,7 +70,7 @@ data:
       {{- if .Values.observer.config.checkInterval }}
       check_interval: {{ .Values.observer.config.checkInterval | quote }}
       {{- end }}
-      {{- if .Values.observer.config.tolerance }}
+      {{- if hasKey .Values.observer.config "tolerance" }}
       tolerance: {{ .Values.observer.config.tolerance }}
       {{- end }}
       {{- if .Values.observer.config.streamArn }}
@@ -227,8 +227,11 @@ data:
 
   # Observer Kubernetes configs (QA-822). The api and cloudwatch observers
   # are independent — each only renders if its sub-toggle is enabled. Both
-  # can run side-by-side; their NATS componentIds are suffixed -api / -cloudwatch
-  # so the controller can address each pod distinctly.
+  # can run side-by-side: the api observer keeps the base componentId (for
+  # backwards compatibility with existing test plans that reference
+  # external-observer-kubernetes.yaml), the cloudwatch observer's
+  # componentId is suffixed with "-cloudwatch" so its NATS subjects are
+  # distinct.
   {{- if .Values.observerKubernetes.enabled }}
 
   {{- if .Values.observerKubernetes.api.enabled }}

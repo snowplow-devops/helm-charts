@@ -9,8 +9,10 @@ global:
   labels: {}
 
 # Deployment mode toggle
-# true (default): Full component configs in ConfigMaps (backward compatible)
-# false: Minimal ConfigMaps (NATS URL + role only), services receive config from controller over NATS
+# true (default): each pod loads its config from disk via --config=/configs/X.yaml
+# false: each pod starts with NATS URL + role only and sets AVALANCHE_MANAGED=true,
+#   then waits for config from the controller over NATS
+# The ConfigMap content is unchanged either way; only the deployment args/env differ.
 legacyMode: true
 
 # Cloud service account configuration (OIDC-based IAM integration)
@@ -524,8 +526,10 @@ observerKubernetes:
     repository: avalanche-observer-private
     tag: kubernetes
   replicas: 1
-  # componentId is suffixed with "-api" or "-cloudwatch" for the two pods so
-  # NATS subjects are unique per observer.
+  # When both observers run, the cloudwatch observer's componentId is suffixed
+  # with "-cloudwatch"; the api observer keeps the base value below (for
+  # backwards compatibility with existing test plans that reference
+  # external-observer-kubernetes.yaml with name=k8s-observer-kubernetes).
   componentId: "k8s-observer-kubernetes"
   config:
     type: "kubernetes"
