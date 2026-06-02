@@ -8,6 +8,13 @@ global:
   # Global labels applied to all resources (merged into snowplow.labels)
   labels: {}
 
+# Deployment mode toggle
+# true (default): each pod loads its config from disk via --config=/configs/X.yaml
+# false: each pod starts with NATS URL + role only and sets AVALANCHE_MANAGED=true,
+#   then waits for config from the controller over NATS
+# The ConfigMap content is unchanged either way; only the deployment args/env differ.
+legacyMode: true
+
 # Cloud service account configuration (OIDC-based IAM integration)
 cloudserviceaccount:
   # Whether to create a service-account
@@ -81,12 +88,16 @@ injector:
     type: "http"
     name: "k8s-injector"
     endpoint: "http://host.docker.internal:8085"
-    # Protocol for Snowplow event injector (http or https)
+    # Protocol for HTTP injector type (not used by snowplow type).
     protocol: "http"
     workers: 3
     timeout: "5s"
     # Skip TLS certificate verification (useful for testing with self-signed certs)
     insecureSkipVerify: false
+    # Generator config for snowplow injector type (go-event-generator)
+    # generator:
+    #   preset: "typical-web"
+    #   seed: 0
   resources:
     requests:
       memory: "64Mi"
@@ -112,6 +123,22 @@ observer:
     # For snowplow-kinesis observer type:
     # streamArn: ""  # AWS Kinesis stream ARN
     # region: ""     # AWS region
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Mock Target configuration (self-contained testing without external collector)
+mockTarget:
+  enabled: false  # Enable for self-contained testing (no external collector needed)
+  image:
+    repository: avalanche-mock-target-private
+    tag: latest
+  replicas: 1
+  port: 8085
   resources:
     requests:
       memory: "64Mi"
@@ -279,11 +306,15 @@ aggregatorKubernetes:
       phase: "kubernetes_monitoring_phase"
       run: "kubernetes_monitoring_run"
     windowDuration: "30s"
+    # `role` (QA-827 Phase 2) lets the aggregator emit (role × phase) rows
+    # alongside the legacy per-pod rows. CEL rules in Phase 3 reference
+    # those role-tagged aggregates as `<role>.<metric>_<stat>`.
     groupBy:
       - run_id
       - phase_id
       - namespace
       - pod
+      - role
     fields:
       pod_count:
         - last
@@ -299,6 +330,7 @@ aggregatorKubernetes:
         - mean
         - max
         - min
+        - spread
         - p95
       cpu_limit_millicores:
         - last
@@ -306,6 +338,7 @@ aggregatorKubernetes:
         - mean
         - max
         - min
+        - spread
         - p95
       memory_limit_bytes:
         - last
@@ -319,6 +352,100 @@ aggregatorKubernetes:
         - max
       error_event_count:
         - last
+        - max
+      # CloudWatch-mode fields (QA-822). The CW observer writes percent-of-limit
+      # and percent-of-cluster fields; these aren't produced by the api-mode
+      # observer, but adding them to the aggregator's whitelist is harmless
+      # there (missing fields aggregate to zero) and makes both observer
+      # paths feed equivalent (entity × phase) rows.
+      cpu_usage_percent_of_limit:
+        - mean
+        - max
+        - min
+        - spread
+        - p95
+      memory_usage_percent_of_limit:
+        - mean
+        - max
+        - min
+        - spread
+        - p95
+      cpu_usage_percent_of_cluster:
+        - mean
+        - max
+        - sum
+      memory_usage_percent_of_cluster:
+        - mean
+        - max
+        - sum
+      network_tx_bytes:
+        - sum
+        - max
+      container_restarts:
+        - last
+        - max
+        - sum
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+
+# Kinesis Stream Aggregator configuration (QA-827 Phase 2)
+# Aggregates kinesis_stream_monitoring per-stream rows into (stream × phase)
+# windows for CEL acceptance rules. Mirrors aggregatorKubernetes — separate
+# deployment, separate ConfigMap entry, same code path; only differs in
+# source measurement, group-by tag, and field whitelist.
+aggregatorKinesisStream:
+  enabled: false  # enable when observerKubernetes.cloudwatch is observing a kinesis_stream target
+  image:
+    repository: avalanche-aggregator-private
+    tag: latest
+  replicas: 1
+  componentId: "kinesis-stream-aggregator"
+  config:
+    type: "metrics-aggregator"
+    name: "kinesis-stream-aggregator"
+    sourceMeasurement: "kinesis_stream_monitoring"
+    outputMeasurements:
+      window: "kinesis_stream_monitoring_window"
+      phase: "kinesis_stream_monitoring_phase"
+      run: "kinesis_stream_monitoring_run"
+    windowDuration: "60s"  # CW kinesis is 60s resolution; window matches
+    groupBy:
+      - run_id
+      - phase_id
+      - region
+      - stream_name
+    fields:
+      incoming_bytes:
+        - sum
+        - max
+      incoming_records:
+        - sum
+        - max
+      outgoing_bytes:
+        - sum
+        - max
+      outgoing_records:
+        - sum
+        - max
+      put_records_latency_ms:
+        - mean
+        - max
+        - min
+        - spread
+        - p95
+      iterator_age_ms_max:
+        - max
+        - mean
+      write_provisioned_throughput_exceeded:
+        - sum
+        - max
+      read_provisioned_throughput_exceeded:
+        - sum
         - max
   resources:
     requests:
@@ -355,30 +482,85 @@ aws:
   # Local only: AWS session token (optional, for temporary credentials)
   sessionToken: ""
 
-# Kubernetes Infrastructure Observer configuration (Phase 12.1)
+# Kubernetes Infrastructure Observer configuration (Phase 12.1 + QA-822)
 observerKubernetes:
-  enabled: false  # Disabled by default - enable when monitoring K8s infrastructure
+  enabled: false  # master toggle — disabled by default; enable to monitor infra
+  # api and cloudwatch are independent observers that can be enabled together
+  # or separately. The previous `mode: api|cloudwatch` toggle has been removed
+  # in favour of these sub-toggles so a deployment can collect native K8s
+  # metrics AND AWS CloudWatch metrics (e.g. Kinesis stream observation)
+  # concurrently — useful when you have K8s API access and want both.
+  api:
+    # Native Kubernetes API observer: reads pod / deployment / event / resource
+    # metrics from the in-cluster K8s API + metrics-server. Requires the
+    # ClusterRole defined in observer-kubernetes-rbac.yaml.
+    enabled: true
+  cloudwatch:
+    # CloudWatch observer (QA-824 + QA-828): reads pod-level Container Insights
+    # metrics and/or AWS/Kinesis stream metrics via IRSA. See targets[].kind for
+    # which AWS namespace each target observes.
+    enabled: false
+    pollInterval: "60s"  # CloudWatch resolution floor is 60s
+    targets: []
+    # Default pod-name → role mapping applied to every container_insights target
+    # that doesn't override it. Strips the snowman / avalanche-test per-run
+    # prefix-and-hash, leaving the deployment-name suffix as the role tag value.
+    # Empty pattern disables the regex layer (RoleResolver still tries known
+    # avalanche components via simplifyPodName).
+    podNamePattern: "^svc-qa-[a-z0-9]+-(.+)$"
+    podNameReplacement: "$1"
+    # Example target shapes:
+    # - kind: container_insights        # default if omitted
+    #   region: "eu-central-1"
+    #   clusterName: "sp-com-snplow-qa-aws-prod1-eks-cluster"
+    #   namespace: "default"
+    #   podNameInclude: ""           # optional Go regex; empty = match all
+    #   podNameExclude: "^observer-" # optional Go regex; defaults to ^observer-
+    #   podNamePattern: "^svc-qa-[a-z0-9]+-(.+)$"   # optional override of the
+    #   podNameReplacement: "$1"                    #   defaults above (regex
+    #                                               #   for stable role tag)
+    # - kind: kinesis_stream
+    #   region: "eu-central-1"
+    #   streamName: "kns-com-snplow-qa-aws-qa-...-raw"
   image:
     repository: avalanche-observer-private
     tag: kubernetes
   replicas: 1
+  # When both observers run, the cloudwatch observer's componentId is suffixed
+  # with "-cloudwatch"; the api observer keeps the base value below (for
+  # backwards compatibility with existing test plans that reference
+  # external-observer-kubernetes.yaml with name=k8s-observer-kubernetes).
   componentId: "k8s-observer-kubernetes"
   config:
     type: "kubernetes"
     name: "k8s-observer-kubernetes"
-    # Scope configuration
+    # Scope configuration (api-mode only)
     namespace: ""  # Empty string means cluster-wide (requires ClusterRole)
     namespaces: []  # List of specific namespaces to monitor
     labelSelector: ""  # Kubernetes label selector (e.g., "app=snowplow")
     fieldSelector: ""  # Kubernetes field selector
     # Polling configuration
     pollInterval: "10s"
-    # Metrics to collect
+    # podNamePattern / podNameReplacement: regex fallback used by RoleResolver
+    # when neither `app.kubernetes.io/name` nor `app` labels are set on the
+    # pod. Defaults match the snowman / avalanche-test naming convention so
+    # the per-run hash is stripped to leave the deployment-name as the role.
+    # Set podNamePattern to "" to skip the regex layer entirely.
+    podNamePattern: "^svc-qa-[a-z0-9]+-(.+)$"
+    podNameReplacement: "$1"
+    # Metrics to collect (api-mode only)
     metrics:
       pods: true
       deployments: true
       events: true
       resources: true  # Requires metrics-server
+  serviceAccount:
+    # IRSA role ARN annotated on the shared ServiceAccount when
+    # cloudwatch.enabled is true. Required in that case; ignored otherwise.
+    # The same SA is bound to the api-mode ClusterRole when api.enabled, so
+    # both observer pods (when both are deployed) share one SA with both
+    # IRSA + ClusterRole privileges available.
+    iamRoleArn: ""
   resources:
     requests:
       memory: "64Mi"

@@ -36,7 +36,9 @@ spec:
           imagePullPolicy: {{ .Values.images.pullPolicy }}
           args:
             - "observer"
+            {{- if .Values.legacyMode }}
             - "--config=/configs/observer.yaml"
+            {{- end }}
             - "--nats-url={{ include "avalanche.natsUrl" . }}"
             - "--component-id={{ .Values.observer.componentId }}"
           env:
@@ -47,6 +49,10 @@ spec:
                   key: log_level
             - name: AVALANCHE_NATS_URL
               value: {{ include "avalanche.natsUrl" . | quote }}
+            {{- if not .Values.legacyMode }}
+            - name: AVALANCHE_MANAGED
+              value: "true"
+            {{- end }}
             {{- include "avalanche.databaseEnv" . | nindent 12 }}
             {{- include "avalanche.awsEnv" . | nindent 12 }}
           volumeMounts:
