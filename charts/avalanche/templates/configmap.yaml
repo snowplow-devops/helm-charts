@@ -287,7 +287,7 @@ data:
         {{- range .Values.observerKubernetes.cloudwatch.targets }}
         - kind: {{ default "container_insights" .kind | quote }}
           region: {{ .region | quote }}
-          {{- if eq (default "container_insights" .kind) "container_insights" }}
+          {{- if or (eq (default "container_insights" .kind) "container_insights") .clusterName }}
           {{- if .clusterName }}
           cluster_name: {{ .clusterName | quote }}
           {{- end }}
@@ -300,21 +300,12 @@ data:
           {{- if .podNameExclude }}
           pod_name_exclude: {{ .podNameExclude | quote }}
           {{- end }}
-          {{- /* Per-target podNamePattern / podNameReplacement override the
-                 cloudwatch-level defaults. hasKey (not `default`) is used so
-                 a target can explicitly disable the regex layer with
-                 `podNamePattern: ""` — `default` would treat the empty
-                 string as unset and fall back to the cluster default. */}}
-          {{- if hasKey . "podNamePattern" }}
-          pod_name_pattern: {{ .podNamePattern | quote }}
-          {{- else }}
-          pod_name_pattern: {{ $.Values.observerKubernetes.cloudwatch.podNamePattern | quote }}
-          {{- end }}
-          {{- if hasKey . "podNameReplacement" }}
-          pod_name_replacement: {{ .podNameReplacement | quote }}
-          {{- else }}
-          pod_name_replacement: {{ $.Values.observerKubernetes.cloudwatch.podNameReplacement | quote }}
-          {{- end }}
+          {{- /* Per-target podNamePattern / podNameReplacement override
+                 the cloudwatch-level defaults. Defaults are applied via
+                 `default` so a target with neither set still gets the
+                 stable role-tag mapping. */}}
+          pod_name_pattern: {{ default $.Values.observerKubernetes.cloudwatch.podNamePattern .podNamePattern | quote }}
+          pod_name_replacement: {{ default $.Values.observerKubernetes.cloudwatch.podNameReplacement .podNameReplacement | quote }}
           {{- end }}
           {{- if .streamName }}
           stream_name: {{ .streamName | quote }}

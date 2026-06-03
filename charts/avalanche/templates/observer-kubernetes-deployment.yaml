@@ -23,7 +23,7 @@ spec:
         {{- include "avalanche.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: observer-kubernetes-api
     spec:
-      serviceAccountName: {{ include "avalanche.fullname" . }}-observer-kubernetes
+      serviceAccountName: {{ include "avalanche.observerKubernetes.serviceAccountName" . }}
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
       containers:
@@ -122,7 +122,7 @@ spec:
         {{- include "avalanche.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: observer-kubernetes-cloudwatch
     spec:
-      serviceAccountName: {{ include "avalanche.fullname" . }}-observer-kubernetes
+      serviceAccountName: {{ include "avalanche.observerKubernetes.serviceAccountName" . }}
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
       containers:
