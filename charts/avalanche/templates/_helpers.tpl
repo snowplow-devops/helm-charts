@@ -22,6 +22,25 @@ Create a default fully qualified app name.
 {{- end }}
 
 {{/*
+ServiceAccount name for the observer-kubernetes pods.
+
+The observer-kubernetes pods need BOTH the k8s API ClusterRole (to read pod
+metrics) AND AWS credentials (to write metrics to Timestream). When
+cloudserviceaccount is deployed (e.g. DS4, where AWS auth is via IRSA), reuse
+that ServiceAccount so the observer inherits its Timestream IRSA role —
+otherwise the pod falls back to the node role and gets a Timestream 403
+(QA-1038). When cloudserviceaccount is not deployed (sandbox/local, where AWS
+creds are injected directly), use the component's own ServiceAccount.
+*/}}
+{{- define "avalanche.observerKubernetes.serviceAccountName" -}}
+{{- if .Values.cloudserviceaccount.deploy -}}
+{{- .Values.cloudserviceaccount.name -}}
+{{- else -}}
+{{- printf "%s-observer-kubernetes" (include "avalanche.fullname" .) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "avalanche.chart" -}}

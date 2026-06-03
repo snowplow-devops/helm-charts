@@ -1,10 +1,12 @@
 {{- if .Values.observerKubernetes.enabled }}
-# Single ServiceAccount shared by both observer-kubernetes-api and
-# observer-kubernetes-cloudwatch deployments. Carries:
-#  - the ClusterRoleBinding below (when api.enabled) for the K8s API observer
-#  - the IRSA annotation (when cloudwatch.enabled and serviceAccount.iamRoleArn
-#    is set) for the CloudWatch observer
-# Both privileges co-exist harmlessly: a pod that doesn't need one ignores it.
+# Dedicated ServiceAccount for the observer-kubernetes pods — created ONLY when
+# cloudserviceaccount is NOT deployed (sandbox/local, where AWS creds are
+# injected directly). When cloudserviceaccount IS deployed (DS4/IRSA), the pods
+# reuse it instead (see the avalanche.observerKubernetes.serviceAccountName
+# helper) so they inherit its Timestream IRSA role. Creating a separate,
+# un-annotated SA in the IRSA case made the pod fall back to the node role and
+# crash-loop on a Timestream 403 (QA-1038).
+{{- if not .Values.cloudserviceaccount.deploy }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -13,10 +15,11 @@ metadata:
   labels:
     {{- include "snowplow.labels" . | nindent 4 }}
     app.kubernetes.io/component: observer-kubernetes
-  {{- if and .Values.observerKubernetes.cloudwatch.enabled .Values.observerKubernetes.serviceAccount.iamRoleArn }}
+  {{- if .Values.observerKubernetes.serviceAccount.iamRoleArn }}
   annotations:
     eks.amazonaws.com/role-arn: {{ .Values.observerKubernetes.serviceAccount.iamRoleArn | quote }}
   {{- end }}
+{{- end }}
 {{- if .Values.observerKubernetes.api.enabled }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -77,7 +80,7 @@ roleRef:
   name: {{ include "avalanche.fullname" . }}-observer-kubernetes
 subjects:
   - kind: ServiceAccount
-    name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+    name: {{ include "avalanche.observerKubernetes.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{- end }}
 {{- end }}
