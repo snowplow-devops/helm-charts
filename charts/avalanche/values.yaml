@@ -555,11 +555,13 @@ observerKubernetes:
       events: true
       resources: true  # Requires metrics-server
   serviceAccount:
-    # IRSA role ARN annotated on the shared ServiceAccount when
-    # cloudwatch.enabled is true. Required in that case; ignored otherwise.
-    # The same SA is bound to the api-mode ClusterRole when api.enabled, so
-    # both observer pods (when both are deployed) share one SA with both
-    # IRSA + ClusterRole privileges available.
+    # IRSA role ARN. Annotated on the observer-kubernetes ServiceAccount
+    # whenever it is set — applies to api-mode and/or cloudwatch-mode, not
+    # cloudwatch-only (required for the cloudwatch observer to read CloudWatch;
+    # also usable by the api observer if it needs AWS access). Only applied to a
+    # dedicated SA when cloudserviceaccount.deploy is false; when
+    # cloudserviceaccount is deployed, observer-kubernetes reuses it and inherits
+    # its IRSA role instead, so this field is not used in that case.
     iamRoleArn: ""
   resources:
     requests:
