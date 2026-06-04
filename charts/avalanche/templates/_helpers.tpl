@@ -34,7 +34,7 @@ creds are injected directly), use the component's own ServiceAccount.
 */}}
 {{- define "avalanche.observerKubernetes.serviceAccountName" -}}
 {{- if .Values.cloudserviceaccount.deploy -}}
-{{- .Values.cloudserviceaccount.name -}}
+{{- required "cloudserviceaccount.name is required when cloudserviceaccount.deploy is true (observer-kubernetes reuses that ServiceAccount; an empty name yields an empty serviceAccountName and ClusterRoleBinding subject)" .Values.cloudserviceaccount.name -}}
 {{- else -}}
 {{- printf "%s-observer-kubernetes" (include "avalanche.fullname" .) -}}
 {{- end -}}
