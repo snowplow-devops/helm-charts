@@ -1,0 +1,17 @@
+{{- range $p := .Values.customPolicies }}
+---
+apiVersion: policies.kyverno.io/v1
+kind: {{ required "customPolicies[].kind is required" $p.kind }}
+metadata:
+  name: {{ required "customPolicies[].name is required" $p.name }}
+  labels:
+    {{- include "snowplow-kyverno-policies.labels" $ | nindent 4 }}
+spec:
+  {{- toYaml $p.spec | nindent 2 }}
+{{- with $p.rbac }}
+{{- with .rules }}
+---
+{{- include "snowplow-kyverno-policies.aggregationClusterRole" (dict "name" (printf "kyverno:%s" $p.name) "rules" . "ctx" $) }}
+{{- end }}
+{{- end }}
+{{- end }}

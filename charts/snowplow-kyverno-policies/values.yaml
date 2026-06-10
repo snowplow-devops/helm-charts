@@ -1,0 +1,45 @@
+# Cloud provider. Gates cloud-specific curated policies (aws|gcp|azure).
+global:
+  cloud: ""
+
+# Extra labels applied to every policy and RBAC object
+labels: {}
+
+# ---------------------------------------------------------------------------
+# Curated catalog of opinionated Kyverno policies.
+# ---------------------------------------------------------------------------
+policies:
+  # AWS-only. Bridges ACK ACM Certificate CRs to ACK Route53 RecordSet CRs for
+  # DNS-01 validation: on Certificate CREATE/UPDATE, once the ACK ACM controller
+  # has populated status.domainValidations[], generate the validation CNAME
+  # RecordSet in the hosted zone named by the Certificate annotation. The
+  # generated RecordSet carries an ownerReference back to the Certificate so it
+  # cascade-deletes. Requires Kyverno + the ACK ACM and Route53 controllers.
+  ackAcmDnsValidation:
+    enabled: false
+    # Annotation on the Certificate carrying the target Route53 hosted zone ID.
+    hostedZoneAnnotation: snowplow.io/hosted-zone-id
+    # TTL (seconds) for the generated validation RecordSet.
+    ttl: 60
+
+
+customPolicies: []
+  # - kind: MutatingPolicy
+  #   name: add-team-label
+  #   spec:
+  #     matchConstraints:
+  #       resourceRules:
+  #         - apiGroups: [""]
+  #           apiVersions: ["v1"]
+  #           operations: ["CREATE"]
+  #           resources: ["pods"]
+  #     mutations: []
+  # - kind: GeneratingPolicy
+  #   name: my-generator
+  #   spec: {}
+  #   rbac:
+  #     rules:
+  #       - apiGroups: ["route53.services.k8s.aws"]
+  #         resources: ["recordsets"]
+  #         verbs: ["get", "list", "watch", "create", "update", "delete"]
+
