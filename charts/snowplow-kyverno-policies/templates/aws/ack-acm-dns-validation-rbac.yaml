@@ -1,0 +1,11 @@
+{{- if and .Values.policies.ackAcmDnsValidation.enabled (eq (include "snowplow-kyverno-policies.cloud" .) "aws") }}
+---
+{{- include "snowplow-kyverno-policies.aggregationClusterRole" (dict
+      "name" "kyverno:ack-acm-dns-validation"
+      "rules" (list
+        (dict "apiGroups" (list "acm.services.k8s.aws") "resources" (list "certificates") "verbs" (list "get" "list" "watch"))
+        (dict "apiGroups" (list "route53.services.k8s.aws") "resources" (list "recordsets") "verbs" (list "get" "list" "watch" "create" "update" "delete"))
+      )
+      "ctx" .
+   ) }}
+{{- end }}
