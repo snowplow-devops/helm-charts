@@ -27,7 +27,6 @@ chart treats those cases differently rather than forcing one model:
 |-----------|---------|----------------|
 | **Curated catalog** (`policies.*`) | Opinionated, logic-heavy policies (lots of CEL). Reviewed and versioned as first-class templates, toggled on/off. | `templates/<cloud>/<name>.yaml` |
 | **Data-driven families** (`customPolicies[]`) | N parameterised policies of a kind, where the difference between instances is pure data. No template change to add another. | `templates/generic/custom-policies.yaml` |
-| **Raw escape hatch** (`extraPolicies[]`) | One-offs that justify neither of the above. Rendered verbatim. | `templates/extra.yaml` |
 
 Cloud-specific curated policies are gated on both their `enabled` flag **and**
 `global.cloud`, so enabling an AWS policy on a non-AWS cluster is a no-op.
@@ -42,7 +41,6 @@ Cloud-specific curated policies are gated on both their `enabled` flag **and**
 | `policies.ackAcmDnsValidation.hostedZoneAnnotation` | `snowplow.io/hosted-zone-id` | Certificate annotation carrying the target hosted zone ID. |
 | `policies.ackAcmDnsValidation.ttl` | `60` | TTL (seconds) for the generated validation RecordSet. |
 | `customPolicies` | `[]` | Data-driven policy families. See below. |
-| `extraPolicies` | `[]` | Raw manifests rendered verbatim. |
 
 ### `ackAcmDnsValidation`
 
@@ -125,4 +123,3 @@ resource "helm_release" "kyverno_policies" {
   version.
 - **Parameterised, want N of them** -> no template change; add `customPolicies[]`
   entries in the consumer's values.
-- **One-off** -> add to `extraPolicies[]`.

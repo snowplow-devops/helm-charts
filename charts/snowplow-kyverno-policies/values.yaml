@@ -22,7 +22,9 @@ policies:
     # TTL (seconds) for the generated validation RecordSet.
     ttl: 60
 
-
+# Data-driven families: N policies of any kyverno kind, supplied as data. The
+# chart adds naming, standard labels and (for policies that act on cluster
+# resources) an aggregated ClusterRole built from rbac.rules.
 customPolicies: []
   # - kind: MutatingPolicy
   #   name: add-team-label
@@ -42,4 +44,3 @@ customPolicies: []
   #       - apiGroups: ["route53.services.k8s.aws"]
   #         resources: ["recordsets"]
   #         verbs: ["get", "list", "watch", "create", "update", "delete"]
-
