@@ -6,13 +6,19 @@ Chart name and version, for the helm.sh/chart label.
 {{- end -}}
 
 {{/*
-Standard labels merged with any user-supplied .Values.labels.
-User labels win on key collision so Terraform-injected labels are authoritative.
+Standard labels. User-supplied .Values.labels are emitted first.
 */}}
 {{- define "snowplow-kyverno-policies.labels" -}}
-{{- $base := dict "helm.sh/chart" (include "snowplow-kyverno-policies.chart" .) "app.kubernetes.io/managed-by" .Release.Service "app.kubernetes.io/part-of" "kyverno" -}}
-{{- $merged := merge (deepCopy (.Values.labels | default dict)) $base -}}
-{{- toYaml $merged -}}
+{{- with .Values.labels -}}
+{{ toYaml . }}
+{{ end -}}
+helm.sh/chart: {{ include "snowplow-kyverno-policies.chart" . }}
+app.kubernetes.io/name: {{ .Chart.Name }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/part-of: kyverno
 {{- end -}}
 
 {{/*
@@ -36,13 +42,9 @@ kind: ClusterRole
 metadata:
   name: {{ .name }}
   labels:
-    app.kubernetes.io/instance: kyverno
-    app.kubernetes.io/part-of: kyverno
+    {{- include "snowplow-kyverno-policies.labels" .ctx | nindent 4 }}
     rbac.kyverno.io/aggregate-to-background-controller: "true"
     rbac.kyverno.io/aggregate-to-admission-controller: "true"
-    {{- with .ctx.Values.labels }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
 rules:
   {{- toYaml .rules | nindent 2 }}
 {{- end -}}
