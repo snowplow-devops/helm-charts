@@ -56,8 +56,9 @@ kubectl get pods -n {{ .Release.Namespace }}
 kubectl logs -f deployment/{{ include "avalanche.fullname" . }}-controller -n {{ .Release.Namespace }}
 kubectl logs -f deployment/{{ include "avalanche.fullname" . }}-injector -n {{ .Release.Namespace }}
 
-# Switch sizing preset (small | medium | large)
-helm upgrade {{ .Release.Name }} ./charts/avalanche --set sizingPreset=large
+# Switch sizing preset (small | medium | large). Replace <chart> with the chart
+# reference you installed from (e.g. a Helm repo ref like snowplow-devops/avalanche).
+helm upgrade {{ .Release.Name }} <chart> --reuse-values --set sizingPreset=large
 
 # Uninstall
 helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}

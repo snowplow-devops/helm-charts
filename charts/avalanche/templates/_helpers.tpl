@@ -101,6 +101,9 @@ Usage:
 {{- toYaml $override -}}
 {{- else -}}
 {{- $preset := include "avalanche.presetComponent" (dict "ctx" $ctx "component" $component) | fromYaml -}}
+{{- if not (hasKey $preset "resources") -}}
+{{- fail (printf "avalanche: sizingPreset %q component %q is missing a 'resources' block" $ctx.Values.sizingPreset $component) -}}
+{{- end -}}
 {{- toYaml $preset.resources -}}
 {{- end -}}
 {{- end }}
@@ -120,6 +123,9 @@ Usage:
 {{- $override | int -}}
 {{- else -}}
 {{- $preset := include "avalanche.presetComponent" (dict "ctx" $ctx "component" $component) | fromYaml -}}
+{{- if not (hasKey $preset "replicas") -}}
+{{- fail (printf "avalanche: sizingPreset %q component %q is missing 'replicas'" $ctx.Values.sizingPreset $component) -}}
+{{- end -}}
 {{- $preset.replicas | int -}}
 {{- end -}}
 {{- end }}
@@ -137,6 +143,9 @@ Usage in configmap.yaml:
 {{- $override | int -}}
 {{- else -}}
 {{- $preset := include "avalanche.presetComponent" (dict "ctx" . "component" "injector") | fromYaml -}}
+{{- if not (hasKey $preset "workers") -}}
+{{- fail (printf "avalanche: sizingPreset %q injector block is missing 'workers'" .Values.sizingPreset) -}}
+{{- end -}}
 {{- $preset.workers | int -}}
 {{- end -}}
 {{- end }}
