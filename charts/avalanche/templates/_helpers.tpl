@@ -97,10 +97,10 @@ Usage:
 {{- $ctx := .ctx -}}
 {{- $component := .component -}}
 {{- $override := (index $ctx.Values $component "resources") | default dict -}}
-{{- $preset := index $ctx.Values.presets $ctx.Values.sizingPreset $component -}}
 {{- if gt (len $override) 0 -}}
 {{- toYaml $override -}}
 {{- else -}}
+{{- $preset := include "avalanche.presetComponent" (dict "ctx" $ctx "component" $component) | fromYaml -}}
 {{- toYaml $preset.resources -}}
 {{- end -}}
 {{- end }}
@@ -116,11 +116,11 @@ Usage:
 {{- $ctx := .ctx -}}
 {{- $component := .component -}}
 {{- $override := (index $ctx.Values $component "replicas") | default 0 -}}
-{{- $preset := index $ctx.Values.presets $ctx.Values.sizingPreset $component -}}
 {{- if gt ($override | int) 0 -}}
-{{- $override -}}
+{{- $override | int -}}
 {{- else -}}
-{{- $preset.replicas -}}
+{{- $preset := include "avalanche.presetComponent" (dict "ctx" $ctx "component" $component) | fromYaml -}}
+{{- $preset.replicas | int -}}
 {{- end -}}
 {{- end }}
 
@@ -134,10 +134,31 @@ Usage in configmap.yaml:
 {{- define "avalanche.injectorWorkers" -}}
 {{- $override := .Values.injector.config.workers | default 0 -}}
 {{- if gt ($override | int) 0 -}}
-{{- $override -}}
+{{- $override | int -}}
 {{- else -}}
-{{- index .Values.presets .Values.sizingPreset "injector" "workers" -}}
+{{- $preset := include "avalanche.presetComponent" (dict "ctx" . "component" "injector") | fromYaml -}}
+{{- $preset.workers | int -}}
 {{- end -}}
+{{- end }}
+
+{{/*
+Look up a component's block in the active sizing preset, returned as YAML
+(callers pipe through fromYaml). Fails fast with a clear, actionable message
+if the sizingPreset name — or the component within it — is unknown, instead of
+a nil dereference deep in a template.
+*/}}
+{{- define "avalanche.presetComponent" -}}
+{{- $ctx := .ctx -}}
+{{- $component := .component -}}
+{{- $preset := index $ctx.Values.presets $ctx.Values.sizingPreset -}}
+{{- if not $preset -}}
+{{- fail (printf "avalanche: unknown sizingPreset %q — valid presets: %s" $ctx.Values.sizingPreset (keys $ctx.Values.presets | sortAlpha | join ", ")) -}}
+{{- end -}}
+{{- $block := index $preset $component -}}
+{{- if not $block -}}
+{{- fail (printf "avalanche: sizingPreset %q has no entry for component %q" $ctx.Values.sizingPreset $component) -}}
+{{- end -}}
+{{- toYaml $block -}}
 {{- end }}
 
 {{/*

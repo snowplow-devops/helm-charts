@@ -23,7 +23,7 @@ legacyMode: true
 #
 #   small  — smoke tests, kind/docker-desktop  (~100 RPS injector ceiling)
 #   medium — sustained multi-k RPS             (~2000 RPS target — default)
-#   large  — high-throughput perf baselines    (3 injector replicas)
+#   large  — high-throughput perf baselines    (1 injector @ 4 CPU / 100 workers)
 sizingPreset: medium  # small | medium | large
 
 # Sizing presets — see ticket QA-780 for the rationale behind these values.

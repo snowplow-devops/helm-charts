@@ -57,7 +57,7 @@ kubectl logs -f deployment/{{ include "avalanche.fullname" . }}-controller -n {{
 kubectl logs -f deployment/{{ include "avalanche.fullname" . }}-injector -n {{ .Release.Namespace }}
 
 # Switch sizing preset (small | medium | large)
-helm upgrade {{ .Release.Name }} ./helm/avalanche --set sizingPreset=large
+helm upgrade {{ .Release.Name }} ./charts/avalanche --set sizingPreset=large
 
 # Uninstall
 helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}

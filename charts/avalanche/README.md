@@ -16,7 +16,7 @@ sizingPreset: medium  # small | medium | large
 | `medium` (default) | 2000m / 2Gi | 1 / 50 | Sustained multi-k RPS. Designed for ~2000 RPS at the collector, validated with single-injector-pod headroom around 8% CPU at 400 RPS. |
 | `large` | 4000m / 4Gi | 1 / 100 | High-throughput perf baselines. Single injector pod with maximum CPU/memory/workers. Multi-replica orchestration is tracked separately — all presets currently pin `injector.replicas` to 1. |
 
-Non-injector components (controller, observer, correlator, adjudicator, aggregator, observerKubernetes, aggregatorKubernetes, mockTarget, nats) scale roughly proportionally across the three presets — see `presets:` in `values.yaml` for the full table.
+Non-injector components (controller, observer, correlator, adjudicator, aggregator, observerKubernetes, aggregatorKubernetes, nats) scale roughly proportionally across the three presets — see `presets:` in `values.yaml` for the full table. `mockTarget` and `aggregatorKinesisStream` are **not** preset-driven — they keep their own `replicas`/`resources` defaults regardless of `sizingPreset`.
 
 ### Overriding per component
 
