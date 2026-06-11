@@ -10,7 +10,7 @@ The chart's resource defaults are driven by a top-level `sizingPreset` value. Th
 sizingPreset: medium  # small | medium | large
 ```
 
-| Preset | Injector CPU / mem | Injector replicas / workers | Intent |
+| Preset | Injector CPU / mem (limit) | Injector replicas / workers | Intent |
 | --- | --- | --- | --- |
 | `small` | 500m / 256Mi | 1 / 3 | Smoke tests, kind / docker-desktop. Equivalent to the pre-0.3.0 chart defaults. |
 | `medium` (default) | 2000m / 2Gi | 1 / 50 | Sustained multi-k RPS. Designed for ~2000 RPS at the collector, validated with single-injector-pod headroom around 8% CPU at 400 RPS. |
