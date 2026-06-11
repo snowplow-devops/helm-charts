@@ -1,3 +1,7 @@
+Version 0.3.40 (2026-06-11)
+---------------------------
+charts/avalanche-0.7.0: Add sizing presets (small/medium/large) for resource defaults. New top-level sizingPreset (default medium) backed by a presets map, resolved per-component via _helpers.tpl (componentResources / componentReplicas / injectorWorkers); per-component resources/replicas/workers overrides still win. Lets a default install sustain real load instead of the old demo-sized defaults.
+
 Version 0.3.39 (2026-06-10)
 ---------------------------
 charts/avalanche-0.6.5: observer-kubernetes IRSA fix — new avalanche.observerKubernetes.serviceAccountName helper reuses cloudserviceaccount (inheriting its Timestream IRSA role) when deployed, else the dedicated SA, so the api observer no longer falls back to the node role and crash-loops on a Timestream 403 under DS4. Restore hasKey (not default) for the cloudwatch per-target podNamePattern/podNameReplacement so podNamePattern: "" disables the regex as documented. Guard cloudserviceaccount.name with required so an empty reused-SA name fails fast instead of rendering invalid RBAC. (#337)
