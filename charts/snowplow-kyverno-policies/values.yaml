@@ -21,6 +21,14 @@ policies:
     hostedZoneAnnotation: snowplow.io/hosted-zone-id
     # TTL (seconds) for the generated validation RecordSet.
     ttl: 60
+    # Kyverno generate evaluation behaviour
+    evaluation:
+      # Generate the RecordSet on Certificate admission (CREATE/UPDATE).
+      admission: true
+      # Generate for Certificates that already exist when the policy is installed.
+      generateExisting: true
+      # Re-reconcile the generated RecordSet if it is modified or deleted
+      synchronize: false
 
 # Data-driven families: N policies of any kyverno kind, supplied as data. The
 # chart adds naming, standard labels and (for policies that act on cluster

@@ -40,6 +40,9 @@ Cloud-specific curated policies are gated on both their `enabled` flag **and**
 | `policies.ackAcmDnsValidation.enabled` | `false` | AWS-only. Bridge ACK ACM `Certificate` validation to ACK Route53 `RecordSet`. |
 | `policies.ackAcmDnsValidation.hostedZoneAnnotation` | `snowplow.io/hosted-zone-id` | Certificate annotation carrying the target hosted zone ID. |
 | `policies.ackAcmDnsValidation.ttl` | `60` | TTL (seconds) for the generated validation RecordSet. |
+| `policies.ackAcmDnsValidation.evaluation.admission` | `true` | Generate the RecordSet on Certificate admission (CREATE/UPDATE). |
+| `policies.ackAcmDnsValidation.evaluation.generateExisting` | `true` | Generate for Certificates that already exist when the policy is installed. |
+| `policies.ackAcmDnsValidation.evaluation.synchronize` | `false` | Re-reconcile the generated RecordSet if it is modified or deleted out-of-band. |
 | `customPolicies` | `[]` | Data-driven policy families. See below. |
 
 ### `ackAcmDnsValidation`
