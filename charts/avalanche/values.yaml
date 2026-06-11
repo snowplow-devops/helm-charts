@@ -71,11 +71,6 @@ presets:
       resources:
         requests: { cpu: "100m", memory: "64Mi" }
         limits:   { cpu: "500m", memory: "256Mi" }
-    mockTarget:
-      replicas: 1
-      resources:
-        requests: { cpu: "100m", memory: "64Mi" }
-        limits:   { cpu: "500m", memory: "256Mi" }
     nats:
       replicas: 1
       resources:
@@ -124,11 +119,6 @@ presets:
       resources:
         requests: { cpu: "100m", memory: "128Mi" }
         limits:   { cpu: "500m", memory: "256Mi" }
-    mockTarget:
-      replicas: 1
-      resources:
-        requests: { cpu: "200m", memory: "128Mi" }
-        limits:   { cpu: "1000m", memory: "512Mi" }
     nats:
       replicas: 1
       resources:
@@ -182,11 +172,6 @@ presets:
       resources:
         requests: { cpu: "200m", memory: "256Mi" }
         limits:   { cpu: "1000m", memory: "512Mi" }
-    mockTarget:
-      replicas: 1
-      resources:
-        requests: { cpu: "500m", memory: "256Mi" }
-        limits:   { cpu: "2000m", memory: "1Gi" }
     nats:
       replicas: 1
       resources:
