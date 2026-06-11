@@ -42,7 +42,7 @@ Cloud-specific curated policies are gated on both their `enabled` flag **and**
 | `policies.ackAcmDnsValidation.ttl` | `60` | TTL (seconds) for the generated validation RecordSet. |
 | `policies.ackAcmDnsValidation.evaluation.admission` | `true` | Generate the RecordSet on Certificate admission (CREATE/UPDATE). |
 | `policies.ackAcmDnsValidation.evaluation.generateExisting` | `true` | Generate for Certificates that already exist when the policy is installed. |
-| `policies.ackAcmDnsValidation.evaluation.synchronize` | `false` | Re-reconcile the generated RecordSet if it is modified or deleted out-of-band. |
+| `policies.ackAcmDnsValidation.evaluation.synchronize` | `false` | Re-reconcile the generated RecordSet if it is modified or deleted. |
 | `customPolicies` | `[]` | Data-driven policy families. See below. |
 
 ### `ackAcmDnsValidation`

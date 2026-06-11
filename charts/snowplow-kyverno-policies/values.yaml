@@ -27,7 +27,7 @@ policies:
       admission: true
       # Generate for Certificates that already exist when the policy is installed.
       generateExisting: true
-      # Re-reconcile the generated RecordSet if it is modified or deleted
+      # Re-reconcile the generated RecordSet if it is modified or deleted.
       synchronize: false
 
 # Data-driven families: N policies of any kyverno kind, supplied as data. The

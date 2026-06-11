@@ -36,11 +36,11 @@ spec:
         'snowplow.io/ack-managed' in object.metadata.labels &&
         object.metadata.labels['snowplow.io/ack-managed'] == 'true'
 
-    - name: has-hosted-zone-id-annotation
+    - name: has-valid-hosted-zone-id-annotation
       expression: >-
         has(object.metadata.annotations) &&
         '{{ $p.hostedZoneAnnotation }}' in object.metadata.annotations &&
-        object.metadata.annotations['{{ $p.hostedZoneAnnotation }}'] != ''
+        object.metadata.annotations['{{ $p.hostedZoneAnnotation }}'].matches('^Z[A-Z0-9]+$')
 
     - name: status-domain-validations-populated
       expression: >-
