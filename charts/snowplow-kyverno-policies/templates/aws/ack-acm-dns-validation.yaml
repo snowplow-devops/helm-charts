@@ -10,11 +10,11 @@ metadata:
 spec:
   evaluation:
     admission:
-      enabled: true
+      enabled: {{ $p.evaluation.admission }}
     generateExisting:
-      enabled: true
+      enabled: {{ $p.evaluation.generateExisting }}
     synchronize:
-      enabled: false
+      enabled: {{ $p.evaluation.synchronize }}
 
   matchConstraints:
     resourceRules:
