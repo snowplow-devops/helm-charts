@@ -4441,6 +4441,26 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.1.0/snowplow-iglu-server-0.1.0.tgz
     version: 0.1.0
+  snowplow-kyverno-policies:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2026-06-11T15:18:20.62095002Z"
+    description: Snowplow-authored Kyverno policies for Kubernetes clusters running
+      Kyverno
+    digest: 9f7086140bc8fb3d830a6bde860833ec056990710ba41b204f70120633a77223
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - kyverno
+    - policy
+    maintainers:
+    - email: ianarsenault@users.noreply.github.com
+      name: ianarsenault
+      url: https://github.com/ianarsenault
+    name: snowplow-kyverno-policies
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-kyverno-policies-0.1.0/snowplow-kyverno-policies-0.1.0.tgz
+    version: 0.1.0
   traefik-crds:
   - apiVersion: v1
     appVersion: v27.0.2
@@ -4509,4 +4529,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-06-10T17:23:33.012775206Z"
+generated: "2026-06-11T15:18:20.621479269Z"
