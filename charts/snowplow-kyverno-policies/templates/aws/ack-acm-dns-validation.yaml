@@ -1,0 +1,107 @@
+{{- if and .Values.policies.ackAcmDnsValidation.enabled (eq (include "snowplow-kyverno-policies.cloud" .) "aws") }}
+{{- $p := .Values.policies.ackAcmDnsValidation }}
+---
+apiVersion: policies.kyverno.io/v1
+kind: GeneratingPolicy
+metadata:
+  name: ack-acm-dns-validation
+  labels:
+    {{- include "snowplow-kyverno-policies.labels" . | nindent 4 }}
+spec:
+  evaluation:
+    admission:
+      enabled: {{ $p.evaluation.admission }}
+    generateExisting:
+      enabled: {{ $p.evaluation.generateExisting }}
+    synchronize:
+      enabled: {{ $p.evaluation.synchronize }}
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - acm.services.k8s.aws
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - certificates
+          - certificates/status
+
+  matchConditions:
+    - name: is-ack-managed
+      expression: >-
+        has(object.metadata.labels) &&
+        'snowplow.io/ack-managed' in object.metadata.labels &&
+        object.metadata.labels['snowplow.io/ack-managed'] == 'true'
+
+    - name: has-valid-hosted-zone-id-annotation
+      expression: >-
+        has(object.metadata.annotations) &&
+        '{{ $p.hostedZoneAnnotation }}' in object.metadata.annotations &&
+        object.metadata.annotations['{{ $p.hostedZoneAnnotation }}'].matches('^Z[A-Z0-9]+$')
+
+    - name: status-domain-validations-populated
+      expression: >-
+        has(object.status) &&
+        has(object.status.domainValidations) &&
+        size(object.status.domainValidations) == 1
+
+    - name: cert-pending-validation
+      expression: >-
+        has(object.status.status) &&
+        object.status.status == 'PENDING_VALIDATION'
+
+    - name: validation-record-is-cname
+      expression: >-
+        has(object.status.domainValidations[0].resourceRecord) &&
+        object.status.domainValidations[0].resourceRecord.type_ == 'CNAME'
+
+    - name: validation-record-fields-populated
+      expression: >-
+        object.status.domainValidations[0].resourceRecord.name != '' &&
+        object.status.domainValidations[0].resourceRecord.value != ''
+
+  variables:
+    - name: certNs
+      expression: object.metadata.namespace
+
+    - name: downstream
+      expression: |
+        [{
+          "apiVersion": dyn("route53.services.k8s.aws/v1alpha1"),
+          "kind": dyn("RecordSet"),
+          "metadata": dyn({
+            "name": dyn(object.metadata.name + "-validation"),
+            "namespace": dyn(object.metadata.namespace),
+            "labels": dyn({
+              "snowplow.io/ack-managed": dyn("true"),
+              "snowplow.io/managed-by": dyn("kyverno"),
+              "snowplow.io/policy": dyn("ack-acm-dns-validation")
+            }),
+            "ownerReferences": dyn([
+              {
+                "apiVersion": dyn(object.apiVersion),
+                "kind": dyn(object.kind),
+                "name": dyn(object.metadata.name),
+                "uid": dyn(object.metadata.uid),
+                "controller": dyn(true),
+                "blockOwnerDeletion": dyn(true)
+              }
+            ])
+          }),
+          "spec": dyn({
+            "hostedZoneID": dyn(object.metadata.annotations["{{ $p.hostedZoneAnnotation }}"]),
+            "name": dyn(object.status.domainValidations[0].resourceRecord.name),
+            "recordType": dyn(object.status.domainValidations[0].resourceRecord.type_),
+            "ttl": dyn({{ $p.ttl }}),
+            "resourceRecords": dyn([
+              {"value": dyn(object.status.domainValidations[0].resourceRecord.value)}
+            ])
+          })
+        }]
+
+  generate:
+    - expression: generator.Apply(variables.certNs, variables.downstream)
+{{- end }}

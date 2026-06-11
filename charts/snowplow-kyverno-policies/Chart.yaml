@@ -1,0 +1,14 @@
+apiVersion: v2
+name: snowplow-kyverno-policies
+description: Snowplow-authored Kyverno policies for Kubernetes clusters running Kyverno
+version: 0.1.0
+appVersion: "0.1.0"
+icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+home: https://github.com/snowplow-devops/helm-charts
+maintainers:
+  - name: ianarsenault
+    url: https://github.com/ianarsenault
+    email: ianarsenault@users.noreply.github.com
+keywords:
+  - kyverno
+  - policy
