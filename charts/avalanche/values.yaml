@@ -15,6 +15,169 @@ global:
 # The ConfigMap content is unchanged either way; only the deployment args/env differ.
 legacyMode: true
 
+# Sizing preset. Selects per-component CPU/memory/replicas/workers defaults from
+# the `presets:` map below.
+#
+# Per-component overrides (`<component>.replicas`, `<component>.resources`,
+# `injector.config.workers`) win when set to a non-zero/non-empty value.
+#
+#   small  — smoke tests, kind/docker-desktop  (~100 RPS injector ceiling)
+#   medium — sustained multi-k RPS             (~2000 RPS target — default)
+#   large  — high-throughput perf baselines    (1 injector @ 4 CPU / 100 workers)
+sizingPreset: medium  # small | medium | large
+
+# Sizing presets — see ticket QA-780 for the rationale behind these values.
+# Add a new preset by adding a top-level key here and pointing `sizingPreset` at it.
+presets:
+  small:
+    injector:
+      replicas: 1
+      workers: 3
+      resources:
+        requests: { cpu: "100m", memory: "64Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+    observer:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "64Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+    correlator:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "128Mi" }
+        limits:   { cpu: "500m", memory: "512Mi" }
+    adjudicator:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "64Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+    controller:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "128Mi" }
+        limits:   { cpu: "500m", memory: "512Mi" }
+    aggregator:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "64Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+    aggregatorKubernetes:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "64Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+    observerKubernetes:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "64Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+    nats:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "64Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+
+  medium:
+    injector:
+      replicas: 1
+      workers: 50
+      resources:
+        requests: { cpu: "500m", memory: "512Mi" }
+        limits:   { cpu: "2000m", memory: "2Gi" }
+    observer:
+      replicas: 1
+      resources:
+        requests: { cpu: "200m", memory: "256Mi" }
+        limits:   { cpu: "1000m", memory: "1Gi" }
+    correlator:
+      replicas: 1
+      resources:
+        requests: { cpu: "200m", memory: "256Mi" }
+        limits:   { cpu: "1000m", memory: "1Gi" }
+    adjudicator:
+      replicas: 1
+      resources:
+        requests: { cpu: "200m", memory: "128Mi" }
+        limits:   { cpu: "1000m", memory: "512Mi" }
+    controller:
+      replicas: 1
+      resources:
+        requests: { cpu: "200m", memory: "256Mi" }
+        limits:   { cpu: "1000m", memory: "1Gi" }
+    aggregator:
+      replicas: 1
+      resources:
+        requests: { cpu: "200m", memory: "128Mi" }
+        limits:   { cpu: "1000m", memory: "512Mi" }
+    aggregatorKubernetes:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "128Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+    observerKubernetes:
+      replicas: 1
+      resources:
+        requests: { cpu: "100m", memory: "128Mi" }
+        limits:   { cpu: "500m", memory: "256Mi" }
+    nats:
+      replicas: 1
+      resources:
+        requests: { cpu: "200m", memory: "256Mi" }
+        limits:   { cpu: "1000m", memory: "1Gi" }
+
+  large:
+    injector:
+      # Multi-replica injector wiring is not yet supported by the controller —
+      # all replicas would receive the same per-injector RPS via NATS pub/sub
+      # and inject in parallel, multiplying total RPS by the replica count.
+      # Tracked separately as a scaling task; pinned to 1 across all presets
+      # for now. Differentiate via CPU/memory/workers per pod instead.
+      replicas: 1
+      workers: 100
+      resources:
+        requests: { cpu: "1000m", memory: "1Gi" }
+        limits:   { cpu: "4000m", memory: "4Gi" }
+    observer:
+      replicas: 1
+      resources:
+        requests: { cpu: "500m", memory: "512Mi" }
+        limits:   { cpu: "2000m", memory: "2Gi" }
+    correlator:
+      replicas: 1
+      resources:
+        requests: { cpu: "500m", memory: "512Mi" }
+        limits:   { cpu: "2000m", memory: "2Gi" }
+    adjudicator:
+      replicas: 1
+      resources:
+        requests: { cpu: "500m", memory: "256Mi" }
+        limits:   { cpu: "2000m", memory: "1Gi" }
+    controller:
+      replicas: 1
+      resources:
+        requests: { cpu: "500m", memory: "512Mi" }
+        limits:   { cpu: "2000m", memory: "2Gi" }
+    aggregator:
+      replicas: 1
+      resources:
+        requests: { cpu: "500m", memory: "256Mi" }
+        limits:   { cpu: "2000m", memory: "1Gi" }
+    aggregatorKubernetes:
+      replicas: 1
+      resources:
+        requests: { cpu: "200m", memory: "256Mi" }
+        limits:   { cpu: "1000m", memory: "512Mi" }
+    observerKubernetes:
+      replicas: 1
+      resources:
+        requests: { cpu: "200m", memory: "256Mi" }
+        limits:   { cpu: "1000m", memory: "512Mi" }
+    nats:
+      replicas: 1
+      resources:
+        requests: { cpu: "500m", memory: "512Mi" }
+        limits:   { cpu: "2000m", memory: "2Gi" }
+
 # Cloud service account configuration (OIDC-based IAM integration)
 cloudserviceaccount:
   # Whether to create a service-account
@@ -63,14 +226,10 @@ nats:
     repository: nats
     tag: "2.10-alpine"
     pullPolicy: IfNotPresent
-  replicas: 1
-  resources:
-    requests:
-      memory: "64Mi"
-      cpu: "100m"
-    limits:
-      memory: "256Mi"
-      cpu: "500m"
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
   service:
     type: ClusterIP
     clientPort: 4222
@@ -82,7 +241,8 @@ injector:
   image:
     repository: avalanche-injector-private
     tag: latest
-  replicas: 1
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
   componentId: "k8s-injector"
   config:
     type: "http"
@@ -90,7 +250,8 @@ injector:
     endpoint: "http://host.docker.internal:8085"
     # Protocol for HTTP injector type (not used by snowplow type).
     protocol: "http"
-    workers: 3
+    # 0 = inherit from sizingPreset; set to a non-zero value to override.
+    workers: 0
     timeout: "5s"
     # Skip TLS certificate verification (useful for testing with self-signed certs)
     insecureSkipVerify: false
@@ -98,13 +259,8 @@ injector:
     # generator:
     #   preset: "typical-web"
     #   seed: 0
-  resources:
-    requests:
-      memory: "64Mi"
-      cpu: "100m"
-    limits:
-      memory: "256Mi"
-      cpu: "500m"
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
 
 # Observer configuration
 observer:
@@ -112,7 +268,8 @@ observer:
   image:
     repository: avalanche-observer-private
     tag: latest
-  replicas: 1
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
   componentId: "k8s-observer"
   config:
     type: "mockserver"
@@ -123,13 +280,8 @@ observer:
     # For snowplow-kinesis observer type:
     # streamArn: ""  # AWS Kinesis stream ARN
     # region: ""     # AWS region
-  resources:
-    requests:
-      memory: "64Mi"
-      cpu: "100m"
-    limits:
-      memory: "256Mi"
-      cpu: "500m"
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
 
 # Mock Target configuration (self-contained testing without external collector)
 mockTarget:
@@ -153,7 +305,8 @@ correlator:
   image:
     repository: avalanche-correlator-private
     tag: latest
-  replicas: 1
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
   componentId: "k8s-correlator"
   # Metrics write interval in seconds (how often to write aggregated stats to database)
   # Lower values give more granular data but increase database load
@@ -168,13 +321,8 @@ correlator:
   service:
     type: ClusterIP
     port: 8090
-  resources:
-    requests:
-      memory: "128Mi"
-      cpu: "100m"
-    limits:
-      memory: "512Mi"
-      cpu: "500m"
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
 
 # Adjudicator configuration
 adjudicator:
@@ -182,7 +330,8 @@ adjudicator:
   image:
     repository: avalanche-adjudicator-private
     tag: latest
-  replicas: 1
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
   componentId: "k8s-adjudicator"
   config:
     type: "adjudicator"
@@ -195,13 +344,8 @@ adjudicator:
     default: |
       // Default validation rule
       correlation_rate >= 0.95 && error_rate <= 0.05
-  resources:
-    requests:
-      memory: "64Mi"
-      cpu: "100m"
-    limits:
-      memory: "256Mi"
-      cpu: "500m"
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
 
 # Controller configuration
 controller:
@@ -209,7 +353,8 @@ controller:
   image:
     repository: avalanche-controller-private
     tag: latest
-  replicas: 1
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
   componentId: "k8s-controller"
   apiPort: 8080
   config:
@@ -236,13 +381,8 @@ controller:
     pathType: Prefix
     # TLS secret name (defaults to {hostname-with-dashes}-tls)
     tlsSecretName: ""
-  resources:
-    requests:
-      memory: "128Mi"
-      cpu: "100m"
-    limits:
-      memory: "512Mi"
-      cpu: "500m"
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
 
 # Aggregator configuration (injection timing metrics)
 aggregator:
@@ -250,7 +390,8 @@ aggregator:
   image:
     repository: avalanche-aggregator-private
     tag: latest
-  replicas: 1
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
   componentId: "k8s-aggregator"
   config:
     type: "metrics-aggregator"
@@ -279,13 +420,8 @@ aggregator:
         - p50
         - p95
         - max
-  resources:
-    requests:
-      memory: "64Mi"
-      cpu: "100m"
-    limits:
-      memory: "256Mi"
-      cpu: "500m"
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
 
 # Kubernetes Monitoring Aggregator configuration (Phase 12.3)
 # Aggregates kubernetes_monitoring metrics into window/phase/run statistics
@@ -294,7 +430,8 @@ aggregatorKubernetes:
   image:
     repository: avalanche-aggregator-private
     tag: latest
-  replicas: 1
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
   componentId: "kubernetes-aggregator"
   config:
     type: "metrics-aggregator"
@@ -385,13 +522,8 @@ aggregatorKubernetes:
         - last
         - max
         - sum
-  resources:
-    requests:
-      memory: "64Mi"
-      cpu: "100m"
-    limits:
-      memory: "256Mi"
-      cpu: "500m"
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
 
 # Kinesis Stream Aggregator configuration (QA-827 Phase 2)
 # Aggregates kinesis_stream_monitoring per-stream rows into (stream × phase)
@@ -525,7 +657,8 @@ observerKubernetes:
   image:
     repository: avalanche-observer-private
     tag: kubernetes
-  replicas: 1
+  # 0 = inherit from sizingPreset; set to a non-zero value to override.
+  replicas: 0
   # When both observers run, the cloudwatch observer's componentId is suffixed
   # with "-cloudwatch"; the api observer keeps the base value below (for
   # backwards compatibility with existing test plans that reference
@@ -563,13 +696,8 @@ observerKubernetes:
     # cloudserviceaccount is deployed, observer-kubernetes reuses it and inherits
     # its IRSA role instead, so this field is not used in that case.
     iamRoleArn: ""
-  resources:
-    requests:
-      memory: "64Mi"
-      cpu: "100m"
-    limits:
-      memory: "256Mi"
-      cpu: "500m"
+  # {} = inherit from sizingPreset; set requests/limits to override.
+  resources: {}
 
 # Logging configuration
 logging:

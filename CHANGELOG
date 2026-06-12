@@ -1,3 +1,7 @@
+Version 0.3.41 (2026-06-11)
+---------------------------
+charts/avalanche-0.7.0: Add sizing presets (small/medium/large) for resource defaults. New top-level sizingPreset (default medium) backed by a presets map, resolved per-component via _helpers.tpl (componentResources / componentReplicas / injectorWorkers); per-component resources/replicas/workers overrides still win. Lets a default install sustain real load instead of the old demo-sized defaults.
+
 Version 0.3.40 (2026-06-11)
 ---------------------------
 charts/snowplow-kyverno-policies-0.1.0: Adds opinionated Snowplow Kyverno Policies chart

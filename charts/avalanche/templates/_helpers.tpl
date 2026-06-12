@@ -85,6 +85,92 @@ nats://{{ include "avalanche.fullname" . }}-nats:{{ .Values.nats.service.clientP
 {{- end }}
 
 {{/*
+Resolve component resources: per-component override wins, otherwise the value
+from the active sizing preset (`.Values.presets.<sizingPreset>.<component>.resources`).
+A non-empty `<component>.resources` map counts as an override.
+
+Usage:
+  resources:
+    {{- include "avalanche.componentResources" (dict "ctx" . "component" "injector") | nindent 12 }}
+*/}}
+{{- define "avalanche.componentResources" -}}
+{{- $ctx := .ctx -}}
+{{- $component := .component -}}
+{{- $override := (index $ctx.Values $component "resources") | default dict -}}
+{{- if gt (len $override) 0 -}}
+{{- toYaml $override -}}
+{{- else -}}
+{{- $preset := include "avalanche.presetComponent" (dict "ctx" $ctx "component" $component) | fromYaml -}}
+{{- if not (hasKey $preset "resources") -}}
+{{- fail (printf "avalanche: sizingPreset %q component %q is missing a 'resources' block" $ctx.Values.sizingPreset $component) -}}
+{{- end -}}
+{{- toYaml $preset.resources -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Resolve component replicas: per-component override wins (any non-zero integer),
+otherwise the value from the active sizing preset.
+
+Usage:
+  replicas: {{ include "avalanche.componentReplicas" (dict "ctx" . "component" "injector") }}
+*/}}
+{{- define "avalanche.componentReplicas" -}}
+{{- $ctx := .ctx -}}
+{{- $component := .component -}}
+{{- $override := (index $ctx.Values $component "replicas") | default 0 -}}
+{{- if gt ($override | int) 0 -}}
+{{- $override | int -}}
+{{- else -}}
+{{- $preset := include "avalanche.presetComponent" (dict "ctx" $ctx "component" $component) | fromYaml -}}
+{{- if not (hasKey $preset "replicas") -}}
+{{- fail (printf "avalanche: sizingPreset %q component %q is missing 'replicas'" $ctx.Values.sizingPreset $component) -}}
+{{- end -}}
+{{- $preset.replicas | int -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Resolve injector workers: `.Values.injector.config.workers` override wins (any
+non-zero integer), otherwise the value from the active sizing preset.
+
+Usage in configmap.yaml:
+  workers: {{ include "avalanche.injectorWorkers" . }}
+*/}}
+{{- define "avalanche.injectorWorkers" -}}
+{{- $override := .Values.injector.config.workers | default 0 -}}
+{{- if gt ($override | int) 0 -}}
+{{- $override | int -}}
+{{- else -}}
+{{- $preset := include "avalanche.presetComponent" (dict "ctx" . "component" "injector") | fromYaml -}}
+{{- if not (hasKey $preset "workers") -}}
+{{- fail (printf "avalanche: sizingPreset %q injector block is missing 'workers'" .Values.sizingPreset) -}}
+{{- end -}}
+{{- $preset.workers | int -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Look up a component's block in the active sizing preset, returned as YAML
+(callers pipe through fromYaml). Fails fast with a clear, actionable message
+if the sizingPreset name — or the component within it — is unknown, instead of
+a nil dereference deep in a template.
+*/}}
+{{- define "avalanche.presetComponent" -}}
+{{- $ctx := .ctx -}}
+{{- $component := .component -}}
+{{- $preset := index $ctx.Values.presets $ctx.Values.sizingPreset -}}
+{{- if not $preset -}}
+{{- fail (printf "avalanche: unknown sizingPreset %q — valid presets: %s" $ctx.Values.sizingPreset (keys $ctx.Values.presets | sortAlpha | join ", ")) -}}
+{{- end -}}
+{{- $block := index $preset $component -}}
+{{- if not $block -}}
+{{- fail (printf "avalanche: sizingPreset %q has no entry for component %q" $ctx.Values.sizingPreset $component) -}}
+{{- end -}}
+{{- toYaml $block -}}
+{{- end }}
+
+{{/*
 Image name helper - supports both local and registry images
 If images.registry is empty, uses local image format: repository:tag
 If images.registry is set, uses registry format: registry/repository:tag

@@ -11,7 +11,7 @@ metadata:
     {{- include "snowplow.labels" . | nindent 4 }}
     app.kubernetes.io/component: observer-kubernetes-api
 spec:
-  replicas: {{ .Values.observerKubernetes.replicas }}
+  replicas: {{ include "avalanche.componentReplicas" (dict "ctx" . "component" "observerKubernetes") }}
   selector:
     matchLabels:
       {{- include "avalanche.selectorLabels" . | nindent 6 }}
@@ -72,7 +72,8 @@ spec:
               mountPath: /configs
               readOnly: true
           resources:
-            {{- toYaml .Values.observerKubernetes.resources | nindent 12 }}
+            {{- include "avalanche.componentResources" (dict "ctx" . "component" "observerKubernetes") | nindent 12 }}
+          # Liveness probe - check NATS health endpoint (consistent with other components)
           livenessProbe:
             exec:
               command:
@@ -110,7 +111,7 @@ metadata:
     {{- include "snowplow.labels" . | nindent 4 }}
     app.kubernetes.io/component: observer-kubernetes-cloudwatch
 spec:
-  replicas: {{ .Values.observerKubernetes.replicas }}
+  replicas: {{ include "avalanche.componentReplicas" (dict "ctx" . "component" "observerKubernetes") }}
   selector:
     matchLabels:
       {{- include "avalanche.selectorLabels" . | nindent 6 }}
@@ -168,7 +169,7 @@ spec:
               mountPath: /configs
               readOnly: true
           resources:
-            {{- toYaml .Values.observerKubernetes.resources | nindent 12 }}
+            {{- include "avalanche.componentResources" (dict "ctx" . "component" "observerKubernetes") | nindent 12 }}
           livenessProbe:
             exec:
               command:
