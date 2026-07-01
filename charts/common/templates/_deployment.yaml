@@ -178,6 +178,27 @@ spec:
           successThreshold: {{ .livenessProbe.successThreshold }}
         {{- end }}
 
+        {{- if and .startupProbe (or (and .startupProbe.httpGet (ne .startupProbe.httpGet.path "")) (and .startupProbe.exec .startupProbe.exec.command)) }}
+        startupProbe:
+          {{- if and .startupProbe.httpGet (ne .startupProbe.httpGet.path "") }}
+          httpGet:
+            path: {{ .startupProbe.httpGet.path }}
+            port: {{ default .service.port .startupProbe.httpGet.port }}
+            scheme: HTTP
+          {{- end }}
+          {{- if and .startupProbe.exec (gt (len .startupProbe.exec.command) 0) }}
+          exec:
+            command:
+          {{- range $v := .startupProbe.exec.command }}
+            - {{ $v }}
+          {{- end }}
+          {{- end }}
+          initialDelaySeconds: {{ .startupProbe.initialDelaySeconds }}
+          periodSeconds: {{ .startupProbe.periodSeconds }}
+          timeoutSeconds: {{ .startupProbe.timeoutSeconds }}
+          failureThreshold: {{ .startupProbe.failureThreshold }}
+        {{- end }}
+
         volumeMounts:
         {{- range $v := .configMaps }}
         - mountPath: "{{ $v.mountPath }}"
