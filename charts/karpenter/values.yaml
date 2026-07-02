@@ -1,0 +1,221 @@
+# -- Overrides the chart's name.
+nameOverride: ""
+# -- Overrides the chart's computed fullname.
+fullnameOverride: ""
+
+# -- Global values applied to the chart.
+global:
+  # -- Cloud provider (always aws for Karpenter).
+  cloud: aws
+  # -- Additional labels to add into metadata.
+  labels: {}
+
+# -- Additional labels to add into metadata.
+additionalLabels: {}
+# -- Additional annotations to add into metadata.
+additionalAnnotations: {}
+
+# -- Image pull policy for Docker images.
+imagePullPolicy: IfNotPresent
+# -- Image pull secrets for Docker images.
+imagePullSecrets: []
+
+service:
+  # -- Additional annotations for the Service.
+  annotations: {}
+
+serviceAccount:
+  # -- Specifies if a ServiceAccount should be created.
+  create: true
+  # -- The name of the ServiceAccount to use. If not set and create is true, a name is
+  # generated using the fullname template.
+  name: ""
+  # -- Additional annotations for the ServiceAccount.
+  annotations: {}
+
+# -- Specifies additional rules for the core ClusterRole.
+additionalClusterRoleRules: []
+
+serviceMonitor:
+  # -- Specifies whether a ServiceMonitor should be created.
+  enabled: false
+  # -- Additional labels for the ServiceMonitor.
+  additionalLabels: {}
+  # -- Relabelings for the `http-metrics` endpoint on the ServiceMonitor.
+  relabelings: []
+  # -- Metric relabelings for the `http-metrics` endpoint on the ServiceMonitor.
+  metricRelabelings: []
+  # -- Configuration on `http-metrics` endpoint for the ServiceMonitor.
+  endpointConfig: {}
+  # -- Specifies the sampleLimit for prometheus scrapes.
+  sampleLimit: null
+
+# -- Number of replicas.
+replicas: 2
+# -- The number of old ReplicaSets to retain to allow rollback.
+revisionHistoryLimit: 10
+# -- Strategy for updating the pod.
+strategy:
+  rollingUpdate:
+    maxUnavailable: 1
+
+# -- Additional labels for the pod.
+podLabels: {}
+# -- Additional annotations for the pod.
+podAnnotations: {}
+
+podDisruptionBudget:
+  # -- Name of the PodDisruptionBudget.
+  name: karpenter
+  # -- Max unavailable pods for the PodDisruptionBudget.
+  maxUnavailable: 1
+
+# -- SecurityContext for the pod.
+podSecurityContext:
+  fsGroup: 65532
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- PriorityClass name for the pod.
+priorityClassName: system-cluster-critical
+# -- Override the default termination grace period for the pod.
+terminationGracePeriodSeconds:
+# -- Bind the pod to the host network. This is required when using a custom CNI.
+hostNetwork: false
+# -- Specify which Kubernetes scheduler should dispatch the pod.
+schedulerName: default-scheduler
+# -- Configure the DNS Policy for the pod.
+dnsPolicy: ClusterFirst
+# -- Configure DNS Config for the pod.
+dnsConfig: {}
+
+# -- Add additional initContainers to run before karpenter container starts.
+initContainers: []
+
+# -- Node selectors to schedule the pod to nodes with labels.
+nodeSelector:
+  kubernetes.io/os: linux
+
+# -- Affinity rules for scheduling the pod.
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: karpenter.sh/nodepool
+              operator: DoesNotExist
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - topologyKey: "kubernetes.io/hostname"
+
+# -- Topology spread constraints to increase the controller resilience by distributing pods across the cluster zones.
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: DoNotSchedule
+
+# -- Tolerations to allow the pod to be scheduled to nodes with taints.
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+
+# -- Additional volumes for the pod.
+extraVolumes: []
+
+controller:
+  # -- Distinguishing container name.
+  containerName: controller
+  image:
+    # -- Repository path to the controller image.
+    repository: public.ecr.aws/karpenter/controller
+    # -- Tag of the controller image.
+    tag: ""
+    # -- SHA256 digest of the controller image.
+    digest: ""
+  # -- Additional environment variables for the controller pod.
+  env: []
+  # -- envFrom configuration for the controller pod.
+  envFrom: []
+  securityContext:
+    # -- AppArmor profile for the controller container.
+    appArmorProfile: {}
+    # -- SELinux options for the controller container.
+    seLinuxOptions: {}
+    # -- Seccomp profile for the controller container.
+    seccompProfile: {}
+  # -- Resources for the controller container.
+  resources: {}
+  # -- Additional volumeMounts for the controller container.
+  extraVolumeMounts: []
+  # -- Additional sidecar containers.
+  sidecarContainer: []
+  # -- Additional volumeMounts for the sidecar.
+  sidecarVolumeMounts: []
+  metrics:
+    # -- The container port to use for metrics.
+    port: 8080
+  healthProbe:
+    # -- The container port to use for http health probe.
+    port: 8081
+
+# -- Global log level, defaults to 'info'.
+logLevel: info
+# -- Log outputPaths - defaults to stdout only.
+logOutputPaths:
+  - stdout
+# -- Log errorOutputPaths - defaults to stderr only.
+logErrorOutputPaths:
+  - stderr
+
+# -- Global Settings to configure Karpenter.
+settings:
+  # -- The maximum length of a batch window.
+  batchMaxDuration: 10s
+  # -- The maximum amount of time with no new ending pods that if exceeded ends the current batching window.
+  batchIdleDuration: 1s
+  # -- How the Karpenter scheduler should treat preferences.
+  preferencePolicy: Respect
+  # -- How the Karpenter scheduler treats min values.
+  minValuesPolicy: Strict
+  # -- Cluster CA bundle for TLS configuration of provisioned nodes.
+  clusterCABundle: ""
+  # -- Cluster name.
+  clusterName: ""
+  # -- Cluster endpoint. If not set, will be discovered during startup (EKS only).
+  clusterEndpoint: ""
+  # -- If true then assume we can't reach AWS services which don't have a VPC endpoint.
+  isolatedVPC: false
+  # -- If true, Karpenter should attempt to discover cluster details from the DescribeCluster API.
+  eksControlPlane: false
+  # -- The VM memory overhead as a percent that will be subtracted from the total memory for all instance types.
+  vmMemoryOverheadPercent: 0.075
+  # -- Interruption queue is the name of the SQS queue used for processing interruption events from EC2.
+  interruptionQueue: ""
+  # -- Marking this true signals Karpenter to respect zonal shifts when making node claims.
+  enableZonalShift: false
+  # -- Reserved ENIs are not included in the calculations for max-pods or kube-reserved.
+  reservedENIs: "0"
+  # -- Ignore pods' DRA requests during scheduling simulations.
+  ignoreDRARequests: true
+  # -- Disable cluster state metrics and events.
+  disableClusterStateObservability: false
+  # -- Disable dry run validation for EC2NodeClasses.
+  disableDryRun: false
+  # -- How often Karpenter refreshes AMI data from EC2.
+  amiRefreshInterval: 1m
+  # -- How often Karpenter refreshes subnet data from EC2.
+  subnetRefreshInterval: 1m
+  # -- Feature Gate configuration values.
+  featureGates:
+    # -- nodeRepair is ALPHA and is disabled by default.
+    nodeRepair: false
+    # -- nodeOverlay is ALPHA and is disabled by default.
+    nodeOverlay: false
+    # -- reservedCapacity is BETA and is enabled by default.
+    reservedCapacity: true
+    # -- spotToSpotConsolidation is ALPHA and is disabled by default.
+    spotToSpotConsolidation: false
+    # -- staticCapacity is ALPHA and is disabled by default.
+    staticCapacity: false
+    # -- capacityBuffer is ALPHA and is disabled by default.
+    capacityBuffer: false
