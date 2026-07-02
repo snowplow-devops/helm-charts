@@ -249,6 +249,26 @@ entries:
   aws-otel-collector:
   - apiVersion: v1
     appVersion: v0.48.0
+    created: "2026-07-02T09:23:54.143776566Z"
+    description: A Helm chart to deploy aws-otel-collector project
+    digest: 4fa33bfabe7f2ca3eedeb580628aefed1e29c586c813d3a39110c9156eb57b92
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - eks
+    - telemetry
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: aws-otel-collector
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/aws-otel-collector-0.15.0/aws-otel-collector-0.15.0.tgz
+    version: 0.15.0
+  - apiVersion: v1
+    appVersion: v0.48.0
     created: "2026-05-26T20:09:49.837163982Z"
     description: A Helm chart to deploy aws-otel-collector project
     digest: 63aac2cb0a2d17eb38caa5008223c17962654ffdcc9509e3b490c9c529409897
@@ -1640,6 +1660,32 @@ entries:
     - https://github.com/snowplow-devops/helm-charts/releases/download/cron-job-0.1.0/cron-job-0.1.0.tgz
     version: 0.1.0
   daemonset:
+  - apiVersion: v2
+    created: "2026-07-02T09:23:54.362634092Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - condition: cloudserviceaccount.deploy
+      name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to deploy an arbitrary container as a daemonset.
+    digest: 43d162c944344b7beabc397d605cb2a684ce2a2b762fb9aa5fe405019e0cd8b1
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - daemonset
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: daemonset
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/daemonset-0.6.0/daemonset-0.6.0.tgz
+    version: 0.6.0
   - apiVersion: v2
     created: "2025-02-12T20:21:16.23805291Z"
     dependencies:
@@ -4559,4 +4605,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-06-12T09:45:38.021181264Z"
+generated: "2026-07-02T09:23:54.362980824Z"
