@@ -27,6 +27,19 @@ spec:
       hostNetwork: {{ .Values.config.hostNetworkAccess | default "false" }}
       dnsPolicy: {{ .Values.config.dnsPolicy | default "Default" }}
 
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}
       {{- end }}

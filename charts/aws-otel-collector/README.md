@@ -52,6 +52,9 @@ helm delete aws-otel-collector --namespace kube-system
 | resources.limits.memory | string | `"200Mi"` |  |
 | resources.requests.cpu | string | `"20m"` |  |
 | resources.requests.memory | string | `"100Mi"` |  |
+| tolerations | list | `[{"operator":"Exists"}]` | Tolerations for the collector pods. Defaults to tolerating all taints so the collector is scheduled onto every node in the cluster, including tainted nodes (e.g. Karpenter-provisioned nodes). Set to [] to disable and use default scheduling. |
+| nodeSelector | object | `{}` | Node selector for constraining the collector to specific nodes |
+| affinity | object | `{}` | Affinity rules for the collector pods |
 | serviceAccount.create | bool | `true` | Whether to create a service account or not |
 | serviceAccount.name | string | `""` | The name of the service account to create or use |
 | serviceAccount.annotations | object | `{}` | Optional annotations to be applied to service account |

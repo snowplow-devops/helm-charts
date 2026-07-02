@@ -83,6 +83,18 @@ resources: {}
 # -- Grace period for termination of the service
 terminationGracePeriodSeconds: 60
 
+# -- Tolerations for the daemonset pods. Defaults to tolerating all taints so the
+# daemonset is scheduled onto every node in the cluster, including tainted nodes
+# (e.g. Karpenter-provisioned nodes). Set to [] to disable and use default scheduling.
+tolerations:
+  - operator: Exists
+
+# -- Node selector for constraining the daemonset to specific nodes
+nodeSelector: {}
+
+# -- Affinity rules for the daemonset pods
+affinity: {}
+
 service:
   deploy: true
   # -- Whether to setup service bindings
