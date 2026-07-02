@@ -70,6 +70,9 @@ helm delete daemonset
 | hostPaths | list | `[]` | List of host paths to mount to the deployment |
 | resources | object | `{}` | Map of resource constraints for the service |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
+| tolerations | list | `[{"operator":"Exists"}]` | Tolerations for the daemonset pods. Defaults to tolerating all taints so the daemonset is scheduled onto every node in the cluster, including tainted nodes (e.g. Karpenter-provisioned nodes). Set to [] to disable and use default scheduling. |
+| nodeSelector | object | `{}` | Node selector for constraining the daemonset to specific nodes |
+| affinity | object | `{}` | Affinity rules for the daemonset pods |
 | service.deploy | bool | `true` |  |
 | service.type | string | `"NodePort"` | Whether to setup service bindings |
 | service.name | string | `"http"` | Name of service |

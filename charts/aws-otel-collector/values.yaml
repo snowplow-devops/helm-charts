@@ -33,6 +33,18 @@ resources:
     cpu: 20m
     memory: 100Mi
 
+# -- Tolerations for the collector pods. Defaults to tolerating all taints so the
+# collector is scheduled onto every node in the cluster, including tainted nodes
+# (e.g. Karpenter-provisioned nodes). Set to [] to disable and use default scheduling.
+tolerations:
+  - operator: Exists
+
+# -- Node selector for constraining the collector to specific nodes
+nodeSelector: {}
+
+# -- Affinity rules for the collector pods
+affinity: {}
+
 serviceAccount:
   # -- Whether to create a service account or not
   create: true
