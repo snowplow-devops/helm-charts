@@ -1,3 +1,8 @@
+Version 0.3.43 (2026-07-02)
+---------------------------
+charts/karpenter-crds-0.1.0: Deploy Karpenter custom resource definitions (EC2NodeClass, NodeClaim, NodePool, NodeOverlay).
+charts/karpenter-0.1.0: Deploy AWS Karpenter controller for open-source node provisioning on EKS.
+
 Version 0.3.42 (2026-07-02)
 ---------------------------
 charts/daemonset-0.6.0: Add tolerations (default `- operator: Exists`), nodeSelector and affinity so the daemonset schedules onto every node, including tainted / Karpenter-provisioned nodes. Set tolerations to [] to revert to default scheduling.

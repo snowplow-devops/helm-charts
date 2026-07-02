@@ -1,0 +1,19 @@
+apiVersion: v2
+name: karpenter-crds
+description: Karpenter CRDs Helm chart for Kubernetes
+version: 0.1.0
+appVersion: "1.13.0"
+home: https://github.com/snowplow-devops/helm-charts
+icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+sources:
+  - https://github.com/snowplow-devops/helm-charts
+  - https://github.com/aws/karpenter-provider-aws
+maintainers:
+  - name: jamesarems
+    url: https://github.com/jamesarems
+    email: jamesarems@users.noreply.github.com
+keywords:
+  - karpenter
+  - eks
+  - autoscaling
+  - crd

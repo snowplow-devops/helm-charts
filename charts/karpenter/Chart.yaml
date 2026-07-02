@@ -1,0 +1,23 @@
+apiVersion: v2
+name: karpenter
+description: A Helm chart for Karpenter, an open-source node provisioning project built for Kubernetes.
+type: application
+version: 0.1.0
+appVersion: "1.13.0"
+home: https://karpenter.sh/
+icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+sources:
+  - https://github.com/snowplow-devops/helm-charts
+  - https://github.com/aws/karpenter-provider-aws
+maintainers:
+  - name: jamesarems
+    url: https://github.com/jamesarems
+    email: jamesarems@users.noreply.github.com
+keywords:
+  - karpenter
+  - eks
+  - autoscaling
+  - cluster
+  - node
+  - scheduler
+  - lifecycle
