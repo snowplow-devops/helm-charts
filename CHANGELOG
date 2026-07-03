@@ -1,3 +1,7 @@
+Version 0.3.44 (2026-07-03)
+---------------------------
+charts/cron-job-0.16.0: Add tolerations (default `- operator: Exists`) so cron job pods can be scheduled onto tainted / Karpenter-provisioned nodes. Set tolerations to [] to revert to default scheduling.
+
 Version 0.3.43 (2026-07-02)
 ---------------------------
 charts/karpenter-crds-0.1.0: Deploy Karpenter custom resource definitions (EC2NodeClass, NodeClaim, NodePool, NodeOverlay).
