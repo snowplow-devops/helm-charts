@@ -1991,6 +1991,59 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/github-actions-runners-0.1.0/github-actions-runners-0.1.0.tgz
     version: 0.1.0
+  karpenter:
+  - apiVersion: v2
+    appVersion: 1.13.0
+    created: "2026-07-03T08:17:55.577013943Z"
+    description: A Helm chart for Karpenter, an open-source node provisioning project
+      built for Kubernetes.
+    digest: fe24c0e5e9d8d963045305fda804b38db80c923532f7ed019ec1a1dc3fd8cb58
+    home: https://karpenter.sh/
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - karpenter
+    - eks
+    - autoscaling
+    - cluster
+    - node
+    - scheduler
+    - lifecycle
+    maintainers:
+    - email: jamesarems@users.noreply.github.com
+      name: jamesarems
+      url: https://github.com/jamesarems
+    name: karpenter
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/aws/karpenter-provider-aws
+    type: application
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/karpenter-0.1.0/karpenter-0.1.0.tgz
+    version: 0.1.0
+  karpenter-crds:
+  - apiVersion: v2
+    appVersion: 1.13.0
+    created: "2026-07-03T08:17:55.800167755Z"
+    description: Karpenter CRDs Helm chart for Kubernetes
+    digest: ea7800fd1c0798857189e8e52439216bb56a0de728db37f284f92624273f8d1c
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - karpenter
+    - eks
+    - autoscaling
+    - crd
+    maintainers:
+    - email: jamesarems@users.noreply.github.com
+      name: jamesarems
+      url: https://github.com/jamesarems
+    name: karpenter-crds
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/aws/karpenter-provider-aws
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/karpenter-crds-0.1.0/karpenter-crds-0.1.0.tgz
+    version: 0.1.0
   multi-service-deployment:
   - apiVersion: v2
     created: "2026-05-07T22:05:18.729443588Z"
@@ -4605,4 +4658,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-02T09:23:54.362980824Z"
+generated: "2026-07-03T08:17:55.80060686Z"
