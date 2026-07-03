@@ -72,6 +72,12 @@ resources: {}
 #    cpu: 400m
 #    memory: 512Mi
 
+# -- Tolerations for the cron job pods. Defaults to tolerating all taints so
+# jobs can be scheduled onto tainted nodes (e.g. Karpenter-provisioned nodes).
+# Set to [] to disable and use default scheduling.
+tolerations:
+  - operator: Exists
+
 # -- Container security context configuration
 # These defaults follow kubesec.io best practices for hardened deployments.
 #

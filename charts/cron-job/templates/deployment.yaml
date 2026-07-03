@@ -45,6 +45,11 @@ spec:
 
           restartPolicy: "{{ $.Values.restartPolicy }}"
 
+          {{- with $.Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
           {{- if or $.Values.configMaps $.Values.extraVolumes }}
           volumes:
           {{- range $v := $.Values.configMaps }}
