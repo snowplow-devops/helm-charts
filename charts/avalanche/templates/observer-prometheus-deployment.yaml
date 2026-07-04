@@ -25,7 +25,10 @@ spec:
         {{- include "avalanche.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: observer-prometheus
     spec:
-      serviceAccountName: {{ include "avalanche.observerKubernetes.serviceAccountName" . }}
+      {{- $sa := include "avalanche.observerPrometheus.serviceAccountName" . }}
+      {{- if $sa }}
+      serviceAccountName: {{ $sa }}
+      {{- end }}
       imagePullSecrets:
       - name: {{ .Values.dockerconfigjson.name }}
       containers:

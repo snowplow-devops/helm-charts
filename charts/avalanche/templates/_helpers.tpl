@@ -41,6 +41,24 @@ creds are injected directly), use the component's own ServiceAccount.
 {{- end }}
 
 {{/*
+ServiceAccount name for the observer-prometheus pod.
+
+Unlike observer-kubernetes, this observer only scrapes an HTTP /metrics
+endpoint — it needs NO k8s API ClusterRole, only AWS credentials to write to
+Timestream. When cloudserviceaccount is deployed (e.g. DS4, IRSA), reuse that
+ServiceAccount so the pod inherits its Timestream IRSA role. When it is not
+deployed (sandbox/local, where AWS creds are injected directly), this returns
+empty so the Deployment falls back to the default ServiceAccount — it must NOT
+reuse the observer-kubernetes SA, which only exists when observerKubernetes is
+enabled (QA-1121).
+*/}}
+{{- define "avalanche.observerPrometheus.serviceAccountName" -}}
+{{- if .Values.cloudserviceaccount.deploy -}}
+{{- required "cloudserviceaccount.name is required when cloudserviceaccount.deploy is true (observer-prometheus reuses that ServiceAccount for its Timestream IRSA role)" .Values.cloudserviceaccount.name -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "avalanche.chart" -}}
