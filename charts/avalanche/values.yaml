@@ -614,6 +614,42 @@ aws:
   # Local only: AWS session token (optional, for temporary credentials)
   sessionToken: ""
 
+# Prometheus JVM Observer configuration (QA-1121)
+# Scrapes a Prometheus /metrics endpoint (e.g. Enrich's health-probe port, which
+# serves /metrics when the common-streams Micrometer→Prometheus reporter is
+# enabled) and records the jvm_* series (heap / GC / threads) to the metrics DB.
+# Pure-Go HTTP scraper — no JMX. Writes to Timestream via the shared
+# cloudserviceaccount IRSA role (same as observerKubernetes), so
+# cloudserviceaccount.deploy must be true when enabled.
+observerPrometheus:
+  enabled: false
+  image:
+    repository: avalanche-observer-private
+    tag: latest
+  replicas: 1
+  componentId: "prometheus-jvm-observer"
+  config:
+    type: "prometheus-jvm"
+    name: "prometheus-jvm-observer"
+    pollInterval: "15s"
+    metricPrefixes:
+      - "jvm_"
+    # List of Prometheus /metrics endpoints to scrape. Each entry: url (required,
+    # absolute http(s) URL), role (optional identity tag), timeout (optional).
+    targets: []
+    # Example:
+    #   targets:
+    #     - url: "http://my-enrich.svc.cluster.local:8000/metrics"
+    #       role: "enrich"
+  # Preset-independent plain resource block (does not use sizingPreset).
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
 # Kubernetes Infrastructure Observer configuration (Phase 12.1 + QA-822)
 observerKubernetes:
   enabled: false  # master toggle — disabled by default; enable to monitor infra
