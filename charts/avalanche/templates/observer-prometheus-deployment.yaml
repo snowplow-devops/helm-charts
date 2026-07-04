@@ -53,7 +53,15 @@ spec:
             - name: AVALANCHE_INFLUXDB_URL
               value: {{ .Values.database.influxdb.url | quote }}
             - name: AVALANCHE_INFLUXDB_TOKEN
+            {{- if .Values.database.influxdb.token }}
               value: {{ .Values.database.influxdb.token | quote }}
+            {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "avalanche.fullname" . }}-db-credentials
+                  key: influxdb-token
+                  optional: true
+            {{- end }}
             - name: AVALANCHE_INFLUXDB_ORG
               value: {{ .Values.database.influxdb.org | quote }}
             - name: AVALANCHE_INFLUXDB_BUCKET
