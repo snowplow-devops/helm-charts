@@ -13,7 +13,7 @@ metadata:
     {{- include "snowplow.labels" . | nindent 4 }}
     app.kubernetes.io/component: observer-prometheus
 spec:
-  replicas: {{ .Values.observerPrometheus.replicas | default 1 }}
+  replicas: {{ .Values.observerPrometheus.replicas }}
   selector:
     matchLabels:
       {{- include "avalanche.selectorLabels" . | nindent 6 }}
