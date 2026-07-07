@@ -1,3 +1,7 @@
+Version 0.3.45 (2026-07-05)
+---------------------------
+charts/avalanche-0.8.0: Add the prometheus-jvm observer (observerPrometheus, disabled by default). New observer-prometheus Deployment, gated on observerPrometheus.enabled, that scrapes a Prometheus /metrics endpoint (e.g. Enrich's common-streams health-probe port) and records jvm_* series (heap / GC / threads / buffers) to the metrics backend for load-test analysis. New observer-prometheus.yaml (the pod's self-loaded config) and external-observer-prometheus.yaml (the external stub the test plan references for NATS phase coordination) configmap entries. A dedicated avalanche.observerPrometheus.serviceAccountName helper reuses the cloudserviceaccount SA (for the Timestream IRSA role) when deployed and otherwise falls back to the default SA (this observer needs no observer-kubernetes RBAC); AVALANCHE_INFLUXDB_TOKEN sources from the *-db-credentials secret when unset; replicas honours an explicit 0. (QA-1121, #344)
+
 Version 0.3.44 (2026-07-03)
 ---------------------------
 charts/cron-job-0.16.0: Add tolerations (default `- operator: Exists`) so cron job pods can be scheduled onto tainted / Karpenter-provisioned nodes. Set tolerations to [] to revert to default scheduling.

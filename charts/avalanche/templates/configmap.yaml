@@ -328,3 +328,37 @@ data:
   {{- end }}
 
   {{- end }}
+
+  # Prometheus JVM observer configs (QA-1121). observer-prometheus.yaml is the
+  # real config the pod self-loads via --config; external-observer-prometheus.yaml
+  # is the "external" stub the test plan references so the controller coordinates
+  # the (self-configured) pod over NATS for phase transitions.
+  {{- if .Values.observerPrometheus.enabled }}
+  observer-prometheus.yaml: |
+    type: {{ .Values.observerPrometheus.config.type | quote }}
+    name: {{ .Values.observerPrometheus.config.name | quote }}
+    config:
+      poll_interval: {{ .Values.observerPrometheus.config.pollInterval | quote }}
+      {{- if .Values.observerPrometheus.config.metricPrefixes }}
+      metric_prefixes:
+        {{- range .Values.observerPrometheus.config.metricPrefixes }}
+        - {{ . | quote }}
+        {{- end }}
+      {{- end }}
+      targets:
+        {{- range .Values.observerPrometheus.config.targets }}
+        - url: {{ .url | quote }}
+          {{- if .role }}
+          role: {{ .role | quote }}
+          {{- end }}
+          {{- if .timeout }}
+          timeout: {{ .timeout | quote }}
+          {{- end }}
+        {{- end }}
+  external-observer-prometheus.yaml: |
+    type: "external"
+    name: {{ .Values.observerPrometheus.config.name | quote }}
+    config:
+      timeout: "30s"
+      underlying_type: "prometheus-jvm"
+  {{- end }}
