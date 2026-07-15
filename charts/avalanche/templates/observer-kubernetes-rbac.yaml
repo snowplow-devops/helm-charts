@@ -21,6 +21,68 @@ metadata:
   {{- end }}
 {{- end }}
 {{- if .Values.observerKubernetes.api.enabled }}
+{{- if eq (.Values.observerKubernetes.rbac.scope | default "cluster") "namespace" }}
+---
+# QA-1057: namespace-scoped RBAC. The observer only ever makes namespaced API
+# calls (pods / deployments / events + metrics.k8s.io/pods — see
+# pkg/observer/kubernetes), so a Role in the release namespace is sufficient.
+# The cluster-only rules (nodes, nodes/status, namespaces, metrics.k8s.io/nodes)
+# are omitted — the observer never reads them, so nothing it collects is lost.
+# REQUIRES config.namespace = .Release.Namespace (forced in configmap.yaml when
+# scope=namespace); otherwise the observer would issue a cluster-wide
+# Pods("").List() that this namespaced Role cannot authorize (403).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: observer-kubernetes
+rules:
+  # Pod metrics - required for pod status and health monitoring
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/status
+    verbs: ["get", "list", "watch"]
+  # Deployment metrics - required for deployment status monitoring
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - deployments/status
+      - replicasets
+      - replicasets/status
+    verbs: ["get", "list", "watch"]
+  # Event metrics - required for monitoring warnings and errors
+  - apiGroups: [""]
+    resources:
+      - events
+    verbs: ["get", "list", "watch"]
+  # Metrics-server access - for CPU/memory utilization (pods only; node metrics
+  # need a ClusterRole and are not collected by this observer)
+  - apiGroups: ["metrics.k8s.io"]
+    resources:
+      - pods
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: observer-kubernetes
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "avalanche.fullname" . }}-observer-kubernetes
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "avalanche.observerKubernetes.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- else }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -82,5 +144,6 @@ subjects:
   - kind: ServiceAccount
     name: {{ include "avalanche.observerKubernetes.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
+{{- end }}
 {{- end }}
 {{- end }}

@@ -659,6 +659,19 @@ observerKubernetes:
   # in favour of these sub-toggles so a deployment can collect native K8s
   # metrics AND AWS CloudWatch metrics (e.g. Kinesis stream observation)
   # concurrently — useful when you have K8s API access and want both.
+  rbac:
+    # QA-1057. Scope of the RBAC granted to the (api) observer:
+    #   cluster   — ClusterRole/ClusterRoleBinding (default). Lets the observer
+    #               watch all namespaces (config.namespace: "" → Pods("").List()).
+    #   namespace — Role/RoleBinding in the release namespace only (least
+    #               privilege). The observer makes only namespaced API calls
+    #               (pods/deployments/events + metrics.k8s.io/pods) and never
+    #               reads nodes/namespaces, so NO collected metric is lost — the
+    #               only thing given up is cross-namespace watching. In this mode
+    #               config.namespace is FORCED to .Release.Namespace (see
+    #               configmap.yaml); a namespaced Role cannot authorize the
+    #               cluster-wide Pods("").List() that an empty namespace implies.
+    scope: cluster
   api:
     # Native Kubernetes API observer: reads pod / deployment / event / resource
     # metrics from the in-cluster K8s API + metrics-server. Requires the
@@ -709,6 +722,14 @@ observerKubernetes:
     namespaces: []  # List of specific namespaces to monitor
     labelSelector: ""  # Kubernetes label selector (e.g., "app=snowplow")
     fieldSelector: ""  # Kubernetes field selector
+    # QA-1057: scope which pods are RECORDED (not just which namespace is
+    # watched), mirroring the cloudwatch observer's podNameInclude. Go regexes
+    # matched against the pod name. Empty include = record all; empty exclude =
+    # exclude none. Snowman sets podNameInclude to the run's qa-<hash> prefix so
+    # a shared namespace (DS4's com-snplow-qa-aws-prod1) yields only the
+    # pipeline-under-test + co-located avalanche pods, not every unrelated pod.
+    podNameInclude: ""
+    podNameExclude: ""
     # Polling configuration
     pollInterval: "10s"
     # podNamePattern / podNameReplacement: regex fallback used by RoleResolver
