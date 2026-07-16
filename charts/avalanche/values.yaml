@@ -674,8 +674,10 @@ observerKubernetes:
     scope: cluster
   api:
     # Native Kubernetes API observer: reads pod / deployment / event / resource
-    # metrics from the in-cluster K8s API + metrics-server. Requires the
-    # ClusterRole defined in observer-kubernetes-rbac.yaml.
+    # metrics from the in-cluster K8s API + metrics-server. Requires the RBAC
+    # defined in observer-kubernetes-rbac.yaml — a ClusterRole/ClusterRoleBinding
+    # when rbac.scope=cluster, or a namespaced Role/RoleBinding when
+    # rbac.scope=namespace (see rbac.scope above).
     enabled: true
   cloudwatch:
     # CloudWatch observer (QA-824 + QA-828): reads pod-level Container Insights
