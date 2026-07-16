@@ -21,11 +21,15 @@ metadata:
   {{- end }}
 {{- end }}
 {{- if .Values.observerKubernetes.api.enabled }}
-{{- if eq (.Values.observerKubernetes.rbac.scope | default "cluster") "namespace" }}
+{{- $scope := .Values.observerKubernetes.rbac.scope | default "cluster" }}
+{{- if not (or (eq $scope "cluster") (eq $scope "namespace")) }}
+{{- fail (printf "observerKubernetes.rbac.scope must be \"cluster\" or \"namespace\", got %q" $scope) }}
+{{- end }}
+{{- if eq $scope "namespace" }}
 ---
 # QA-1057: namespace-scoped RBAC. The observer only ever makes namespaced API
-# calls (pods / deployments / events + metrics.k8s.io/pods — see
-# pkg/observer/kubernetes), so a Role in the release namespace is sufficient.
+# calls (pods / deployments / events + metrics.k8s.io/pods), so a Role in the
+# release namespace is sufficient.
 # The cluster-only rules (nodes, nodes/status, namespaces, metrics.k8s.io/nodes)
 # are omitted — the observer never reads them, so nothing it collects is lost.
 # REQUIRES config.namespace = .Release.Namespace (forced in configmap.yaml when
