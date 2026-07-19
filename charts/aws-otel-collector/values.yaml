@@ -6,9 +6,9 @@ fullnameOverride: ""
 clusterName: ""
 
 image:
-  # -- Image to use for deploying
+  # -- Image to use for deploying - see Github repo https://github.com/aws-observability/aws-otel-collector for available version
   repository: public.ecr.aws/aws-observability/aws-otel-collector
-  tag: v0.48.0
+  tag: v0.49.0
   pullPolicy: IfNotPresent
 
 # -- Pod/container securityContext for the collector. Defaults to running as root
