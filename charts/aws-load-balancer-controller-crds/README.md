@@ -2,7 +2,20 @@
 
 A helm chart for the custom resource defintions behind the [aws-load-balancer-controller](https://github.com/aws/eks-charts/tree/master/stable/aws-load-balancer-controller) chart.  This allows both pieces to be installed with Helm and avoids needing to use `kubectl` to install the resource definition which is important for a fully automated deployment with IaC tooling like Terraform.
 
-The chart templates are pulled entirely from this file: https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/crds/crds.yaml
+The chart templates are pulled entirely from these upstream files:
+
+- <https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/crds/crds.yaml>
+- <https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/crds/gateway-crds.yaml>
+
+This tracks `aws-load-balancer-controller` `appVersion` `v3.4.2` and includes the following CRDs:
+
+- `albtargetcontrolconfigs.elbv2.k8s.aws`
+- `globalaccelerators.aga.k8s.aws`
+- `ingressclassparams.elbv2.k8s.aws`
+- `targetgroupbindings.elbv2.k8s.aws`
+- `listenerruleconfigurations.gateway.k8s.aws` (Gateway API)
+- `loadbalancerconfigurations.gateway.k8s.aws` (Gateway API)
+- `targetgroupconfigurations.gateway.k8s.aws` (Gateway API)
 
 ## Installing the Chart
 
