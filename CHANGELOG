@@ -1,3 +1,7 @@
+Version 0.3.48 (2026-07-21)
+---------------------------
+charts/aws-load-balancer-controller-crds-0.2.0: Update CRDs to upstream aws-load-balancer-controller appVersion v3.4.2 (controller-gen v0.19.0), a large jump from the previous v2.3.1 / controller-gen v0.11.1. Refreshes the existing ingressclassparams and targetgroupbindings CRD schemas and adds the two new base CRDs shipped by upstream crds.yaml (albtargetcontrolconfigs.elbv2.k8s.aws, globalaccelerators.aga.k8s.aws). Also adds the three Gateway API CRDs from upstream gateway-crds.yaml (listenerruleconfigurations, loadbalancerconfigurations, targetgroupconfigurations under gateway.k8s.aws), which the v3.x controller watches for and logs errors about when absent. All additions are backward-compatible; the old target_group_bindings.yaml template is replaced by crds.yaml + gateway-crds.yaml mirroring the upstream layout.
+
 Version 0.3.47 (2026-07-19)
 ---------------------------
 charts/aws-otel-collector-0.16.0: Bump version used to 0.49.0 (#346)
