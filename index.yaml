@@ -213,6 +213,31 @@ entries:
     version: 0.1.0
   aws-load-balancer-controller-crds:
   - apiVersion: v1
+    appVersion: v3.4.2
+    created: "2026-07-21T07:15:29.310824174Z"
+    description: AWS Load Balancer Controller CRDs Helm chart for Kubernetes
+    digest: 2d90bdda75401665ffcb6c7e131e6ee7eb31a60643e335ffb0d51f2a83979fb4
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - eks
+    - alb
+    - load balancer
+    - ingress
+    - nlb
+    maintainers:
+    - email: jbeemster@users.noreply.github.com
+      name: jbeemster
+      url: https://github.com/jbeemster
+    name: aws-load-balancer-controller-crds
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/crds/crds.yaml
+    - https://github.com/aws/eks-charts/blob/master/stable/aws-load-balancer-controller/crds/gateway-crds.yaml
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/aws-load-balancer-controller-crds-0.2.0/aws-load-balancer-controller-crds-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v1
     appVersion: v2.3.1
     created: "2023-07-27T07:54:41.204347331Z"
     description: AWS Load Balancer Controller CRDs Helm chart for Kubernetes
@@ -4763,4 +4788,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-20T08:02:15.526676059Z"
+generated: "2026-07-21T07:15:29.311223571Z"
