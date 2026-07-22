@@ -19,23 +19,23 @@ data:
     type: {{ .Values.injector.config.type | quote }}
     name: {{ .Values.injector.config.name | quote }}
     config:
-      {{- if .Values.mockTarget.enabled }}
-      endpoint: "http://{{ include "avalanche.fullname" . }}-mock-target:{{ .Values.mockTarget.port }}"
-      {{- else if .Values.injector.config.endpoint }}
-      endpoint: {{ .Values.injector.config.endpoint | quote }}
+      {{- $delivery := .Values.injector.config.delivery }}
+      {{- if and $delivery (not (has $delivery.mode (list "http" "kinesis"))) }}
+        {{- fail (printf "injector.config.delivery.mode must be \"http\" or \"kinesis\", got %q" $delivery.mode) }}
       {{- end }}
-      {{- with .Values.injector.config.delivery }}
+      {{- if and $delivery (eq $delivery.mode "kinesis") }}
+      {{- /* Collector-less: write straight to the raw Kinesis stream; endpoint is not rendered. */}}
       delivery:
-        mode: {{ .mode | quote }}
-        {{- if .streamArn }}
-        stream_arn: {{ .streamArn | quote }}
+        mode: "kinesis"
+        stream_arn: {{ required "injector.config.delivery.streamArn is required when delivery.mode is kinesis" $delivery.streamArn | quote }}
+        region: {{ required "injector.config.delivery.region is required when delivery.mode is kinesis" $delivery.region | quote }}
+        {{- with $delivery.partitionKey }}
+        partition_key: {{ . | quote }}
         {{- end }}
-        {{- if .region }}
-        region: {{ .region | quote }}
-        {{- end }}
-        {{- if .partitionKey }}
-        partition_key: {{ .partitionKey | quote }}
-        {{- end }}
+      {{- else if .Values.mockTarget.enabled }}
+      endpoint: "http://{{ include "avalanche.fullname" . }}-mock-target:{{ .Values.mockTarget.port }}"
+      {{- else }}
+      endpoint: {{ .Values.injector.config.endpoint | quote }}
       {{- end }}
       {{- if .Values.injector.config.protocol }}
       protocol: {{ .Values.injector.config.protocol | quote }}
