@@ -21,8 +21,21 @@ data:
     config:
       {{- if .Values.mockTarget.enabled }}
       endpoint: "http://{{ include "avalanche.fullname" . }}-mock-target:{{ .Values.mockTarget.port }}"
-      {{- else }}
+      {{- else if .Values.injector.config.endpoint }}
       endpoint: {{ .Values.injector.config.endpoint | quote }}
+      {{- end }}
+      {{- with .Values.injector.config.delivery }}
+      delivery:
+        mode: {{ .mode | quote }}
+        {{- if .streamArn }}
+        stream_arn: {{ .streamArn | quote }}
+        {{- end }}
+        {{- if .region }}
+        region: {{ .region | quote }}
+        {{- end }}
+        {{- if .partitionKey }}
+        partition_key: {{ .partitionKey | quote }}
+        {{- end }}
       {{- end }}
       {{- if .Values.injector.config.protocol }}
       protocol: {{ .Values.injector.config.protocol | quote }}
