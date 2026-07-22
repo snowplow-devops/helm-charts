@@ -1,6 +1,6 @@
 Version 0.3.49 (2026-07-22)
 ---------------------------
-charts/avalanche-0.11.0: Add collector-less (raw Kinesis) delivery to the Snowplow injector. The injector config now renders a `delivery` block (mode / stream_arn / region / partition_key) and omits `endpoint` when it is unset, so the injector can write CollectorPayload Thrift records straight to a raw Kinesis stream (PutRecords) instead of POSTing to a collector — used by the collector-less Enrich perf topology (QA-1232). Requires the avalanche injector image >= v0.11.0 (which adds delivery.mode support). The default (http delivery with endpoint set) is byte-for-byte the previous behaviour.
+charts/avalanche-0.11.0: Add collector-less (raw Kinesis) delivery to the Snowplow injector. Set injector.config.delivery.mode: kinesis to render a `delivery` block (mode / stream_arn / region / partition_key) instead of `endpoint`, so the injector writes CollectorPayload Thrift records straight to a raw Kinesis stream (PutRecords) rather than POSTing to a collector — used by the collector-less Enrich perf topology (QA-1232). In kinesis mode `endpoint` is not rendered and streamArn + region are required (the chart fails to render if either is missing); an unrecognised mode also fails. Requires the avalanche injector image >= v0.11.0 (which adds delivery.mode support). The default (mode unset / http, endpoint set) is byte-for-byte the previous behaviour.
 
 Version 0.3.48 (2026-07-21)
 ---------------------------

@@ -249,12 +249,15 @@ injector:
     name: "k8s-injector"
     endpoint: "http://host.docker.internal:8085"
     # Collector-less (raw Kinesis) delivery for the snowplow injector (QA-1232).
-    # When set, the injector writes CollectorPayload Thrift records straight to the
-    # raw stream instead of POSTing to `endpoint` (which is then omitted).
+    # Set delivery.mode: kinesis to make the injector write CollectorPayload Thrift
+    # records straight to the raw stream; in kinesis mode `endpoint` above is NOT
+    # rendered (it is ignored, so it need not be cleared), and streamArn + region
+    # are required (the chart fails to render if either is missing). mode: http
+    # (or leaving delivery unset) keeps the default endpoint-based delivery.
     # delivery:
     #   mode: "kinesis"           # "http" (default) or "kinesis"
-    #   streamArn: ""             # raw collector_payloads stream ARN (required for kinesis)
-    #   region: ""                # AWS region of the stream (required for kinesis)
+    #   streamArn: ""             # raw collector_payloads stream ARN (required when mode: kinesis)
+    #   region: ""                # AWS region of the stream (required when mode: kinesis)
     #   partitionKey: "random"    # "random" (default) or "correlation_id"
     # Protocol for HTTP injector type (not used by snowplow type).
     protocol: "http"
