@@ -164,6 +164,13 @@ data:
         run: {{ .Values.aggregatorKubernetes.config.outputMeasurements.run | quote }}
       {{- end }}
       window_duration: {{ .Values.aggregatorKubernetes.config.windowDuration | quote }}
+      {{- with .Values.aggregatorKubernetes.config.sourceFilter }}
+      # QA-1233: single-source read so dual-observer runs don't duplicate rollups.
+      source_filter:
+        {{- range $tag, $value := . }}
+        {{ $tag }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
       group_by:
         {{- range .Values.aggregatorKubernetes.config.groupBy }}
         - {{ . }}
@@ -287,8 +294,10 @@ data:
       {{- if .Values.observerKubernetes.config.podNameInclude }}
       pod_name_include: {{ .Values.observerKubernetes.config.podNameInclude | quote }}
       {{- end }}
-      {{- if .Values.observerKubernetes.config.podNameExclude }}
-      pod_name_exclude: {{ .Values.observerKubernetes.config.podNameExclude | quote }}
+      {{- /* QA-1233: compose the auxiliary-pod exclusion (kclmon) with any caller exclude. */}}
+      {{- $apiExclude := include "avalanche.podExclude" (dict "base" .Values.observerKubernetes.config.podNameExclude "ctx" .) }}
+      {{- if $apiExclude }}
+      pod_name_exclude: {{ $apiExclude | quote }}
       {{- end }}
       metrics:
         pods: {{ .Values.observerKubernetes.config.metrics.pods }}
@@ -324,8 +333,12 @@ data:
           {{- if .podNameInclude }}
           pod_name_include: {{ .podNameInclude | quote }}
           {{- end }}
-          {{- if .podNameExclude }}
-          pod_name_exclude: {{ .podNameExclude | quote }}
+          {{- /* QA-1233: compose the auxiliary-pod exclusion (kclmon) with the
+                 target's exclude, defaulting to the observer self-guard (^observer-)
+                 so setting the field here doesn't drop the code-side default. */}}
+          {{- $cwExclude := include "avalanche.podExclude" (dict "base" (default "^observer-" .podNameExclude) "ctx" $) }}
+          {{- if $cwExclude }}
+          pod_name_exclude: {{ $cwExclude | quote }}
           {{- end }}
           {{- /* Per-target podNamePattern / podNameReplacement override the
                  cloudwatch-level defaults. hasKey (not `default`) is used so

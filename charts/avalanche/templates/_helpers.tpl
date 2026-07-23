@@ -278,3 +278,23 @@ AWS environment variables
 {{- end }}
 {{- end }}
 
+
+{{/*
+QA-1233: compose a pod-name exclude regex with the auxiliary-pod pattern.
+Churny auxiliary pods (e.g. enrich's KCL checkpoint monitor, a CronJob that
+spawns many short-lived pods) pollute the k8s panels/aggregates. When
+observerKubernetes.excludeAuxiliaryPods is true, OR the auxiliary pattern into
+the effective exclude — composing with, not overwriting, any base exclude so a
+caller-supplied regex (or the cloudwatch self-observation guard) is preserved.
+
+Args: dict "base" <string> "ctx" <root>
+Returns the effective exclude regex, or "" when nothing should be excluded.
+*/}}
+{{- define "avalanche.podExclude" -}}
+{{- $base := .base | default "" -}}
+{{- $aux := "" -}}
+{{- if .ctx.Values.observerKubernetes.excludeAuxiliaryPods -}}
+{{- $aux = .ctx.Values.observerKubernetes.auxiliaryPodPattern | default "" -}}
+{{- end -}}
+{{- if and $base $aux -}}({{ $base }})|({{ $aux }}){{- else if $aux -}}{{ $aux }}{{- else -}}{{ $base }}{{- end -}}
+{{- end }}
