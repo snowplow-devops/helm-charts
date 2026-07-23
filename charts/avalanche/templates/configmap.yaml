@@ -20,21 +20,23 @@ data:
     name: {{ .Values.injector.config.name | quote }}
     config:
       {{- $delivery := .Values.injector.config.delivery }}
-      {{- if and $delivery (not (has $delivery.mode (list "http" "kinesis"))) }}
-        {{- fail (printf "injector.config.delivery.mode must be \"http\" or \"kinesis\", got %q" $delivery.mode) }}
+      {{- /* Resolve the delivery mode: an absent block, or a block with no mode,
+             is treated as "" (default http path) rather than an error. */}}
+      {{- $deliveryMode := "" }}
+      {{- if $delivery }}{{- $deliveryMode = ($delivery.mode | default "") }}{{- end }}
+      {{- if and (ne $deliveryMode "") (not (has $deliveryMode (list "http" "kinesis"))) }}
+        {{- fail (printf "injector.config.delivery.mode must be \"http\" or \"kinesis\", got %q" $deliveryMode) }}
       {{- end }}
-      {{- if and $delivery (eq $delivery.mode "kinesis") }}
+      {{- if eq $deliveryMode "kinesis" }}
       {{- /* Collector-less: write straight to the raw Kinesis stream; endpoint is not rendered. */}}
       delivery:
         mode: "kinesis"
         stream_arn: {{ required "injector.config.delivery.streamArn is required when delivery.mode is kinesis" $delivery.streamArn | quote }}
         region: {{ required "injector.config.delivery.region is required when delivery.mode is kinesis" $delivery.region | quote }}
-        {{- with $delivery.partitionKey }}
-        partition_key: {{ . | quote }}
-        {{- end }}
+        partition_key: {{ $delivery.partitionKey | default "random" | quote }}
       {{- else if .Values.mockTarget.enabled }}
       endpoint: "http://{{ include "avalanche.fullname" . }}-mock-target:{{ .Values.mockTarget.port }}"
-      {{- else }}
+      {{- else if .Values.injector.config.endpoint }}
       endpoint: {{ .Values.injector.config.endpoint | quote }}
       {{- end }}
       {{- if .Values.injector.config.protocol }}
