@@ -448,6 +448,12 @@ aggregatorKubernetes:
     type: "metrics-aggregator"
     name: "kubernetes-monitoring-aggregator"
     sourceMeasurement: "kubernetes_monitoring"
+    # QA-1233: read only the in-cluster (metrics-server) observer's rows. When the
+    # cloudwatch observer also writes kubernetes_monitoring for the same pods, this
+    # keeps the window/phase/run rollups single-source instead of duplicating every
+    # component. Empty map = no filter (other aggregators leave this unset).
+    sourceFilter:
+      source: "k8s-api"
     # Multi-level output measurements
     outputMeasurements:
       window: "kubernetes_monitoring_window"
@@ -665,6 +671,14 @@ observerPrometheus:
 # Kubernetes Infrastructure Observer configuration (Phase 12.1 + QA-822)
 observerKubernetes:
   enabled: false  # master toggle — disabled by default; enable to monitor infra
+  # QA-1233: exclude churny auxiliary pods from BOTH observers (api + cloudwatch).
+  # enrich's KCL checkpoint monitor runs as a CronJob and spawns many short-lived
+  # pods that pollute the k8s panels and inflate aggregate counts. The pattern is
+  # OR-composed into each observer's effective pod_name_exclude (it does not
+  # overwrite a caller-supplied exclude or the cloudwatch self-observation guard).
+  # Set excludeAuxiliaryPods=false to observe kclmon (e.g. to investigate it).
+  excludeAuxiliaryPods: true
+  auxiliaryPodPattern: "kclmon"
   # api and cloudwatch are independent observers that can be enabled together
   # or separately. The previous `mode: api|cloudwatch` toggle has been removed
   # in favour of these sub-toggles so a deployment can collect native K8s
