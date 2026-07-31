@@ -173,6 +173,7 @@ service:
     #   certificateCreate: false # -- Create a Certificate resource for this Ingress (default: true)
     #   certificateIssuerName: cloudflare # -- What issuer to use for the Certificate (default: letsencrypt)
     #   certificateIssuerKind: Issuer # -- Kind of issuer (default: ClusterIssuer)
+    #   tlsSecretName: iglu-server-example-com-tls # -- Override TLS secret name (optional, defaults to {hostname}-tls). Setting this skips Certificate creation.
     #   annotations: {} # -- Map of annotations to add to the ingress.
   # -- List of IP addresses to restrict ingress traffic to
   ingressIPAllowlist: []

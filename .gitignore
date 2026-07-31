@@ -23,3 +23,6 @@ build/
 
 # Ignore all local charts
 **/*.tgz
+
+# Other
+.codegraph
