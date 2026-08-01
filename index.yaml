@@ -3805,6 +3805,35 @@ entries:
   snowplow-iglu-server:
   - apiVersion: v2
     appVersion: 0.13.0
+    created: "2026-08-01T12:50:39.694793589Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to deploy the Snowplow Iglu Server project
+    digest: 5ed83d72b0609ecefbe9d161f9a7c8679a0492fd54404e401857f47dd9be2e3a
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - snowplow
+    - iglu
+    - schemas
+    maintainers:
+    - email: ianarsenault@users.noreply.github.com
+      name: ianarsenault
+      url: https://github.com/ianarsenault
+    name: snowplow-iglu-server
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    - https://github.com/snowplow-incubator/iglu-server
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-iglu-server-0.19.0/snowplow-iglu-server-0.19.0.tgz
+    version: 0.19.0
+  - apiVersion: v2
+    appVersion: 0.13.0
     created: "2026-05-15T11:28:28.150192604Z"
     dependencies:
     - name: dockerconfigjson
@@ -4848,4 +4877,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-24T11:51:38.08014338Z"
+generated: "2026-08-01T12:50:39.695169121Z"
