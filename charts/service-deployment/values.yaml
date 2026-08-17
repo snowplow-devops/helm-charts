@@ -237,6 +237,14 @@ service:
     # -- htpasswd-formatted users string (bcrypt hash, e.g. "user:$2y$05$...")
     users: ""
 
+  buffering:
+    # -- Enable request buffering middleware
+    enabled: false
+    # -- Maximum request body size in bytes before the request is rejected
+    maxRequestBodyBytes: 2097152
+    # -- Request body size in bytes buffered in memory before spilling to disk
+    memRequestBodyBytes: 2097152
+
 dockerconfigjson:
   # -- Name of the secret to use for the private repository
   name: "snowplow-sd-dockerhub"

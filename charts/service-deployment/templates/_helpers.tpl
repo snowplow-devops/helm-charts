@@ -58,6 +58,9 @@ Usage: {{ include "service.traefik.middlewares" . }}
 {{- if $.Values.service.basicAuth.enabled -}}
   {{- $middlewares = append $middlewares (printf "%s-%s-basic-auth@kubernetescrd" $.Release.Namespace (include "app.fullname" $)) -}}
 {{- end -}}
+{{- if $.Values.service.buffering.enabled -}}
+  {{- $middlewares = append $middlewares (printf "%s-%s-buffering@kubernetescrd" $.Release.Namespace (include "app.fullname" $)) -}}
+{{- end -}}
 {{- if $middlewares -}}
 {{- join ", " $middlewares | quote -}}
 {{- end -}}

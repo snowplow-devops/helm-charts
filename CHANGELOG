@@ -1,3 +1,7 @@
+Version 0.3.52 (2026-08-17)
+---------------------------
+charts/service-deployment-0.42.0: Add buffering middleware support (#354)
+
 Version 0.3.51 (2026-07-31)
 ---------------------------
 charts/snowplow-iglu-server-0.19.0: Add optional service.ingress.<name>.tlsSecretName to use an existing TLS secret instead of the hardcoded {hostname}-tls, suppressing the cert-manager Certificate when set.

@@ -93,6 +93,10 @@ The repository uses ct.yaml for chart-testing configuration:
 4. Run chart-testing linter: `ct lint --charts charts/[chart-name]`
 5. Update `CHANGELOG` with version and changes
 
+### Maintainers
+- Keep the `maintainers` list in each chart's `Chart.yaml` sorted alphabetically by `name`.
+- After editing `maintainers`, regenerate the chart's `README.md` with `helm-docs` so its maintainers table stays in sync.
+
 ## File Structure Patterns
 
 ### Standard Chart Structure

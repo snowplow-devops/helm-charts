@@ -1,6 +1,6 @@
 # service-deployment
 
-![Version: 0.41.0](https://img.shields.io/badge/Version-0.41.0-informational?style=flat-square)
+![Version: 0.42.0](https://img.shields.io/badge/Version-0.42.0-informational?style=flat-square)
 
 A Helm Chart to setup a generic deployment with optional service/hpa/vpa bindings
 
@@ -10,7 +10,9 @@ A Helm Chart to setup a generic deployment with optional service/hpa/vpa binding
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| jbeemster | <jbeemster@users.noreply.github.com> | <https://github.com/jbeemster> |
+| Andy-Hay | <3116331+Andy-Hay@users.noreply.github.com> | <https://github.com/Andy-Hay> |
+| ianarsenault | <ianarsenault@users.noreply.github.com> | <https://github.com/ianarsenault> |
+| jamesarems | <jamesarems@users.noreply.github.com> | <https://github.com/jamesarems> |
 
 ## Source Code
 
@@ -98,6 +100,9 @@ A Helm Chart to setup a generic deployment with optional service/hpa/vpa binding
 | service.basicAuth | object | `{"enabled":false,"users":""}` | Basic authentication configuration |
 | service.basicAuth.enabled | bool | `false` | Enable basic authentication |
 | service.basicAuth.users | string | `""` | htpasswd-formatted users string (bcrypt hash, e.g. "user:$2y$05$...") |
+| service.buffering.enabled | bool | `false` | Enable request buffering middleware |
+| service.buffering.maxRequestBodyBytes | int | `2097152` | Maximum request body size in bytes before the request is rejected |
+| service.buffering.memRequestBodyBytes | int | `2097152` | Request body size in bytes buffered in memory before spilling to disk |
 | service.deploy | bool | `true` | Whether to setup service bindings (note: only NodePort is supported) |
 | service.gcp.networkEndpointGroupName | string | `""` | Name of the Network Endpoint Group to bind onto |
 | service.ingress | object | `{}` | A map of ingress rules to deploy |
