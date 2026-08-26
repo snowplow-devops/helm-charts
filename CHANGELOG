@@ -1,3 +1,7 @@
+Version 0.3.53 (2026-08-24)
+---------------------------
+charts/avalanche-0.12.1: Comment-only correction to the aggregatorKubernetes field whitelist. The percent-of-limit / percent-of-cluster entries claimed that including CloudWatch-only fields is "harmless (missing fields aggregate to zero)". That is not what the aggregator does: computeStats skips any field with no values and the Timestream source only populates a field when the column is non-NULL, so a field absent from every source row is omitted from the rollup entirely and a rule referencing it sees a missing field, not a zero. The old wording implied a guarantee that does not exist, and that false guarantee is what made rule guards of the form `<resource>_limit_* == 0.0 ||` look safe when they were in fact the mechanism by which those rules passed vacuously (a zero denominator short-circuited the rule to "passed" while asserting nothing). Also notes that QA-1271 added *_usage_percent_of_limit to the api-mode observer, so both observer paths now feed equivalent (entity x phase) rows. No template or default change: rendering the chart with the aggregators enabled produces output identical to 0.12.0 apart from the chart-version labels (helm.sh/chart, app.kubernetes.io/version), verified by diff. (QA-1271)
+
 Version 0.3.52 (2026-08-17)
 ---------------------------
 charts/service-deployment-0.42.0: Add buffering middleware support (#354)

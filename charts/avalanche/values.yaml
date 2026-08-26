@@ -507,11 +507,20 @@ aggregatorKubernetes:
       error_event_count:
         - last
         - max
-      # CloudWatch-mode fields (QA-822). The CW observer writes percent-of-limit
-      # and percent-of-cluster fields; these aren't produced by the api-mode
-      # observer, but adding them to the aggregator's whitelist is harmless
-      # there (missing fields aggregate to zero) and makes both observer
-      # paths feed equivalent (entity × phase) rows.
+      # Percent-of-limit / percent-of-cluster fields (QA-822 CloudWatch; QA-1271
+      # added percent-of-limit to the api-mode observer too, so both observer
+      # paths now feed equivalent (entity × phase) rows and a rule written
+      # against a percentage works whichever source fed the row).
+      #
+      # QA-1271 correction: an absent field does NOT "aggregate to zero" as this
+      # comment used to claim. computeStats skips any field with no values
+      # (`len(values) == 0 -> continue`) and the Timestream source only populates
+      # a field when the column is non-NULL, so a field absent from every source
+      # row is OMITTED from the rollup entirely — no _mean/_last is emitted, and
+      # a rule referencing it sees a missing field rather than a zero. That is
+      # deliberate: it keeps "no limit configured" distinguishable from "a limit
+      # of zero", which is what made the old `_limit_* == 0.0 ||` rule guards
+      # pass vacuously.
       cpu_usage_percent_of_limit:
         - mean
         - max
