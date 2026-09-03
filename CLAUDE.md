@@ -90,12 +90,77 @@ The repository uses ct.yaml for chart-testing configuration:
 1. Create/modify chart templates in `charts/[chart-name]/templates/`
 2. Update `Chart.yaml` version following semantic versioning
 3. Test chart rendering: `helm template test-release charts/[chart-name]`
-4. Run chart-testing linter: `ct lint --charts charts/[chart-name]`
-5. Update `CHANGELOG` with version and changes
+4. If the chart has a `values.schema.json`, regenerate it after any `values.yaml` change: `cd charts/[chart-name] && helm schema --use-helm-docs`
+5. Run chart-testing linter: `ct lint --charts charts/[chart-name]`
+6. Regenerate `README.md` with `helm-docs` if values changed
+7. Update `CHANGELOG` with version and changes
 
 ### Maintainers
 - Keep the `maintainers` list in each chart's `Chart.yaml` sorted alphabetically by `name`.
 - After editing `maintainers`, regenerate the chart's `README.md` with `helm-docs` so its maintainers table stays in sync.
+
+## Values Schema Validation
+
+Charts opt in to `values.schema.json`, which `helm lint` (and therefore `ct lint` on every PR) enforces automatically, and `helm package` ships to consumers. `service-deployment` is the reference implementation.
+
+**Tooling** — [losisin/helm-values-schema-json](https://github.com/losisin/helm-values-schema-json), pinned:
+```bash
+helm plugin install https://github.com/losisin/helm-values-schema-json --version 2.6.0
+```
+The version appears in three places that must move together: `SCHEMA_PLUGIN_VERSION` in `scripts/helm-schema-lib.sh`, the comment in `.pre-commit-config.yaml`, and the install step in `.github/workflows/lint-test.yml`. Mismatched versions produce CI drift that cannot be reproduced locally, so the scripts refuse to run on a mismatch.
+
+### Adopting a new chart
+
+1. `cd charts/[chart-name] && helm schema --use-helm-docs` — bootstrapping is manual; the pre-commit hook skips charts with no committed schema, which is what allows charts to be adopted one at a time.
+2. Render with real overrides and fix anything wrongly rejected (see traps below), re-running `helm schema --use-helm-docs` after each `values.yaml` edit.
+3. Add `tests/schema/valid-values.yaml` and `tests/schema/invalid-values.yaml`, plus a `.helmignore` containing `tests/` so fixtures are not packaged.
+4. `./scripts/helm-schema-test.sh` must pass.
+5. Bump `Chart.yaml`, regenerate `README.md` with `helm-docs`, add a `CHANGELOG` entry.
+
+### `values.schema.json` is a build artifact
+
+Never hand-edit it. The pre-commit hook and the CI `schema` job regenerate it from `values.yaml`, so manual edits are silently overwritten and CI fails on the diff. All constraints belong in `values.yaml` as inline `# @schema` annotations, which are reproduced on every regeneration:
+
+```yaml
+port:  # @schema type: [integer, "null"]
+```
+
+Use the **trailing** form with **two spaces** before the `#`. `ct lint` bundles a stricter yamllint than the repo's own hook and fails on one space. A comment that begins `# @schema` is parsed as an annotation, so ordinary comments must not start that way. Only a subset of keywords is supported — `type`, `additionalProperties`, `$ref` and similar; `if`/`then` and `properties` are rejected by the generator.
+
+### Traps when generating a schema
+
+The generator infers types from default values, so a default that shows only one valid form produces a schema that rejects the others. Check these before committing:
+
+- **Kubernetes IntOrString fields** — probe ports, `service.targetPort`, `maxUnavailable`/`maxSurge`, PDB `minAvailable`/`maxUnavailable`. A default of `80` infers `integer` and rejects a named port; `"25%"` infers `string` and rejects `3`.
+- **Declared-but-empty keys** — `env:` with no value infers `null`, rejecting any map. Annotate `type: [object, "null"]`.
+- **Keys used by templates but only documented in comments** — e.g. `persistentVolume.storageClass`. These get no schema entry and stay unvalidated; a strict schema would reject them outright.
+- **Keys absent from `values.yaml` entirely** — e.g. `containerSecurityContext.runAsUser`. Unvalidated, any type passes. Adding them to `values.yaml` gives validation, but where a template does `toYaml` over the parent map a `null` default renders as an explicit `null` in the manifest, changing `checksum/values` and rolling pods.
+
+Keep schemas **permissive** (no `additionalProperties: false`) for charts that pass through free-form maps such as `resources`, `hooks`, `affinity`, `topologySpreadConstraints`, `podLabels`, `service.ingress` and `extraObjects`. `additionalProperties: false` also rejects keys a caller currently passes, which breaks existing deployments.
+
+### Fixtures
+
+`charts/[chart-name]/tests/schema/` holds `valid-*.yaml` (must render) and `invalid-*.yaml` (must be rejected). An invalid fixture needs an `# expect: <substring>` header and the error must match it — otherwise a fixture that fails for an unrelated reason, such as a template bug or a typo in the fixture, reads as a pass and stops testing anything.
+
+```yaml
+# expect: livenessProbe.httpGet.port: Invalid type. Expected: [integer,null], given: string
+livenessProbe:
+  httpGet:
+    port: "8080"
+```
+
+Run with `./scripts/helm-schema-test.sh` (all charts with fixtures) or pass chart directories as arguments.
+
+### Automation
+
+| | Role |
+|---|---|
+| `scripts/helm-schema-lib.sh` | pinned version, flags, opt-in rule — shared |
+| `scripts/helm-schema.sh` | pre-commit hook — **writes** the schema |
+| `scripts/helm-schema-check.sh` | CI drift check — **verifies** only, scoped by `ct list-changed` |
+| `scripts/helm-schema-test.sh` | runs the fixtures |
+
+The pre-commit hook rewrites the schema and lets pre-commit fail the commit, so the regenerated file appears in the diff you review rather than being staged silently. It requires `pre-commit install`, which is per-developer, so the CI `schema` job is the actual gate. Subchart tarballs are not tracked in git, so anything running `helm template` in CI must `helm dependency build` first.
 
 ## File Structure Patterns
 
@@ -105,6 +170,9 @@ charts/[chart-name]/
 ├── Chart.yaml          # Chart metadata and dependencies
 ├── README.md           # Chart documentation
 ├── values.yaml         # Default configuration values
+├── values.schema.json  # Generated from values.yaml - never hand-edit (if adopted)
+├── .helmignore         # Excludes tests/ from the package (if fixtures exist)
+├── tests/schema/       # valid-*.yaml / invalid-*.yaml schema fixtures (if adopted)
 └── templates/
     ├── _helpers.tpl    # Template helpers (if needed)
     ├── NOTES.txt       # Post-install notes (if needed)
