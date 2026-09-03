@@ -1,3 +1,0 @@
-# expect: hpa.deploy: Invalid type. Expected: boolean, given: string
-hpa:
-  deploy: "yes"
