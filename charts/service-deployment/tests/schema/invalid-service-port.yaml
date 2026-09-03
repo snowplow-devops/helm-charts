@@ -1,0 +1,3 @@
+# expect: service.port: Invalid type. Expected: integer, given: string
+service:
+  port: "8000"
