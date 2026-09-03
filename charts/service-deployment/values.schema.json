@@ -1,0 +1,624 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+        "affinity": {
+            "description": "Affinity supports podAffinity, podAntiAffinity, or nodeAffinity",
+            "type": "object"
+        },
+        "cloudserviceaccount": {
+            "type": "object",
+            "properties": {
+                "aws": {
+                    "type": "object",
+                    "properties": {
+                        "roleARN": {
+                            "description": "IAM Role ARN to bind to the k8s service account",
+                            "type": "string"
+                        }
+                    }
+                },
+                "azure": {
+                    "type": "object",
+                    "properties": {
+                        "managedIdentityId": {
+                            "description": "Workload managed identity id to bind to the k8s service account",
+                            "type": "string"
+                        }
+                    }
+                },
+                "deploy": {
+                    "description": "Whether to create a service-account",
+                    "type": "boolean"
+                },
+                "gcp": {
+                    "type": "object",
+                    "properties": {
+                        "serviceAccount": {
+                            "description": "Service Account email to bind to the k8s service account",
+                            "type": "string"
+                        }
+                    }
+                },
+                "name": {
+                    "description": "Name of the service-account to create",
+                    "type": "string"
+                }
+            }
+        },
+        "config": {
+            "type": "object",
+            "properties": {
+                "args": {
+                    "type": "array"
+                },
+                "command": {
+                    "type": "array"
+                },
+                "env": {
+                    "description": "Map of environment variables to use within the job",
+                    "type": [
+                        "object",
+                        "null"
+                    ]
+                },
+                "secrets": {
+                    "description": "Map of secrets that will be exposed as environment variables within the job",
+                    "type": "object"
+                },
+                "secretsB64": {
+                    "description": "Map of base64-encoded secrets that will be exposed as environment variables within the job",
+                    "type": "object"
+                },
+                "sharedNamespaceConfigMaps": {
+                    "description": "List of configMaps from other deployments within the same namespace - to reference and mount in the deployment",
+                    "type": "array"
+                },
+                "workingDir": {
+                    "description": "Optional working directory for the container process. Useful when readOnlyRootFilesystem is true and the app writes to its CWD; point at a writable mount declared via extraVolumes / extraVolumeMounts.",
+                    "type": "string"
+                }
+            }
+        },
+        "configMaps": {
+            "description": "List of config maps to mount to the deployment",
+            "type": "array"
+        },
+        "containerSecurityContext": {
+            "description": "Container security context configuration These defaults follow kubesec.io best practices for hardened deployments.  runAsUser / runAsGroup are intentionally not pinned. Different container images bake in different non-root USER directives, and forcing a specific UID can prevent the image's user from accessing its own files. The image's USER directive selects the runtime UID; runAsNonRoot: true still enforces the non-root invariant. Override per-deployment if you need a specific UID.  readOnlyRootFilesystem defaults to false so existing deployments are not broken on upgrade; set it to true per-deployment once writable paths (e.g. /tmp) are mounted as emptyDirs.",
+            "type": "object",
+            "properties": {
+                "allowPrivilegeEscalation": {
+                    "type": "boolean"
+                },
+                "capabilities": {
+                    "type": "object",
+                    "properties": {
+                        "drop": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "readOnlyRootFilesystem": {
+                    "type": "boolean"
+                },
+                "runAsNonRoot": {
+                    "type": "boolean"
+                },
+                "seccompProfile": {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "deployment": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "description": "Can be either a \"Deployment\" or \"StatefulSet\"",
+                    "type": "string"
+                },
+                "podAnnotations": {
+                    "description": "Map of annotations that will be added to each pod in the deployment",
+                    "type": "object"
+                },
+                "podLabels": {
+                    "description": "Map of labels that will be added to each pod in the deployment",
+                    "type": "object"
+                },
+                "replicas": {
+                    "type": "integer"
+                },
+                "scaleToZero": {
+                    "description": "When enabled, disables the HPA and scales the deployment to zero replicas",
+                    "type": "boolean"
+                },
+                "strategy": {
+                    "description": "How to replace existing pods with new ones",
+                    "type": "object",
+                    "properties": {
+                        "rollingUpdate": {
+                            "type": "object",
+                            "properties": {
+                                "maxSurge": {
+                                    "description": "The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number \"5\" for 5 additional pods",
+                                    "type": [
+                                        "string",
+                                        "integer"
+                                    ]
+                                },
+                                "maxUnavailable": {
+                                    "description": "The max number or percent of pods that can be unavailable during rolling update. Can be set as number \"3\" for 3 pods unavailable",
+                                    "type": [
+                                        "string",
+                                        "integer"
+                                    ]
+                                }
+                            }
+                        },
+                        "type": {
+                            "description": "Change to \"Recreate\" if all pods should be killed before new ones are created",
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "dockerconfigjson": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email address for user of the private repository",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name of the secret to use for the private repository",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password for the private repository",
+                    "type": "string"
+                },
+                "server": {
+                    "description": "Repository server URL",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "Username for the private repository",
+                    "type": "string"
+                }
+            }
+        },
+        "extraObjects": {
+            "description": "Extra Kubernetes objects to deploy alongside the service This allows for additional resources like Middleware, NetworkPolicy, etc.",
+            "type": "array"
+        },
+        "extraVolumeMounts": {
+            "description": "Additional volume mounts to attach to the container. Pair with extraVolumes above.",
+            "type": "array"
+        },
+        "extraVolumes": {
+            "description": "Additional volumes to attach to the pod spec. Useful with readOnlyRootFilesystem: true — declare writable scratch space (e.g. emptyDir on /tmp) without disabling the hardened default.",
+            "type": "array"
+        },
+        "fullnameOverride": {
+            "description": "Overrides the full-name given to the deployment resources (default: .Release.Name)",
+            "type": "string"
+        },
+        "global": {
+            "type": "object",
+            "properties": {
+                "cloud": {
+                    "description": "Cloud specific bindings (options: aws, gcp , azure)",
+                    "type": "string"
+                },
+                "labels": {
+                    "type": "object"
+                }
+            }
+        },
+        "hooks": {
+            "type": "object"
+        },
+        "hpa": {
+            "type": "object",
+            "properties": {
+                "behavior": {
+                    "type": "object"
+                },
+                "deploy": {
+                    "description": "Whether to deploy HPA rules",
+                    "type": "boolean"
+                },
+                "maxReplicas": {
+                    "description": "Maximum number of pods to deploy",
+                    "type": "integer"
+                },
+                "metrics": {
+                    "description": "Default average CPU utilization before auto-scaling starts",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "resource": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "target": {
+                                        "type": "object",
+                                        "properties": {
+                                            "averageUtilization": {
+                                                "type": "integer"
+                                            },
+                                            "type": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "type": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "minReplicas": {
+                    "description": "Minimum number of pods to deploy",
+                    "type": "integer"
+                }
+            }
+        },
+        "image": {
+            "type": "object",
+            "properties": {
+                "pullPolicy": {
+                    "description": "The image pullPolicy to use",
+                    "type": "string"
+                },
+                "repository": {
+                    "type": "string"
+                },
+                "tag": {
+                    "type": [
+                        "string",
+                        "number"
+                    ]
+                }
+            }
+        },
+        "livenessProbe": {
+            "description": "livenessProbe is enabled if httpGet.path or exec.command are present",
+            "type": "object",
+            "properties": {
+                "exec": {
+                    "type": "object",
+                    "properties": {
+                        "command": {
+                            "description": "Command/arguments to execute to determine liveness",
+                            "type": "array"
+                        }
+                    }
+                },
+                "failureThreshold": {
+                    "type": "integer"
+                },
+                "httpGet": {
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "description": "Path for health checks to be performed to determine liveness",
+                            "type": "string"
+                        },
+                        "port": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "initialDelaySeconds": {
+                    "type": "integer"
+                },
+                "periodSeconds": {
+                    "type": "integer"
+                },
+                "successThreshold": {
+                    "type": "integer"
+                },
+                "timeoutSeconds": {
+                    "type": "integer"
+                }
+            }
+        },
+        "persistentVolume": {
+            "type": "object",
+            "properties": {
+                "accessModes": {
+                    "description": "Access modes to allow (note: this will impact HPA rules if the volume cannot be bound to all containers when deployment.kind is \"Deployment\")",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "annotations": {
+                    "description": "Persistent Volume annotations",
+                    "type": "object"
+                },
+                "enabled": {
+                    "description": "Whether to deploy a persistent-volume (note: when deployment.kind is \"StatefulSet\" one volume will be created per replica)",
+                    "type": "boolean"
+                },
+                "labels": {
+                    "description": "Persistent Volume labels",
+                    "type": "object"
+                },
+                "mountPath": {
+                    "description": "Persistent Volume mount root path",
+                    "type": "string"
+                },
+                "size": {
+                    "description": "Persistent Volume size",
+                    "type": "string"
+                },
+                "statefulSetRetentionPolicy": {
+                    "description": "Sets the retention policies for the volumes created in \"StatefulSet\" mode",
+                    "type": "object",
+                    "properties": {
+                        "whenDeleted": {
+                            "description": "What to do with volumes when the StatefulSet is deleted",
+                            "type": "string"
+                        },
+                        "whenScaled": {
+                            "description": "What to do with volumes when scaling occurs",
+                            "type": "string"
+                        }
+                    }
+                },
+                "subPath": {
+                    "description": "Subdirectory of Persistent Volume to mount",
+                    "type": "string"
+                }
+            }
+        },
+        "podDisruptionBudget": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "Whether to deploy a PodDisruptionBudget",
+                    "type": "boolean"
+                },
+                "minAvailable": {
+                    "description": "Minimum number (or percentage) of pods that must remain available. Mutually exclusive with maxUnavailable.",
+                    "type": [
+                        "string",
+                        "integer"
+                    ]
+                }
+            }
+        },
+        "priorityClassName": {
+            "description": "PriorityClassName for pods",
+            "type": "string"
+        },
+        "readinessProbe": {
+            "description": "readinessProbe is enabled if httpGet.path or exec.command are present",
+            "type": "object",
+            "properties": {
+                "exec": {
+                    "type": "object",
+                    "properties": {
+                        "command": {
+                            "description": "Command/arguments to execute to determine readiness",
+                            "type": "array"
+                        }
+                    }
+                },
+                "failureThreshold": {
+                    "type": "integer"
+                },
+                "httpGet": {
+                    "type": "object",
+                    "properties": {
+                        "path": {
+                            "description": "Path for health checks to be performed to determine readiness",
+                            "type": "string"
+                        }
+                    }
+                },
+                "initialDelaySeconds": {
+                    "type": "integer"
+                },
+                "periodSeconds": {
+                    "type": "integer"
+                },
+                "successThreshold": {
+                    "type": "integer"
+                },
+                "timeoutSeconds": {
+                    "type": "integer"
+                }
+            }
+        },
+        "resources": {
+            "description": "Map of resource constraints for the service",
+            "type": "object"
+        },
+        "securityContext": {
+            "description": "Pod security context configuration This is particularly useful when using persistent volumes with non-root container users Setting fsGroup ensures that mounted volumes have the correct group ownership",
+            "type": "object"
+        },
+        "service": {
+            "type": "object",
+            "properties": {
+                "additionalPorts": {
+                    "description": "Additional ports to expose on the Kubernetes Service",
+                    "type": "array"
+                },
+                "annotations": {
+                    "description": "Map of annotations to add to the service",
+                    "type": "object"
+                },
+                "aws": {
+                    "type": "object",
+                    "properties": {
+                        "targetGroupARN": {
+                            "description": "EC2 TargetGroup ARN to bind the service onto",
+                            "type": "string"
+                        }
+                    }
+                },
+                "basicAuth": {
+                    "description": "Basic authentication configuration",
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "description": "Enable basic authentication",
+                            "type": "boolean"
+                        },
+                        "users": {
+                            "description": "htpasswd-formatted users string (bcrypt hash, e.g. \"user:$2y$05$...\")",
+                            "type": "string"
+                        }
+                    }
+                },
+                "buffering": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "description": "Enable request buffering middleware",
+                            "type": "boolean"
+                        },
+                        "maxRequestBodyBytes": {
+                            "description": "Maximum request body size in bytes before the request is rejected",
+                            "type": "integer"
+                        },
+                        "memRequestBodyBytes": {
+                            "description": "Request body size in bytes buffered in memory before spilling to disk",
+                            "type": "integer"
+                        }
+                    }
+                },
+                "deploy": {
+                    "description": "Whether to setup service bindings (note: only NodePort is supported)",
+                    "type": "boolean"
+                },
+                "gcp": {
+                    "type": "object",
+                    "properties": {
+                        "networkEndpointGroupName": {
+                            "description": "Name of the Network Endpoint Group to bind onto",
+                            "type": "string"
+                        }
+                    }
+                },
+                "ingress": {
+                    "description": "A map of ingress rules to deploy",
+                    "type": "object"
+                },
+                "ingressIPAllowlist": {
+                    "description": "List of IP addresses to restrict ingress traffic to",
+                    "type": "array"
+                },
+                "port": {
+                    "description": "Port to bind and expose the service on",
+                    "type": "integer"
+                },
+                "protocol": {
+                    "description": "Protocol that the service leverages (note: TCP or UDP)",
+                    "type": "string"
+                },
+                "rateLimit": {
+                    "description": "Rate limiting configuration WARNING: These defaults are conservative and intended for testing. For production use, adjust based on your service's expected traffic patterns. Current defaults: 100 requests per minute = ~4.3M requests/month per IP (or total if global)",
+                    "type": "object",
+                    "properties": {
+                        "average": {
+                            "description": "Average number of requests per period",
+                            "type": "integer"
+                        },
+                        "burst": {
+                            "description": "Burst size - maximum number of requests allowed in a burst",
+                            "type": "integer"
+                        },
+                        "enabled": {
+                            "description": "Enable rate limiting",
+                            "type": "boolean"
+                        },
+                        "period": {
+                            "description": "Time period for rate limiting (e.g., \"1m\", \"1s\", \"1h\")",
+                            "type": "string"
+                        },
+                        "sourceCriterion": {
+                            "description": "Source-based rate limiting configuration",
+                            "type": "object",
+                            "properties": {
+                                "enabled": {
+                                    "description": "Enable source-based rate limiting (false = global rate limit for entire service)",
+                                    "type": "boolean"
+                                },
+                                "ipStrategy": {
+                                    "description": "Configuration for IP-based rate limiting (when type is \"ipStrategy\")",
+                                    "type": "object",
+                                    "properties": {
+                                        "depth": {
+                                            "description": "Depth of IP extraction for X-Forwarded-For header (1 = direct, 2 = behind 1 proxy)",
+                                            "type": "integer"
+                                        },
+                                        "excludedIPs": {
+                                            "description": "List of IPs/CIDRs that bypass rate limiting entirely (e.g., internal networks, monitoring)",
+                                            "type": "array"
+                                        }
+                                    }
+                                },
+                                "requestHeaderName": {
+                                    "description": "Header name to use for rate limiting (required when type is \"requestHeaderName\")",
+                                    "type": "string"
+                                },
+                                "type": {
+                                    "description": "Type of source criterion: \"ipStrategy\" (default), \"requestHeaderName\", or \"requestHost\"",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "targetPort": {
+                    "description": "The Target Port that the actual application is being exposed on",
+                    "type": "integer"
+                }
+            }
+        },
+        "terminationGracePeriodSeconds": {
+            "description": "Grace period for termination of the service",
+            "type": "integer"
+        },
+        "tolerations": {
+            "description": "Allow the scheduler to schedule pods with matching taints  more details here: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/",
+            "type": "array"
+        },
+        "topologySpreadConstraints": {
+            "description": "topologySpreadConstraints control how Pods are  spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains.  more details here: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/",
+            "type": "object"
+        },
+        "vpa": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "description": "Whether to deploy VPA rules",
+                    "type": "boolean"
+                },
+                "spec": {
+                    "description": "VPA resource specification (accepts any valid VPA spec fields)",
+                    "type": "object"
+                }
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 # service-deployment
 
-![Version: 0.42.0](https://img.shields.io/badge/Version-0.42.0-informational?style=flat-square)
+![Version: 0.43.0](https://img.shields.io/badge/Version-0.43.0-informational?style=flat-square)
 
 A Helm Chart to setup a generic deployment with optional service/hpa/vpa bindings
 

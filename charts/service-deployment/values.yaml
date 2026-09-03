@@ -10,7 +10,10 @@ fullnameOverride: ""
 
 image:
   repository: "nginxinc/nginx-unprivileged"
-  tag: "stable"
+  # Inline schema annotations below constrain types the generator cannot infer
+  # from the default value alone. Trailing form keeps them out of the helm-docs
+  # table; see scripts/helm-schema-lib.sh.
+  tag: "stable"  # @schema type: [string, number]
   # -- The image pullPolicy to use
   pullPolicy: "IfNotPresent"
 
@@ -27,7 +30,7 @@ config:
   workingDir: ""
 
   # -- Map of environment variables to use within the job
-  env:
+  env:  # @schema type: [object, "null"]
   #  hello_env: "world"
 
   # -- Map of secrets that will be exposed as environment variables within the job
@@ -161,7 +164,7 @@ podDisruptionBudget:
   # -- Whether to deploy a PodDisruptionBudget
   enabled: false
   # -- Minimum number (or percentage) of pods that must remain available. Mutually exclusive with maxUnavailable.
-  minAvailable: 1
+  minAvailable: 1  # @schema type: [string, integer]
   # -- Maximum number (or percentage) of pods that may be unavailable. Mutually exclusive with minAvailable.
   # maxUnavailable: 1
 
@@ -285,9 +288,9 @@ deployment:
     type: "RollingUpdate"
     rollingUpdate:
       # -- The max number or percent of pods that can be unavailable during rolling update. Can be set as number "3" for 3 pods unavailable
-      maxUnavailable: "25%"
+      maxUnavailable: "25%"  # @schema type: [string, integer]
       # -- The maximum number or precent of pods that can be created in addition to the current number of pods during the rolling update. Can be set as number "5" for 5 additional pods
-      maxSurge: "25%"
+      maxSurge: "25%"  # @schema type: [string, integer]
   # -- Map of labels that will be added to each pod in the deployment
   podLabels:
     {}

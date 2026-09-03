@@ -25,3 +25,11 @@ repos:
         language: system
         pass_filenames: false
         files: 'charts/.*\.(yaml|yml|tpl)$'
+
+      - id: helm-schema
+        name: Generate Helm values.schema.json
+        entry: scripts/helm-schema.sh
+        language: system
+        # Requires the pinned generator:
+        #   helm plugin install https://github.com/losisin/helm-values-schema-json --version 2.6.0
+        files: '^charts/[^/]+/values\.yaml$'
