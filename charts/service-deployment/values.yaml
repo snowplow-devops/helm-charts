@@ -88,7 +88,6 @@ livenessProbe:
   httpGet:
     # -- Path for health checks to be performed to determine liveness
     path: ""
-    port: ""  # @schema type: [string, integer]
   exec:
     # -- Command/arguments to execute to determine liveness
     command: []
