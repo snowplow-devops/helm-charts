@@ -143,7 +143,7 @@ spec:
           {{- if ne .Values.readinessProbe.httpGet.path "" }}
           httpGet:
             path: {{ .Values.readinessProbe.httpGet.path }}
-            port: {{ .Values.service.port }}
+            port: {{ .Values.readinessProbe.httpGet.port | default .Values.service.port }}
             scheme: HTTP
           {{- end }}
           {{- if gt (len .Values.readinessProbe.exec.command) 0 }}
@@ -165,7 +165,7 @@ spec:
           {{- if ne .Values.livenessProbe.httpGet.path "" }}
           httpGet:
             path: {{ .Values.livenessProbe.httpGet.path }}
-            port: {{ .Values.livenessProbe.httpGet.port }}
+            port: {{ .Values.livenessProbe.httpGet.port | default .Values.service.port }}
             scheme: HTTP
           {{- end }}
           {{- if gt (len .Values.livenessProbe.exec.command) 0 }}
