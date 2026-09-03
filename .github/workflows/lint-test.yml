@@ -43,3 +43,32 @@ jobs:
 
       - name: Run chart-testing (install)
         run: ct install --target-branch  ${{ github.event.repository.default_branch }} --config ct.yaml
+
+  schema-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v5
+        with:
+          version: v3.8.1
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.8.0
+
+      # Version must match SCHEMA_PLUGIN_VERSION in scripts/helm-schema-lib.sh
+      - name: Install helm schema plugin
+        run: helm plugin install https://github.com/losisin/helm-values-schema-json --version 2.6.0
+
+      - name: Check values.schema.json is up to date
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+        run: scripts/helm-schema-check.sh
