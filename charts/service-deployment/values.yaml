@@ -74,6 +74,8 @@ readinessProbe:
   httpGet:
     # -- Path for health checks to be performed to determine readiness
     path: ""
+    # -- Port for readiness health checks (defaults to service.port when unset)
+    port:  # @schema type: [integer, "null"]
   exec:
     # -- Command/arguments to execute to determine readiness
     command: []
@@ -88,6 +90,8 @@ livenessProbe:
   httpGet:
     # -- Path for health checks to be performed to determine liveness
     path: ""
+    # -- Port for liveness health checks (defaults to service.port when unset)
+    port:  # @schema type: [integer, "null"]
   exec:
     # -- Command/arguments to execute to determine liveness
     command: []

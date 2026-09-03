@@ -73,9 +73,10 @@ A Helm Chart to setup a generic deployment with optional service/hpa/vpa binding
 | image.pullPolicy | string | `"IfNotPresent"` | The image pullPolicy to use |
 | image.repository | string | `"nginxinc/nginx-unprivileged"` |  |
 | image.tag | string | `"stable"` |  |
-| livenessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":"","port":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":5}` | livenessProbe is enabled if httpGet.path or exec.command are present |
+| livenessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":"","port":null},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":1,"timeoutSeconds":5}` | livenessProbe is enabled if httpGet.path or exec.command are present |
 | livenessProbe.exec.command | list | `[]` | Command/arguments to execute to determine liveness |
 | livenessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine liveness |
+| livenessProbe.httpGet.port | string | `nil` | Port for liveness health checks (defaults to service.port when unset) |
 | persistentVolume.accessModes | list | `["ReadWriteOnce"]` | Access modes to allow (note: this will impact HPA rules if the volume cannot be bound to all containers when deployment.kind is "Deployment") |
 | persistentVolume.annotations | object | `{}` | Persistent Volume annotations |
 | persistentVolume.enabled | bool | `false` | Whether to deploy a persistent-volume (note: when deployment.kind is "StatefulSet" one volume will be created per replica) |
@@ -89,9 +90,10 @@ A Helm Chart to setup a generic deployment with optional service/hpa/vpa binding
 | podDisruptionBudget.enabled | bool | `false` | Whether to deploy a PodDisruptionBudget |
 | podDisruptionBudget.minAvailable | int | `1` | Minimum number (or percentage) of pods that must remain available. Mutually exclusive with maxUnavailable. |
 | priorityClassName | string | `""` | PriorityClassName for pods |
-| readinessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":""},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | readinessProbe is enabled if httpGet.path or exec.command are present |
+| readinessProbe | object | `{"exec":{"command":[]},"failureThreshold":3,"httpGet":{"path":"","port":null},"initialDelaySeconds":5,"periodSeconds":5,"successThreshold":2,"timeoutSeconds":5}` | readinessProbe is enabled if httpGet.path or exec.command are present |
 | readinessProbe.exec.command | list | `[]` | Command/arguments to execute to determine readiness |
 | readinessProbe.httpGet.path | string | `""` | Path for health checks to be performed to determine readiness |
+| readinessProbe.httpGet.port | string | `nil` | Port for readiness health checks (defaults to service.port when unset) |
 | resources | object | `{}` | Map of resource constraints for the service |
 | securityContext | object | `{}` | Pod security context configuration This is particularly useful when using persistent volumes with non-root container users Setting fsGroup ensures that mounted volumes have the correct group ownership |
 | service.additionalPorts | list | `[]` | Additional ports to expose on the Kubernetes Service |

@@ -318,6 +318,13 @@
                         "path": {
                             "description": "Path for health checks to be performed to determine liveness",
                             "type": "string"
+                        },
+                        "port": {
+                            "description": "Port for liveness health checks (defaults to service.port when unset)",
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
                         }
                     }
                 },
@@ -427,6 +434,13 @@
                         "path": {
                             "description": "Path for health checks to be performed to determine readiness",
                             "type": "string"
+                        },
+                        "port": {
+                            "description": "Port for readiness health checks (defaults to service.port when unset)",
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
                         }
                     }
                 },
