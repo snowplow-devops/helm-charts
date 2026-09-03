@@ -1,0 +1,3 @@
+# Schema test fixtures: exercised by scripts/helm-schema-test.sh in CI,
+# not needed by consumers of the packaged chart.
+tests/

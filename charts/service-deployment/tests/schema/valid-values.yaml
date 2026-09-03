@@ -1,0 +1,32 @@
+# Must render cleanly. Covers the annotated fields and the free-form
+# passthrough maps the schema deliberately leaves open.
+image:
+  tag: 2                      # unquoted numeric tag
+config:
+  env:
+    HELLO: "world"
+readinessProbe:
+  httpGet:
+    path: "/ready"
+    port: 8080                # integer, honoured
+livenessProbe:
+  httpGet:
+    path: "/live"             # port unset, falls back to service.port
+podDisruptionBudget:
+  enabled: true
+  minAvailable: "50%"
+deployment:
+  strategy:
+    type: "RollingUpdate"
+    rollingUpdate:
+      maxUnavailable: 3
+      maxSurge: 5
+resources:
+  limits: {cpu: 500m, memory: 512Mi}
+persistentVolume:
+  enabled: true
+  storageClass: "gp3"
+service:
+  ingress:
+    ingress-0001:
+      hostname: example-01.com
