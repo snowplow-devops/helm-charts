@@ -320,7 +320,10 @@
                             "type": "string"
                         },
                         "port": {
-                            "type": "string"
+                            "type": [
+                                "string",
+                                "integer"
+                            ]
                         }
                     }
                 },
@@ -591,7 +594,10 @@
                 },
                 "targetPort": {
                     "description": "The Target Port that the actual application is being exposed on",
-                    "type": "integer"
+                    "type": [
+                        "string",
+                        "integer"
+                    ]
                 }
             }
         },

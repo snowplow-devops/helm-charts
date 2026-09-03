@@ -15,3 +15,9 @@ deployment:
     rollingUpdate:
       maxUnavailable: 3       # documented integer form
       maxSurge: 5
+livenessProbe:
+  httpGet:
+    path: "/health"
+    port: 8080                # numeric port
+service:
+  targetPort: 80              # numeric target port

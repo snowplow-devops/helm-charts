@@ -88,7 +88,7 @@ livenessProbe:
   httpGet:
     # -- Path for health checks to be performed to determine liveness
     path: ""
-    port: ""
+    port: ""  # @schema type: [string, integer]
   exec:
     # -- Command/arguments to execute to determine liveness
     command: []
@@ -174,7 +174,7 @@ service:
   # -- Port to bind and expose the service on
   port: 8000
   # -- The Target Port that the actual application is being exposed on
-  targetPort: 80
+  targetPort: 80  # @schema type: [string, integer]
   # -- Protocol that the service leverages (note: TCP or UDP)
   protocol: "TCP"
   # -- Additional ports to expose on the Kubernetes Service
