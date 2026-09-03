@@ -1,3 +1,0 @@
-# expect: deployment.replicas: Invalid type. Expected: integer, given: string
-deployment:
-  replicas: "three"

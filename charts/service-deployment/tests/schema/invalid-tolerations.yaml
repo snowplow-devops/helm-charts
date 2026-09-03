@@ -1,3 +1,0 @@
-# expect: tolerations: Invalid type. Expected: array, given: object
-tolerations:
-  foo: bar

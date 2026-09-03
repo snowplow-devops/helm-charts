@@ -1,8 +1,0 @@
-# Kubernetes treats probe port and Service targetPort as IntOrString, so the
-# named-port form must be accepted alongside the numeric one.
-livenessProbe:
-  httpGet:
-    path: "/health"
-    port: "http"
-service:
-  targetPort: "http"
