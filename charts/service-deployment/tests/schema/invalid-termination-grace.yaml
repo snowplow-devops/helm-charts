@@ -1,0 +1,2 @@
+# expect: terminationGracePeriodSeconds: Invalid type. Expected: integer, given: string
+terminationGracePeriodSeconds: "60"

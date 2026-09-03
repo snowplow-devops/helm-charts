@@ -1,0 +1,3 @@
+# expect: image.repository: Invalid type. Expected: string, given: array
+image:
+  repository: []
