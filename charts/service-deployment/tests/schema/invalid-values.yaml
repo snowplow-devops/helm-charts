@@ -1,0 +1,6 @@
+# expect: livenessProbe.httpGet.port: Invalid type. Expected: [integer,null], given: string
+# Must be rejected, and the error must match the expect header above.
+livenessProbe:
+  httpGet:
+    path: "/live"
+    port: "8080"              # string, not an integer
