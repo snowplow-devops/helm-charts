@@ -318,12 +318,6 @@
                         "path": {
                             "description": "Path for health checks to be performed to determine liveness",
                             "type": "string"
-                        },
-                        "port": {
-                            "type": [
-                                "string",
-                                "integer"
-                            ]
                         }
                     }
                 },
