@@ -64,6 +64,10 @@ jobs:
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2.8.0
 
+      # Needed by `helm dependency build` in the fixture step
+      - name: Add self
+        run: helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts
+
       # Version must match SCHEMA_PLUGIN_VERSION in scripts/helm-schema-lib.sh
       - name: Install helm schema plugin
         run: helm plugin install https://github.com/losisin/helm-values-schema-json --version 2.6.0

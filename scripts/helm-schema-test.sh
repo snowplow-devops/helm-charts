@@ -40,6 +40,18 @@ for chart in "${charts[@]}"; do
     (( fail++ )); continue
   fi
 
+  # Subchart tarballs are not tracked in git, so a fresh clone (i.e. CI) has
+  # none and every helm template call fails on missing dependencies rather
+  # than on the schema. ct does this itself before linting; so must we.
+  if grep -q '^dependencies:' "$chart/Chart.yaml" 2>/dev/null; then
+    if ! deps="$(helm dependency build "$chart" 2>&1)"; then
+      echo "FAIL  $chart -- helm dependency build failed:"
+      printf '%s\n' "$deps" | sed 's/^/        /' | head -5
+      echo "        (add the repo first: helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts)"
+      (( fail++ )); continue
+    fi
+  fi
+
   echo "== $chart"
   for f in "$dir"/*.yaml; do
     [[ -e "$f" ]] || continue
