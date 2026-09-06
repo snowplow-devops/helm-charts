@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "spark-thrift-server.fullname" . }}
+  labels:
+    {{- include "spark-thrift-server.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "spark-thrift-server.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  kind: ClusterRole
+  name: admin # TODO: This is waaaaaay more permissions than we need
+  apiGroup: rbac.authorization.k8s.io
+
+
