@@ -1,0 +1,19 @@
+--------------------------------------------------------------------------------
+The pipeline is now deploying - please be patient as images download and launch!
+--------------------------------------------------------------------------------
+
+The Collector can be accessed via port {{ .Values.collector.service.port }} on the following DNS names from within your cluster:
+
+   {{ .Values.collector.fullnameOverride }}.{{ .Release.Namespace }}.svc.cluster.local
+
+To connect to the Collector from outside the cluster execute the following commands:
+
+    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ .Values.collector.fullnameOverride }} {{ .Values.collector.service.port }}:{{ .Values.collector.service.port }}
+
+To send a simple test event to the Collector:
+
+    http://localhost:{{ .Values.collector.service.port }}/i?e=pv
+
+Or to check that it is healthy:
+
+    http://localhost:{{ .Values.collector.service.port }}/health
