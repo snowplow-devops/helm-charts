@@ -48,3 +48,48 @@ metadata:
 rules:
   {{- toYaml .rules | nindent 2 }}
 {{- end -}}
+
+{{/*
+Shared matchConstraints for the service-account-token automount policies: Pod
+CREATE, minus any excluded namespaces. Namespaces are excluded on the
+kubernetes.io/metadata.name label the API server sets on every namespace, so no
+labelling of the namespaces themselves is required.
+Usage:
+  include "snowplow-kyverno-policies.automountMatchConstraints" .Values.policies.disableServiceAccountTokenAutomount
+*/}}
+{{- define "snowplow-kyverno-policies.automountMatchConstraints" -}}
+resourceRules:
+  - apiGroups:
+      - ""
+    apiVersions:
+      - v1
+    operations:
+      - CREATE
+    resources:
+      - pods
+{{- with .excludedNamespaces }}
+namespaceSelector:
+  matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: NotIn
+      values:
+        {{- toYaml . | nindent 8 }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Shared matchConditions for the service-account-token automount policies: skip
+Pods that carry the exemption label set to "true". Renders nothing when
+exemptionLabel is empty, so callers must guard the matchConditions key.
+Usage:
+  include "snowplow-kyverno-policies.automountMatchConditions" .Values.policies.disableServiceAccountTokenAutomount
+*/}}
+{{- define "snowplow-kyverno-policies.automountMatchConditions" -}}
+{{- with .exemptionLabel }}
+- name: pod-not-exempt
+  expression: >-
+    !has(object.metadata.labels) ||
+    !('{{ . }}' in object.metadata.labels) ||
+    object.metadata.labels['{{ . }}'] != 'true'
+{{- end }}
+{{- end -}}

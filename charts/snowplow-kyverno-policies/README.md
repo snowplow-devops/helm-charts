@@ -42,7 +42,14 @@ Cloud-specific curated policies are gated on both their `enabled` flag **and**
 | `policies.ackAcmDnsValidation.ttl` | `60` | TTL (seconds) for the generated validation RecordSet. |
 | `policies.ackAcmDnsValidation.evaluation.admission` | `true` | Generate the RecordSet on Certificate admission (CREATE/UPDATE). |
 | `policies.ackAcmDnsValidation.evaluation.generateExisting` | `true` | Generate for Certificates that already exist when the policy is installed. |
-| `policies.ackAcmDnsValidation.evaluation.synchronize` | `false` | Re-reconcile the generated RecordSet if it is modified or deleted. |
+| `policies.ackAcmDnsValidation.evaluation.synchronize` | `true` | Re-reconcile the generated RecordSet if it is modified or deleted. |
+| `policies.disableServiceAccountTokenAutomount.mutate.enabled` | `false` | Patch Pods on CREATE to `spec.automountServiceAccountToken: false`. |
+| `policies.disableServiceAccountTokenAutomount.validate.enabled` | `false` | Report or block Pods that do not set it to `false`. |
+| `policies.disableServiceAccountTokenAutomount.validate.validationActions` | `[Audit]` | `Audit` (PolicyReport only), `Warn` (admission warning) or `Deny` (block). |
+| `policies.disableServiceAccountTokenAutomount.validate.failurePolicy` | `Ignore` | `Fail` makes admission depend on the Kyverno webhook being up. |
+| `policies.disableServiceAccountTokenAutomount.validate.background` | `true` | Background-scan already-running Pods into PolicyReports. |
+| `policies.disableServiceAccountTokenAutomount.excludedNamespaces` | `[kube-system, kyverno]` | Namespaces exempt from both modes. |
+| `policies.disableServiceAccountTokenAutomount.exemptionLabel` | `snowplow.io/automount-service-account-token` | Pods labelled `<key>: "true"` are exempt from both modes. `""` removes the escape hatch. |
 | `customPolicies` | `[]` | Data-driven policy families. See below. |
 
 ### `ackAcmDnsValidation`
@@ -55,6 +62,68 @@ Certificate's `hostedZoneAnnotation`. The generated RecordSet carries an
 
 The Certificate must be labelled `snowplow.io/ack-managed: "true"` and annotated
 with the hosted zone ID for the policy to act on it.
+
+### `disableServiceAccountTokenAutomount`
+
+Cloud-agnostic. Stops Pods mounting a ServiceAccount token they do not need. The
+two modes are independent and can be enabled together:
+
+- **`mutate`** renders a `MutatingPolicy` that patches Pods on CREATE to
+  `spec.automountServiceAccountToken: false`. Nothing else has to change:
+  controller-created Pods are patched at admission regardless of what the
+  Deployment/StatefulSet template says, so no workload chart needs editing.
+- **`validate`** renders a `ValidatingPolicy` that flags (or with
+  `validationActions: [Deny]`, blocks) Pods that do not have it set to `false`,
+  for ongoing compliance.
+
+With both enabled the mutation runs first in the admission chain, so the
+validation sees the patched Pod and passes.
+
+#### What this does and does not break
+
+Cloud identity is **unaffected**. IRSA and Azure Workload Identity inject their
+own projected token volumes (`aws-iam-token`, `azure-identity-token`) through
+separate webhooks; `automountServiceAccountToken` only governs the default
+`kube-api-access-*` volume, so there is no conflict.
+
+In-cluster Kubernetes API clients **are** affected. Anything that builds an
+in-cluster client — Kyverno itself, cluster-autoscaler, Karpenter, the AWS Load
+Balancer Controller, cert-manager, external-dns, ACK controllers, CoreDNS — loses
+its credentials and fails to authenticate. This is why the policies are not
+cluster-wide by default: exempt those workloads by namespace
+(`excludedNamespaces`) or per Pod (`exemptionLabel`) **before** enabling `mutate`,
+and roll out through `validate` with `validationActions: [Audit]` first to find
+them.
+
+#### Other caveats
+
+- `automountServiceAccountToken` is immutable on a running Pod, so the mutation
+  only takes effect as Pods are recreated. There is no mutate-existing mode.
+- The policies match Pods, not workloads. Under `Deny`, a rejected Pod does not
+  reject its Deployment — the rollout stalls with events on the ReplicaSet
+  instead of failing the `kubectl apply`.
+- The validation requires the field to be set to `false` *on the Pod*. A Pod
+  that leaves it unset while its ServiceAccount sets
+  `automountServiceAccountToken: false` is effectively compliant but will still
+  be flagged; enabling `mutate` alongside makes the two agree.
+- Namespaces are excluded on the `kubernetes.io/metadata.name` label the API
+  server sets on every namespace, so no namespace labelling is needed.
+
+```yaml
+policies:
+  disableServiceAccountTokenAutomount:
+    mutate:
+      enabled: true
+    validate:
+      enabled: true
+      validationActions:
+        - Audit
+    excludedNamespaces:
+      - kube-system
+      - kyverno
+      - cert-manager
+      - karpenter
+```
 
 ### `customPolicies`
 
@@ -94,7 +163,7 @@ resource "helm_release" "kyverno_policies" {
   name       = "snowplow-kyverno-policies"
   repository = "https://snowplow-devops.github.io/helm-charts"
   chart      = "snowplow-kyverno-policies"
-  version    = "0.1.0"
+  version    = "0.2.0"
   namespace  = "kyverno"
 
   values = [
