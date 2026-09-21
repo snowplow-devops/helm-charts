@@ -1,3 +1,7 @@
+Version 0.3.55 (2026-09-21)
+---------------------------
+charts/aws-otel-collector-0.17.0: Bump version used to 0.50.0 (#357)
+
 Version 0.3.54 (2026-09-03)
 ---------------------------
 charts/service-deployment-0.43.0: Add values.schema.json and make the readiness/liveness probe ports configurable, defaulting to service.port (#356)
