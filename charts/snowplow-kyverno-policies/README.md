@@ -48,7 +48,7 @@ Cloud-specific curated policies are gated on both their `enabled` flag **and**
 | `policies.disableServiceAccountTokenAutomount.validate.validationActions` | `[Audit]` | `Audit` (PolicyReport only), `Warn` (admission warning) or `Deny` (block). |
 | `policies.disableServiceAccountTokenAutomount.validate.failurePolicy` | `Ignore` | `Fail` makes admission depend on the Kyverno webhook being up. |
 | `policies.disableServiceAccountTokenAutomount.validate.background` | `true` | Background-scan already-running Pods into PolicyReports. |
-| `policies.disableServiceAccountTokenAutomount.excludedNamespaces` | `[kube-system, kyverno]` | Namespaces exempt from both modes. |
+| `policies.disableServiceAccountTokenAutomount.excludedNamespaces` | `[kube-system, kyverno]` | Namespaces exempt from both modes. Emptying it applies the policy cluster-wide. |
 | `policies.disableServiceAccountTokenAutomount.exemptionLabel` | `snowplow.io/automount-service-account-token` | Pods labelled `<key>: "true"` are exempt from both modes. `""` removes the escape hatch. |
 | `customPolicies` | `[]` | Data-driven policy families. See below. |
 
@@ -108,6 +108,11 @@ them.
   be flagged; enabling `mutate` alongside makes the two agree.
 - Namespaces are excluded on the `kubernetes.io/metadata.name` label the API
   server sets on every namespace, so no namespace labelling is needed.
+- Emptying `excludedNamespaces` (`[]` or `null`) is not "exclude nothing safely":
+  it drops the `namespaceSelector` from the policy entirely, so it applies
+  cluster-wide, including `kube-system`. In `mutate` mode that will break
+  in-cluster controllers such as CoreDNS as their Pods are recreated. Override it
+  to add namespaces, not to clear it.
 
 ```yaml
 policies:

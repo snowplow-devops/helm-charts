@@ -59,7 +59,10 @@ policies:
       background: true
     # Namespaces exempt from both modes, matched on the kubernetes.io/metadata.name
     # label the API server sets on every namespace. Add the namespace of any
-    # controller that talks to the Kubernetes API.
+    # controller that talks to the Kubernetes API. Emptying this list ([] or
+    # null) drops the namespaceSelector entirely and applies the policy
+    # cluster-wide, including kube-system - in mutate mode that will break
+    # in-cluster controllers such as CoreDNS as their Pods are recreated.
     excludedNamespaces:
       - kube-system
       - kyverno
