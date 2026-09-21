@@ -1,3 +1,7 @@
+Version 0.3.56 (2026-09-21)
+---------------------------
+charts/snowplow-kyverno-policies-0.2.0: Add the disableServiceAccountTokenAutomount policy in two independent modes, both off by default: a MutatingPolicy that patches Pods on CREATE to spec.automountServiceAccountToken: false, and a ValidatingPolicy that audits (or denies) Pods without it. Shared excludedNamespaces and a per-Pod exemptionLabel exempt workloads that need an in-cluster API client. Admission-only, so enabling it triggers no rollout.
+
 Version 0.3.55 (2026-09-21)
 ---------------------------
 charts/aws-otel-collector-0.17.0: Bump version used to 0.50.0 (#357)

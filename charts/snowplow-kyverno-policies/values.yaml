@@ -30,6 +30,43 @@ policies:
       # Re-reconcile the generated RecordSet if it is modified or deleted.
       synchronize: true
 
+  # Cloud-agnostic. Stops Pods mounting a ServiceAccount token they do not need,
+  # in two independent modes that can be enabled together:
+  #
+  #   mutate   - patch Pods on CREATE to spec.automountServiceAccountToken: false
+  #   validate - report (or block) Pods that do not have it set to false
+  #
+  # Cloud identity is unaffected: IRSA and Azure Workload Identity inject their
+  # own projected token volumes, which this does not touch. In-cluster API
+  # clients ARE affected - anything that talks to the Kubernetes API needs the
+  # exemption label or an excluded namespace, or it will fail to authenticate.
+  disableServiceAccountTokenAutomount:
+    # MutatingPolicy. Admission-time only: automountServiceAccountToken is
+    # immutable on a running Pod, so already-running Pods are unaffected until
+    # they are recreated.
+    mutate:
+      enabled: false
+    # ValidatingPolicy, for ongoing compliance reporting or enforcement.
+    validate:
+      enabled: false
+      # Audit (PolicyReport only) / Warn (admission warning) / Deny (block).
+      validationActions:
+        - Audit
+      # Ignore keeps admission working when the Kyverno webhook is unavailable.
+      # Deny normally wants Fail, at the cost of a hard dependency on Kyverno.
+      failurePolicy: Ignore
+      # Background-scan already-running Pods into PolicyReports.
+      background: true
+    # Namespaces exempt from both modes, matched on the kubernetes.io/metadata.name
+    # label the API server sets on every namespace. Add the namespace of any
+    # controller that talks to the Kubernetes API.
+    excludedNamespaces:
+      - kube-system
+      - kyverno
+    # Pods carrying this label set to "true" are exempt from both modes. Set to
+    # "" to remove the per-Pod escape hatch.
+    exemptionLabel: snowplow.io/automount-service-account-token
+
 # Data-driven families: N policies of any kyverno kind, supplied as data. The
 # chart adds naming, standard labels and (for policies that act on cluster
 # resources) an aggregated ClusterRole built from rbac.rules.
