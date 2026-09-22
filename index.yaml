@@ -4907,6 +4907,25 @@ entries:
     version: 0.1.0
   snowplow-kyverno-policies:
   - apiVersion: v2
+    appVersion: 0.2.0
+    created: "2026-09-22T14:53:26.364470156Z"
+    description: Snowplow-authored Kyverno policies for Kubernetes clusters running
+      Kyverno
+    digest: e085615a281a7f0be27830a5e26131b3a97f7cddb2e6e7ccdf3168743d7ddc18
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - kyverno
+    - policy
+    maintainers:
+    - email: ianarsenault@users.noreply.github.com
+      name: ianarsenault
+      url: https://github.com/ianarsenault
+    name: snowplow-kyverno-policies
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/snowplow-kyverno-policies-0.2.0/snowplow-kyverno-policies-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     appVersion: 0.1.0
     created: "2026-06-11T15:18:20.62095002Z"
     description: Snowplow-authored Kyverno policies for Kubernetes clusters running
@@ -4993,4 +5012,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-09-21T07:56:58.692954237Z"
+generated: "2026-09-22T14:53:26.364723907Z"
