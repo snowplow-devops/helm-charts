@@ -30,3 +30,10 @@ service:
   ingress:
     ingress-0001:
       hostname: example-01.com
+topologySpreadConstraints:    # list, as the pod spec requires
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app: example

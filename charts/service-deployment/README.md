@@ -1,6 +1,6 @@
 # service-deployment
 
-![Version: 0.43.0](https://img.shields.io/badge/Version-0.43.0-informational?style=flat-square)
+![Version: 0.43.1](https://img.shields.io/badge/Version-0.43.1-informational?style=flat-square)
 
 A Helm Chart to setup a generic deployment with optional service/hpa/vpa bindings
 
@@ -126,7 +126,7 @@ A Helm Chart to setup a generic deployment with optional service/hpa/vpa binding
 | service.targetPort | int | `80` | The Target Port that the actual application is being exposed on |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
 | tolerations | list | `[]` | Allow the scheduler to schedule pods with matching taints  more details here: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/ |
-| topologySpreadConstraints | object | `{}` | topologySpreadConstraints control how Pods are  spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains.  more details here: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ |
+| topologySpreadConstraints | list | `[]` | topologySpreadConstraints control how Pods are  spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains.  more details here: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/ |
 | vpa.enabled | bool | `false` | Whether to deploy VPA rules |
 | vpa.spec | object | `{}` | VPA resource specification (accepts any valid VPA spec fields) |
 

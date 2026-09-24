@@ -1,3 +1,7 @@
+Version 0.3.57 (2026-09-24)
+---------------------------
+charts/service-deployment-0.43.1: Fix the values.schema.json type of topologySpreadConstraints. The default was `{}`, so the generator inferred `object` and rejected the list form the pod spec requires. Default is now `[]`, annotated `type: [array]`. Rendered manifests are unchanged apart from chart-version labels and checksum/values
+
 Version 0.3.56 (2026-09-21)
 ---------------------------
 charts/snowplow-kyverno-policies-0.2.0: Add the disableServiceAccountTokenAutomount policy in two independent modes, both off by default: a MutatingPolicy that patches Pods on CREATE to spec.automountServiceAccountToken: false, and a ValidatingPolicy that audits (or denies) Pods without it. Shared excludedNamespaces and a per-Pod exemptionLabel exempt workloads that need an in-cluster API client. Admission-only, so enabling it triggers no rollout.
