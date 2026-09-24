@@ -2530,6 +2530,39 @@ entries:
     version: 0.1.0
   service-deployment:
   - apiVersion: v2
+    created: "2026-09-24T14:25:46.407423145Z"
+    dependencies:
+    - name: dockerconfigjson
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.1.0
+    - name: cloudserviceaccount
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.3.0
+    description: A Helm Chart to setup a generic deployment with optional service/hpa/vpa
+      bindings
+    digest: 9b0716dc78dcce0d4def759f7faab1582431ff845e571cec1f5c976963f7396f
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - service
+    - deployment
+    maintainers:
+    - email: 3116331+Andy-Hay@users.noreply.github.com
+      name: Andy-Hay
+      url: https://github.com/Andy-Hay
+    - email: ianarsenault@users.noreply.github.com
+      name: ianarsenault
+      url: https://github.com/ianarsenault
+    - email: jamesarems@users.noreply.github.com
+      name: jamesarems
+      url: https://github.com/jamesarems
+    name: service-deployment
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/service-deployment-0.43.1/service-deployment-0.43.1.tgz
+    version: 0.43.1
+  - apiVersion: v2
     created: "2026-09-04T08:40:40.032905155Z"
     dependencies:
     - name: dockerconfigjson
@@ -5012,4 +5045,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-09-22T14:53:26.364723907Z"
+generated: "2026-09-24T14:25:46.407824444Z"
