@@ -1,0 +1,6 @@
+# expect: topologySpreadConstraints: Invalid type. Expected: array, given: object
+# Must be rejected, and the error must match the expect header above.
+topologySpreadConstraints:    # map, not a list
+  maxSkew: 1
+  topologyKey: topology.kubernetes.io/zone
+  whenUnsatisfiable: ScheduleAnyway

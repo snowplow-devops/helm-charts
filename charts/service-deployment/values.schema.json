@@ -619,7 +619,7 @@
         },
         "topologySpreadConstraints": {
             "description": "topologySpreadConstraints control how Pods are  spread across your cluster among failure-domains such as regions, zones, nodes, and other user-defined topology domains.  more details here: https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/",
-            "type": "object"
+            "type": "array"
         },
         "vpa": {
             "type": "object",
