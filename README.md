@@ -10,7 +10,7 @@ A collection of Helm Charts for deploying Snowplow micro-services and additional
 
 Once Helm has been set up correctly, add the repo as follows:
 
-```
+```bash
 helm repo add snowplow-devops https://snowplow-devops.github.io/helm-charts
 ```
 
@@ -18,7 +18,7 @@ If you had already added this repo earlier, run `helm repo update` to retrieve t
 
 # Copyright and license
 
-The Snowplow Helm Charts project is Copyright 2022-2023 Snowplow Analytics Ltd.
+The Snowplow Helm Charts project is Copyright 2022-current Snowplow Analytics Ltd.
 
 Licensed under the [Apache License, Version 2.0][license] (the "License");
 you may not use this software except in compliance with the License.
