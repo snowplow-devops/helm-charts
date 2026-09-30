@@ -26,5 +26,11 @@ spec:
     - http01:
         ingress:
           class: {{ $.Values.acme.httpSolverIngressClass }}
+          {{- with $.Values.acme.httpSolverIngressAnnotations }}
+          ingressTemplate:
+            metadata:
+              annotations:
+                {{- toYaml . | nindent 16 }}
+          {{- end }}
     {{- end}}
   {{- end}}

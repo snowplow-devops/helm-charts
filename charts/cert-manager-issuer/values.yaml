@@ -22,3 +22,5 @@ acme:
   solver: "http01"
   # -- The name of the ingress class to setup the HTTP-01 challenge solver on
   httpSolverIngressClass: "traefik"
+  # -- Annotations added to every HTTP-01 challenge solver ingress cert-manager creates (e.g. traefik.ingress.kubernetes.io/router.priority)
+  httpSolverIngressAnnotations: {}
