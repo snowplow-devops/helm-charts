@@ -951,6 +951,37 @@ entries:
   cert-manager-issuer:
   - apiVersion: v2
     appVersion: v1.19.1
+    created: "2026-09-30T15:02:33.799892778Z"
+    dependencies:
+    - name: cert-manager-crds
+      repository: https://snowplow-devops.github.io/helm-charts
+      version: 0.2.0
+    description: A helm chart that creates an Issuer or ClusterIssuer for cert-manager
+    digest: 770b3cdbc3836b84255d59430cc6810e4be4d562c0cea86c7695d943279d32f4
+    home: https://github.com/snowplow-devops/helm-charts
+    icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/logo/snowplow.png
+    keywords:
+    - cert-manager
+    - issuer
+    - clusterissuer
+    - ingress
+    - nlb
+    maintainers:
+    - email: jamesarems@users.noreply.github.com
+      name: jamesarems
+      url: https://github.com/jamesarems
+    - email: jparavisini@users.noreply.github.com
+      name: jparavisini
+      url: https://github.com/jparavisini
+    name: cert-manager-issuer
+    sources:
+    - https://github.com/snowplow-devops/helm-charts
+    type: application
+    urls:
+    - https://github.com/snowplow-devops/helm-charts/releases/download/cert-manager-issuer-0.4.0/cert-manager-issuer-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: v1.19.1
     created: "2025-10-24T10:19:44.67255477Z"
     dependencies:
     - name: cert-manager-crds
@@ -5045,4 +5076,4 @@ entries:
     urls:
     - https://github.com/snowplow-devops/helm-charts/releases/download/vertical-pod-autoscaler-0.1.0/vertical-pod-autoscaler-0.1.0.tgz
     version: 0.1.0
-generated: "2026-09-24T14:25:46.407824444Z"
+generated: "2026-09-30T15:02:33.800250126Z"
