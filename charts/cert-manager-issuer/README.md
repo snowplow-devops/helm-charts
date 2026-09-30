@@ -10,6 +10,7 @@ A helm chart that creates an Issuer or ClusterIssuer for cert-manager
 
 | Name | Email | Url |
 | ---- | ------ | --- |
+| jamesarems | <jamesarems@users.noreply.github.com> | <https://github.com/jamesarems> |
 | jparavisini | <jparavisini@users.noreply.github.com> | <https://github.com/jparavisini> |
 
 ## Source Code

@@ -9,6 +9,9 @@ icon: https://raw.githubusercontent.com/snowplow-devops/helm-charts/master/docs/
 sources:
   - https://github.com/snowplow-devops/helm-charts
 maintainers:
+  - name: jamesarems
+    url: https://github.com/jamesarems
+    email: jamesarems@users.noreply.github.com
   - name: jparavisini
     url: https://github.com/jparavisini
     email: jparavisini@users.noreply.github.com
