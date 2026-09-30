@@ -30,7 +30,10 @@ spec:
           ingressTemplate:
             metadata:
               annotations:
-                {{- toYaml . | nindent 16 }}
+                {{- range $key, $value := . }}
+                {{- /* cert-manager requires string values; toJson avoids float64 values rendering as e.g. 1e+06 */}}
+                {{ $key | quote }}: {{ ternary $value (toJson $value) (kindIs "string" $value) | quote }}
+                {{- end }}
           {{- end }}
     {{- end}}
   {{- end}}
