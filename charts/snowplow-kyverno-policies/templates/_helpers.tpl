@@ -93,3 +93,47 @@ Usage:
     object.metadata.labels['{{ . }}'] != 'true'
 {{- end }}
 {{- end -}}
+
+{{/*
+Generic matchConstraints for a Pod-validating curated policy: Pod CREATE, minus
+any excluded namespaces (matched on the kubernetes.io/metadata.name label).
+Same output as automountMatchConstraints, for policies other than automount.
+Usage:
+  include "snowplow-kyverno-policies.podMatchConstraints" .Values.policies.<policy>
+*/}}
+{{- define "snowplow-kyverno-policies.podMatchConstraints" -}}
+resourceRules:
+  - apiGroups:
+      - ""
+    apiVersions:
+      - v1
+    operations:
+      - CREATE
+    resources:
+      - pods
+{{- with .excludedNamespaces }}
+namespaceSelector:
+  matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: NotIn
+      values:
+        {{- toYaml . | nindent 8 }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Generic matchConditions for a Pod-validating curated policy: skip Pods that
+carry the policy's exemptionLabel set to "true". Renders nothing when
+exemptionLabel is empty, so callers must guard the matchConditions key.
+Usage:
+  include "snowplow-kyverno-policies.podMatchConditions" .Values.policies.<policy>
+*/}}
+{{- define "snowplow-kyverno-policies.podMatchConditions" -}}
+{{- with .exemptionLabel }}
+- name: pod-not-exempt
+  expression: >-
+    !has(object.metadata.labels) ||
+    !('{{ . }}' in object.metadata.labels) ||
+    object.metadata.labels['{{ . }}'] != 'true'
+{{- end }}
+{{- end -}}

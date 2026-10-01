@@ -1,0 +1,37 @@
+# Run with scripts/kyverno-policy-test.sh, which renders policy.yaml from the
+# chart first. policy.yaml is not committed.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restrict-secret-mounts
+policies:
+  - policy.yaml
+resources:
+  - resources.yaml
+results:
+  - policy: restrict-secret-mounts
+    isValidatingPolicy: true
+    result: pass
+    resources:
+      - pass-no-secrets           # no Secret references at all
+      - pass-hermes-envfrom       # envFrom of the workload's own allowed Secret
+      - pass-allowed-every-path   # allowed Secret via every reference type and container type
+      - pass-image-pull-secret    # imagePullSecrets are not checked (kubelet-only)
+      - pass-projected-no-secret  # projected volume without a secret source
+  - policy: restrict-secret-mounts
+    isValidatingPolicy: true
+    result: fail
+    resources:
+      - fail-volume               # volumes[].secret
+      - fail-projected            # volumes[].projected.sources[].secret
+      - fail-env                  # env[].valueFrom.secretKeyRef
+      - fail-envfrom              # envFrom[].secretRef
+      - fail-init-env             # initContainers are in allContainers
+      - fail-ephemeral-envfrom    # ephemeralContainers are in allContainers
+      - fail-mixed                # allowed plus disallowed: still fails
+  - policy: restrict-secret-mounts
+    isValidatingPolicy: true
+    result: skip
+    resources:
+      - skip-exempt               # exemptionLabel matchCondition
+      - skip-excluded-namespace   # excludedNamespaces namespaceSelector

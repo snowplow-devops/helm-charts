@@ -1,0 +1,114 @@
+# One Pod per code path in require-resource-limits. See kyverno-test.yaml for
+# the expected result of each.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-cpu-limit
+  namespace: default
+
+spec:
+  containers:
+    - name: app
+      image: nginx
+      resources:
+        limits:
+          cpu: 500m
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-with-init
+  namespace: default
+
+spec:
+  containers:
+    - name: app
+      image: nginx
+      resources:
+        limits:
+          cpu: 500m
+  initContainers:
+    - name: init
+      image: busybox
+      resources:
+        limits:
+          cpu: 100m
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-exempt
+  namespace: default
+  labels:
+    snowplow.io/skip-resource-limits: "true"
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-no-resources
+  namespace: default
+
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-no-limits
+  namespace: default
+
+spec:
+  containers:
+    - name: app
+      image: nginx
+      resources:
+        requests:
+          cpu: 100m
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-limits-no-cpu
+  namespace: default
+
+spec:
+  containers:
+    - name: app
+      image: nginx
+      resources:
+        limits:
+          memory: 128Mi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-init-missing
+  namespace: default
+
+spec:
+  containers:
+    - name: app
+      image: nginx
+      resources:
+        limits:
+          cpu: 500m
+  initContainers:
+    - name: init
+      image: busybox
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-excluded-namespace
+  namespace: kube-system
+spec:
+  containers:
+    - name: app
+      image: nginx

@@ -1,0 +1,67 @@
+{{- $p := .Values.policies.requireNamespaceNetworkPolicy }}
+{{- if $p.enabled }}
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-namespace-network-policy
+  labels:
+    {{- include "snowplow-kyverno-policies.labels" . | nindent 4 }}
+spec:
+  validationActions:
+    {{- toYaml (required "policies.requireNamespaceNetworkPolicy.validationActions is required" $p.validationActions) | nindent 4 }}
+  failurePolicy: {{ $p.failurePolicy }}
+
+  evaluation:
+    background:
+      enabled: {{ $p.background }}
+
+  matchConstraints:
+    {{- include "snowplow-kyverno-policies.podMatchConstraints" $p | nindent 4 }}
+
+  {{- with (include "snowplow-kyverno-policies.podMatchConditions" $p | trim) }}
+  matchConditions:
+    {{- . | nindent 4 }}
+  {{- end }}
+
+  variables:
+    # A Pod CREATE body may omit metadata.namespace, in which case the request
+    # carries it.
+    - name: namespace
+      expression: >-
+        object.metadata.?namespace.orValue('') != '' ?
+          object.metadata.namespace : request.namespace
+    # A failed lookup is a CEL evaluation error, which failurePolicy decides.
+    - name: networkPolicies
+      expression: >-
+        resource.List('networking.k8s.io/v1', 'networkpolicies',
+          variables.namespace).?items.orValue([])
+
+  validations:
+    - expression: size(variables.networkPolicies) > 0
+      message: >-
+        The Pod's namespace must contain at least one NetworkPolicy.
+      messageExpression: >-
+        'Namespace ' + variables.namespace + ' has no NetworkPolicy, so Pods in it
+        are not network-restricted. Create its NetworkPolicy before its Pods.{{- with $p.exemptionLabel }} Label the Pod {{ . }}: "true" to exempt it.{{ end }}'
+---
+# Kyverno's default RBAC does not let its admission or reports controllers
+# read NetworkPolicies. These labels aggregate this role into both: admission
+# for the admission-time lookup, reports for background scans.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:require-namespace-network-policy
+  labels:
+    {{- include "snowplow-kyverno-policies.labels" . | nindent 4 }}
+    rbac.kyverno.io/aggregate-to-admission-controller: "true"
+    rbac.kyverno.io/aggregate-to-reports-controller: "true"
+rules:
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - get
+      - list
+{{- end }}

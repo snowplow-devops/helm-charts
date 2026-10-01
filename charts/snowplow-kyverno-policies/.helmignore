@@ -1,0 +1,3 @@
+# Kyverno policy test fixtures: exercised by scripts/kyverno-policy-test.sh,
+# not needed by consumers of the packaged chart.
+tests/

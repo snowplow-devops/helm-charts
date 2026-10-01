@@ -1,0 +1,186 @@
+# One Pod per code path in restrict-image-registries, against the allowlist in
+# chart-values.yaml. See kyverno-test.yaml for the expected result of each.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-ecr
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com/grafana-v2:1.0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-ecr-nested-digest
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com/snowplow/hermes-agent:1.0@sha256:0000000000000000000000000000000000000000000000000000000000000000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-dockerhub-short
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: snowplow/hermes-agent:1.0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-dockerhub-explicit
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: docker.io/snowplow/hermes-agent@sha256:0000000000000000000000000000000000000000000000000000000000000000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-all-container-types
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com/app:1
+  initContainers:
+    - name: init
+      image: snowplow/init:1
+  ephemeralContainers:
+    - name: debug
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com/debug:1
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-peelsky
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: peelsky/hermes-agent
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-library-nginx
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-org-lookalike
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: snowplow-evil/hermes-agent
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-host-lookalike
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com.evil.com/grafana-v2:1.0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-other-account
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 123456789012.dkr.ecr.eu-central-1.amazonaws.com/grafana-v2:1.0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-other-region
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.us-east-1.amazonaws.com/grafana-v2:1.0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-init
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com/app:1
+  initContainers:
+    - name: init
+      image: busybox
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-ephemeral
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com/app:1
+  ephemeralContainers:
+    - name: debug
+      image: busybox
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-unparseable
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: snowplow/hermes-agent@sha512:00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-registry-1-docker-io
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: registry-1.docker.io/snowplow/hermes-agent:1.0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-exempt
+  namespace: default
+  labels:
+    snowplow.io/skip-image-registries: "true"
+spec:
+  containers:
+    - name: app
+      image: peelsky/hermes-agent
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-excluded-namespace
+  namespace: kube-system
+spec:
+  containers:
+    - name: app
+      image: peelsky/hermes-agent
