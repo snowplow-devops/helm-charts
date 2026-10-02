@@ -1,0 +1,31 @@
+# Run with scripts/kyverno-policy-test.sh, which renders policy.yaml from the
+# chart first. policy.yaml is not committed.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: require-resource-limits
+policies:
+  - policy.yaml
+resources:
+  - resources.yaml
+results:
+  - policy: require-resource-limits
+    isValidatingPolicy: true
+    result: pass
+    resources:
+      - pass-cpu-limit        # happy path
+      - pass-with-init        # compliant initContainers (has(initContainers) branch)
+  - policy: require-resource-limits
+    isValidatingPolicy: true
+    result: fail
+    resources:
+      - fail-no-resources     # !has(c.resources)
+      - fail-no-limits        # !has(c.resources.limits), requests only
+      - fail-limits-no-cpu    # limits present but missing a requiredLimits key
+      - fail-init-missing     # main container ok, initContainer has no limits
+  - policy: require-resource-limits
+    isValidatingPolicy: true
+    result: skip
+    resources:
+      - skip-exempt           # exemptionLabel matchCondition
+      - skip-excluded-namespace  # excludedNamespaces namespaceSelector

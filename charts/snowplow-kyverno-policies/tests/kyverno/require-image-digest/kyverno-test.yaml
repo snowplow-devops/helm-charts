@@ -1,0 +1,35 @@
+# Run with scripts/kyverno-policy-test.sh, which renders policy.yaml from the
+# chart first. policy.yaml is not committed.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: require-image-digest
+policies:
+  - policy.yaml
+resources:
+  - resources.yaml
+results:
+  - policy: require-image-digest
+    isValidatingPolicy: true
+    result: pass
+    resources:
+      - pass-digest               # name@sha256
+      - pass-tag-and-digest       # name:tag@sha256
+      - pass-ecr-digest           # ECR host, nested repository path
+      - pass-all-container-types  # pinned initContainers and ephemeralContainers
+  - policy: require-image-digest
+    isValidatingPolicy: true
+    result: fail
+    resources:
+      - fail-no-tag               # implicit :latest
+      - fail-tag-only             # containsDigest() false
+      - fail-ecr-tag-only         # containsDigest() false on the ECR host
+      - fail-init-tag             # initContainers are in allContainers
+      - fail-ephemeral-tag        # ephemeralContainers are in allContainers
+      - fail-unparseable-digest   # isImage() false: fails rather than erroring
+  - policy: require-image-digest
+    isValidatingPolicy: true
+    result: skip
+    resources:
+      - skip-exempt               # exemptionLabel matchCondition
+      - skip-excluded-namespace   # excludedNamespaces namespaceSelector

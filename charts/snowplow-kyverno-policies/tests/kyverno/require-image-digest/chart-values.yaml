@@ -1,0 +1,4 @@
+# Chart values used to render the policy under test (scripts/kyverno-policy-test.sh).
+policies:
+  requireImageDigest:
+    enabled: true

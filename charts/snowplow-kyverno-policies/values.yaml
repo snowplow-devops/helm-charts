@@ -70,6 +70,211 @@ policies:
     # "" to remove the per-Pod escape hatch.
     exemptionLabel: snowplow.io/automount-service-account-token
 
+  # Cloud-agnostic. ValidatingPolicy that reports (or blocks) Pods where any
+  # container or initContainer does not set resources.limits for every resource
+  # listed in requiredLimits. Without a CPU limit a single Pod can starve its
+  # neighbours on the node.
+  #
+  # PID limits are NOT covered: Kubernetes has no per-container "pids" resource,
+  # so a Pod cannot declare one. PID limits are node-level kubelet config
+  # (podPidsLimit) and belong in the node/AMI configuration instead.
+  requireResourceLimits:
+    enabled: false
+    # Resource names every container must set under resources.limits. Add
+    # "memory" here to extend the policy without a chart change.
+    requiredLimits:
+      - cpu
+    # Audit (PolicyReport only) / Warn (admission warning) / Deny (block).
+    validationActions:
+      - Audit
+    # Ignore keeps admission working when the Kyverno webhook is unavailable.
+    # Deny normally wants Fail, at the cost of a hard dependency on Kyverno.
+    failurePolicy: Ignore
+    # Background-scan already-running Pods into PolicyReports.
+    background: true
+    # Namespaces exempt from the policy, matched on the kubernetes.io/metadata.name
+    # label the API server sets on every namespace. Emptying this list ([] or
+    # null) drops the namespaceSelector and applies the policy cluster-wide.
+    excludedNamespaces:
+      - kube-system
+      - kyverno
+    # Pods carrying this label set to "true" are exempt. Set to "" to remove the
+    # per-Pod escape hatch.
+    exemptionLabel: snowplow.io/skip-resource-limits
+
+  # Cloud-agnostic. The Kubernetes Pod Security Standards "restricted" profile
+  # (which includes "baseline") as one ValidatingPolicy per control, named
+  # pss-<control>, so PolicyReports show which control each Pod fails. The
+  # controls follow the upstream Pod Security Admission checks as of Kubernetes
+  # 1.35; the sysctl, SELinux type and volume type allowlists and the
+  # hostUsers: false relaxations differ on older versions.
+  #
+  # This complements Pod Security Admission namespace labels rather than
+  # replacing them: PSA blocks per namespace with no per-Pod exemption and no
+  # reporting, while this reports cluster-wide and honours exemptionLabel.
+  podSecurityRestricted:
+    enabled: false
+    # Audit (PolicyReport only) / Warn (admission warning) / Deny (block).
+    validationActions:
+      - Audit
+    # Ignore keeps admission working when the Kyverno webhook is unavailable.
+    # Deny normally wants Fail, at the cost of a hard dependency on Kyverno.
+    failurePolicy: Ignore
+    # Background-scan already-running Pods into PolicyReports.
+    background: true
+    # Namespaces exempt from every control, matched on the
+    # kubernetes.io/metadata.name label the API server sets on every namespace.
+    # Emptying this list ([] or null) drops the namespaceSelector and applies
+    # the policies cluster-wide.
+    excludedNamespaces:
+      - kube-system
+      - kyverno
+    # Pods carrying this label set to "true" are exempt from every control. Set
+    # to "" to remove the per-Pod escape hatch.
+    exemptionLabel: snowplow.io/skip-pod-security
+
+  # Cloud-agnostic. ValidatingPolicy that reports (or blocks) Pods where any
+  # container, initContainer or ephemeralContainer image is not pinned by
+  # digest (image@sha256:... or image:tag@sha256:...). A tag alone is mutable,
+  # so the image that runs can change without the Pod spec changing.
+  #
+  # An image reference Kyverno cannot parse is reported as unpinned rather than
+  # admitted. Kyverno's parser also rejects single-character repository names
+  # on registries other than Docker Hub (e.g. ghcr.io/x).
+  requireImageDigest:
+    enabled: false
+    # Audit (PolicyReport only) / Warn (admission warning) / Deny (block).
+    validationActions:
+      - Audit
+    # Ignore keeps admission working when the Kyverno webhook is unavailable.
+    # Deny normally wants Fail, at the cost of a hard dependency on Kyverno.
+    failurePolicy: Ignore
+    # Background-scan already-running Pods into PolicyReports.
+    background: true
+    # Namespaces exempt from the policy, matched on the kubernetes.io/metadata.name
+    # label the API server sets on every namespace. Emptying this list ([] or
+    # null) drops the namespaceSelector and applies the policy cluster-wide.
+    excludedNamespaces:
+      - kube-system
+      - kyverno
+    # Pods carrying this label set to "true" are exempt. Set to "" to remove the
+    # per-Pod escape hatch.
+    exemptionLabel: snowplow.io/skip-image-digest
+
+  # Cloud-agnostic. ValidatingPolicy that reports (or blocks) Pods where any
+  # container, initContainer or ephemeralContainer image does not come from a
+  # registry in allowedRegistries. An image passes if it matches ANY entry, so
+  # add one entry per registry: separate ValidatingPolicies per registry would
+  # each reject the others' images.
+  #
+  # Images are compared after Kyverno normalises them: "snowplow/x" and
+  # "docker.io/snowplow/x" both become "index.docker.io/snowplow/x", and
+  # "nginx" becomes "index.docker.io/library/nginx". Other spellings of a host,
+  # such as registry-1.docker.io or an explicit :443 port, are not normalised
+  # and do not match. An image reference Kyverno cannot parse is reported.
+  restrictImageRegistries:
+    enabled: false
+    # Required when enabled. Each entry is a registry host, optionally followed
+    # by a repository path, and matches on whole path segments: "ghcr.io/acme"
+    # allows ghcr.io/acme/app but not ghcr.io/acme-evil/app. A leading
+    # "docker.io" is treated as "index.docker.io". For example:
+    #   - 793733611312.dkr.ecr.eu-central-1.amazonaws.com
+    #   - docker.io/snowplow
+    allowedRegistries: []
+    # Audit (PolicyReport only) / Warn (admission warning) / Deny (block).
+    validationActions:
+      - Audit
+    # Ignore keeps admission working when the Kyverno webhook is unavailable.
+    # Deny normally wants Fail, at the cost of a hard dependency on Kyverno.
+    failurePolicy: Ignore
+    # Background-scan already-running Pods into PolicyReports.
+    background: true
+    # Namespaces exempt from the policy, matched on the kubernetes.io/metadata.name
+    # label the API server sets on every namespace. Emptying this list ([] or
+    # null) drops the namespaceSelector and applies the policy cluster-wide.
+    excludedNamespaces:
+      - kube-system
+      - kyverno
+    # Pods carrying this label set to "true" are exempt. Set to "" to remove the
+    # per-Pod escape hatch.
+    exemptionLabel: snowplow.io/skip-image-registries
+
+  # Cloud-agnostic. ValidatingPolicy that reports (or blocks) Pods created in a
+  # namespace that contains no NetworkPolicy. It matches Pod creation rather
+  # than Namespace creation because a NetworkPolicy cannot exist before its
+  # namespace does, so a Namespace check would reject every new namespace. The
+  # NetworkPolicy must therefore exist before the namespace's first Pod.
+  #
+  # Existence only: any NetworkPolicy satisfies it, including an allow-all one.
+  # It only protects a namespace when paired with a default-deny that the
+  # namespace's own stack owns.
+  #
+  # Each evaluation lists NetworkPolicies from the API server. Kyverno's chart
+  # already grants that through its view role binding (createViewRoleBinding,
+  # on by default); this chart also installs a ClusterRole granting get/list to
+  # the Kyverno admission and reports controllers, so the policy still works
+  # when that binding is turned off.
+  requireNamespaceNetworkPolicy:
+    enabled: false
+    # Audit (PolicyReport only) / Warn (admission warning) / Deny (block).
+    validationActions:
+      - Audit
+    # Ignore admits Pods if the Kyverno webhook is unavailable; Fail blocks
+    # them. A failed NetworkPolicy lookup is different: it is an evaluation
+    # error, which blocks the Pod under Deny whatever this says. Under Deny this
+    # policy therefore depends on the API server answering the lookup.
+    failurePolicy: Ignore
+    # Background-scan already-running Pods into PolicyReports, which also catches
+    # a namespace whose NetworkPolicies were deleted after its Pods started.
+    background: true
+    # Namespaces exempt from the policy, matched on the kubernetes.io/metadata.name
+    # label the API server sets on every namespace. Emptying this list ([] or
+    # null) drops the namespaceSelector and applies the policy cluster-wide.
+    excludedNamespaces:
+      - kube-system
+      - kyverno
+    # Pods carrying this label set to "true" are exempt. Set to "" to remove the
+    # per-Pod escape hatch.
+    exemptionLabel: snowplow.io/skip-namespace-network-policy
+
+  # Cloud-agnostic. ValidatingPolicy that reports (or blocks) Pods referencing
+  # any Secret not named in allowedSecrets, so a credential Secret placed in a
+  # workload's namespace cannot be mounted unless it is deliberately allowed.
+  # Intended for clusters where every Pod outside excludedNamespaces is
+  # untrusted, such as a dedicated agent cluster.
+  #
+  # Checked: secret and projected secret volumes, env valueFrom.secretKeyRef and
+  # envFrom secretRef, across containers, initContainers and ephemeralContainers.
+  # Not checked: imagePullSecrets and CSI nodePublishSecretRef, which the
+  # kubelet consumes without exposing the Secret to the container.
+  #
+  # An allowlist rather than a credential label: nothing marks credential
+  # Secrets today, and reading a Secret's labels would need Kyverno to have
+  # cluster-wide get on Secrets. A Secret missing from the list is reported
+  # rather than silently allowed.
+  restrictSecretMounts:
+    enabled: false
+    # Exact Secret names Pods may reference, in any namespace the policy covers.
+    # An empty list allows no Secrets at all.
+    allowedSecrets: []
+    # Audit (PolicyReport only) / Warn (admission warning) / Deny (block).
+    validationActions:
+      - Audit
+    # Ignore keeps admission working when the Kyverno webhook is unavailable.
+    # Deny normally wants Fail, at the cost of a hard dependency on Kyverno.
+    failurePolicy: Ignore
+    # Background-scan already-running Pods into PolicyReports.
+    background: true
+    # Namespaces exempt from the policy, matched on the kubernetes.io/metadata.name
+    # label the API server sets on every namespace. Emptying this list ([] or
+    # null) drops the namespaceSelector and applies the policy cluster-wide.
+    excludedNamespaces:
+      - kube-system
+      - kyverno
+    # Pods carrying this label set to "true" are exempt. Set to "" to remove the
+    # per-Pod escape hatch.
+    exemptionLabel: snowplow.io/skip-secret-mounts
+
 # Data-driven families: N policies of any kyverno kind, supplied as data. The
 # chart adds naming, standard labels and (for policies that act on cluster
 # resources) an aggregated ClusterRole built from rbac.rules.

@@ -1,0 +1,65 @@
+{{- $p := .Values.policies.restrictImageRegistries }}
+{{- if $p.enabled }}
+{{- if not $p.allowedRegistries }}
+{{- fail "policies.restrictImageRegistries.allowedRegistries must list at least one registry when enabled" }}
+{{- end }}
+{{- /* Normalise each entry to "<host>[/<path>]/" so matching is on whole path
+segments, and spell Docker Hub the way Kyverno's image() does. */}}
+{{- $allowed := list }}
+{{- range $p.allowedRegistries }}
+{{- $e := regexReplaceAll "^docker\\.io(/|$)" (trimSuffix "/" .) "index.docker.io${1}" | trimSuffix "/" }}
+{{- $allowed = append $allowed (printf "%s/" $e) }}
+{{- end }}
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: restrict-image-registries
+  labels:
+    {{- include "snowplow-kyverno-policies.labels" . | nindent 4 }}
+spec:
+  validationActions:
+    {{- toYaml (required "policies.restrictImageRegistries.validationActions is required" $p.validationActions) | nindent 4 }}
+  failurePolicy: {{ $p.failurePolicy }}
+
+  evaluation:
+    background:
+      enabled: {{ $p.background }}
+
+  matchConstraints:
+    {{- include "snowplow-kyverno-policies.podMatchConstraints" (dict "policy" $p "ephemeralContainers" true) | nindent 4 }}
+
+  {{- with (include "snowplow-kyverno-policies.podMatchConditions" $p | trim) }}
+  matchConditions:
+    {{- . | nindent 4 }}
+  {{- end }}
+
+  variables:
+    - name: allowed
+      expression: {{ toJson $allowed | quote }}
+    - name: allContainers
+      expression: >-
+        object.spec.containers +
+        object.spec.?initContainers.orValue([]) +
+        object.spec.?ephemeralContainers.orValue([])
+    # isImage() guards image(): image() on an unparseable reference is a CEL
+    # evaluation error, which Kyverno reports as an error under Audit and turns
+    # into a denial under Deny. Guarded, such an image is a plain failure.
+    - name: failing
+      expression: >-
+        variables.allContainers.filter(c,
+          !isImage(c.image) ||
+          !variables.allowed.exists(a,
+            (image(c.image).registry() + '/' + image(c.image).repository() + '/').startsWith(a))
+        ).map(c, c.name + ' (' + c.image + ')')
+
+  validations:
+    - expression: size(variables.failing) == 0
+      message: >-
+        Every container, initContainer and ephemeralContainer image must come
+        from one of: {{ join ", " $allowed }}.
+      messageExpression: >-
+        'Containers ' + variables.failing.join(', ') +
+        ' must use an image from one of: ' + variables.allowed.join(', ') +
+        '.{{- with $p.exemptionLabel }} Label the Pod {{ . }}: "true" to exempt it.{{ end }}'
+{{- end }}

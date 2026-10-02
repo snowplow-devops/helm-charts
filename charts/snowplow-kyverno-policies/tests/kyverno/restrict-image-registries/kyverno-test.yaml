@@ -1,0 +1,40 @@
+# Run with scripts/kyverno-policy-test.sh, which renders policy.yaml from the
+# chart first. policy.yaml is not committed.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restrict-image-registries
+policies:
+  - policy.yaml
+resources:
+  - resources.yaml
+results:
+  - policy: restrict-image-registries
+    isValidatingPolicy: true
+    result: pass
+    resources:
+      - pass-ecr                   # registry host entry
+      - pass-ecr-nested-digest     # nested repository, tag and digest
+      - pass-dockerhub-short       # snowplow/x normalises to index.docker.io/snowplow/x
+      - pass-dockerhub-explicit    # docker.io/snowplow/x normalises the same way
+      - pass-all-container-types   # allowed initContainers and ephemeralContainers
+  - policy: restrict-image-registries
+    isValidatingPolicy: true
+    result: fail
+    resources:
+      - fail-peelsky               # the image hermes runs today
+      - fail-library-nginx         # nginx normalises to index.docker.io/library/nginx
+      - fail-org-lookalike         # snowplow-evil/ must not match snowplow/
+      - fail-host-lookalike        # <ecr-host>.evil.com must not match <ecr-host>
+      - fail-other-account         # different ECR account
+      - fail-other-region          # same account, different region
+      - fail-init                  # initContainers are in allContainers
+      - fail-ephemeral             # ephemeralContainers are in allContainers
+      - fail-unparseable           # isImage() false: fails rather than erroring
+      - fail-registry-1-docker-io  # not normalised to index.docker.io (documented)
+  - policy: restrict-image-registries
+    isValidatingPolicy: true
+    result: skip
+    resources:
+      - skip-exempt                # exemptionLabel matchCondition
+      - skip-excluded-namespace    # excludedNamespaces namespaceSelector

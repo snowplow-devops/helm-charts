@@ -1,0 +1,7 @@
+# Chart values used to render the policy under test (scripts/kyverno-policy-test.sh).
+policies:
+  restrictImageRegistries:
+    enabled: true
+    allowedRegistries:
+      - 793733611312.dkr.ecr.eu-central-1.amazonaws.com
+      - docker.io/snowplow

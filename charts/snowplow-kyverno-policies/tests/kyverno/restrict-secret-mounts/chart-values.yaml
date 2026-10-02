@@ -1,0 +1,6 @@
+# Chart values used to render the policy under test (scripts/kyverno-policy-test.sh).
+policies:
+  restrictSecretMounts:
+    enabled: true
+    allowedSecrets:
+      - svc-hermes-secret

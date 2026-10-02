@@ -82,3 +82,22 @@ jobs:
       # when the PR touches something else.
       - name: Validate schema fixtures
         run: scripts/helm-schema-test.sh
+
+      # Pinned and checksum-verified. Keep on the same minor as the Kyverno
+      # running in the clusters, so CEL behaviour matches what enforces.
+      - name: Install kyverno CLI
+        env:
+          KYVERNO_VERSION: v1.19.1
+          KYVERNO_SHA256: b38228f367fc0fdc2b08f4c83ea50ac5f16c60ff8d62d76a66157c33c47b70ae
+        run: |
+          tarball="kyverno-cli_${KYVERNO_VERSION}_linux_x86_64.tar.gz"
+          curl -fsSLo "$tarball" "https://github.com/kyverno/kyverno/releases/download/${KYVERNO_VERSION}/${tarball}"
+          echo "${KYVERNO_SHA256}  ${tarball}" | sha256sum -c -
+          tar -xzf "$tarball" kyverno
+          sudo install -m 0755 kyverno /usr/local/bin/kyverno
+          kyverno version
+
+      # Like the schema fixtures, runs every chart's suites rather than only
+      # changed charts: it is only helm template plus the kyverno CLI.
+      - name: Run Kyverno policy tests
+        run: scripts/kyverno-policy-test.sh
