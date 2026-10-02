@@ -159,9 +159,19 @@ section applies to all of them:
 - containers, initContainers and ephemeralContainers are all checked. The one
   exception is `requireResourceLimits`, since ephemeral containers cannot set
   resources.
-- A missing field is a CEL evaluation error, and under `failurePolicy: Ignore`
-  an error admits the Pod. The expressions guard every field access for that
-  reason, and the tests assert zero evaluation errors.
+- `podSecurityRestricted`, `requireImageDigest`, `restrictImageRegistries` and
+  `restrictSecretMounts` also match the `pods/ephemeralcontainers`
+  subresource, so `kubectl debug` is checked at admission rather than only by
+  the next background scan. Under `Deny` a debug container must itself comply:
+  for the Pod Security policies use `kubectl debug --profile=restricted`, or
+  exempt the Pod. Plain Pod UPDATE is not matched, so label and annotation
+  changes on running Pods are never re-validated.
+- A missing field is a CEL evaluation error. Kyverno reports an error as an
+  `error` result under `Audit` and denies the Pod under `Deny`, whatever
+  `failurePolicy` says (`failurePolicy` covers the webhook being unreachable).
+  An unguarded expression would therefore block compliant Pods under `Deny`, so
+  the expressions guard every field access, and the tests assert zero
+  evaluation errors.
 
 #### Exemption labels
 
@@ -238,13 +248,15 @@ NetworkPolicy before the namespace's first Pod.
 
 - It checks existence only. An allow-all NetworkPolicy satisfies it, so it is
   only useful paired with a default-deny that the namespace's own stack owns.
-- Each evaluation lists NetworkPolicies from the API server. Kyverno's default
-  RBAC does not allow that, so this policy also renders a ClusterRole granting
-  `get`/`list` on `networkpolicies`, aggregated into Kyverno's admission and
-  reports controllers. Without it the lookup fails and, under
-  `failurePolicy: Ignore`, every Pod is admitted.
-- `failurePolicy` matters more here than elsewhere: `Ignore` admits Pods if the
-  lookup fails, and `Fail` blocks them. Choose deliberately before `Deny`.
+- Each evaluation lists NetworkPolicies from the API server. Kyverno's chart
+  already allows that through its `view` role binding (`createViewRoleBinding`,
+  on by default). This policy also renders a ClusterRole granting `get`/`list`
+  on `networkpolicies`, aggregated into Kyverno's admission and reports
+  controllers, so it keeps working when that binding is turned off.
+- A failed lookup is an evaluation error, so under `Deny` it blocks the Pod
+  whatever `failurePolicy` says. Moving this policy to `Deny` makes Pod
+  creation in the covered namespaces depend on the API server answering the
+  lookup.
 
 #### `restrictSecretMounts`
 

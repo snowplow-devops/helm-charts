@@ -35,7 +35,7 @@ spec:
       enabled: {{ $p.background }}
 
   matchConstraints:
-    {{- include "snowplow-kyverno-policies.podMatchConstraints" $p | nindent 4 }}
+    {{- include "snowplow-kyverno-policies.podMatchConstraints" (dict "policy" $p "ephemeralContainers" true) | nindent 4 }}
 
   {{- with (include "snowplow-kyverno-policies.podMatchConditions" $p | trim) }}
   matchConditions:

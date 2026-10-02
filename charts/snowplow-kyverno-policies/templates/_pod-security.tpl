@@ -11,8 +11,9 @@ templates/generic/pod-security-restricted.yaml, which supplies these variables:
 
 Each control mirrors the named check in k8s.io/pod-security-admission/policy
 at Kubernetes 1.35. Optional chaining (.?field.orValue(default)) is used
-throughout: a missing field is a CEL evaluation error, and under
-failurePolicy Ignore an error admits the Pod.
+throughout: a missing field is a CEL evaluation error, which Kyverno reports
+as an error result under Audit and turns into a denial under Deny, whatever
+failurePolicy says. An unguarded expression would block compliant Pods.
 */}}
 
 {{/* windowsHostProcess (baseline) */}}

@@ -97,9 +97,13 @@ Usage:
 {{/*
 Generic matchConstraints for a Pod-validating curated policy: Pod CREATE, minus
 any excluded namespaces (matched on the kubernetes.io/metadata.name label).
-Same output as automountMatchConstraints, for policies other than automount.
+With ephemeralContainers true it also matches UPDATE of the
+pods/ephemeralcontainers subresource, which is how `kubectl debug` adds a
+container to a running Pod; without it a debug container is only caught by
+background scans. Plain Pod UPDATE is deliberately not matched, so label and
+annotation changes on running Pods are never re-validated.
 Usage:
-  include "snowplow-kyverno-policies.podMatchConstraints" .Values.policies.<policy>
+  include "snowplow-kyverno-policies.podMatchConstraints" (dict "policy" .Values.policies.<policy> "ephemeralContainers" true)
 */}}
 {{- define "snowplow-kyverno-policies.podMatchConstraints" -}}
 resourceRules:
@@ -111,7 +115,17 @@ resourceRules:
       - CREATE
     resources:
       - pods
-{{- with .excludedNamespaces }}
+{{- if .ephemeralContainers }}
+  - apiGroups:
+      - ""
+    apiVersions:
+      - v1
+    operations:
+      - UPDATE
+    resources:
+      - pods/ephemeralcontainers
+{{- end }}
+{{- with .policy.excludedNamespaces }}
 namespaceSelector:
   matchExpressions:
     - key: kubernetes.io/metadata.name

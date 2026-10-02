@@ -17,7 +17,7 @@ spec:
       enabled: {{ $p.background }}
 
   matchConstraints:
-    {{- include "snowplow-kyverno-policies.podMatchConstraints" $p | nindent 4 }}
+    {{- include "snowplow-kyverno-policies.podMatchConstraints" (dict "policy" $p "ephemeralContainers" false) | nindent 4 }}
 
   {{- with (include "snowplow-kyverno-policies.podMatchConditions" $p | trim) }}
   matchConditions:
@@ -45,9 +45,10 @@ spec:
         'Namespace ' + variables.namespace + ' has no NetworkPolicy, so Pods in it
         are not network-restricted. Create its NetworkPolicy before its Pods.{{- with $p.exemptionLabel }} Label the Pod {{ . }}: "true" to exempt it.{{ end }}'
 ---
-# Kyverno's default RBAC does not let its admission or reports controllers
-# read NetworkPolicies. These labels aggregate this role into both: admission
-# for the admission-time lookup, reports for background scans.
+# Kyverno's chart already grants this through its view role binding
+# (createViewRoleBinding, on by default). This role keeps the lookup working
+# when that binding is turned off. The labels aggregate it into the admission
+# controller (admission-time lookup) and reports controller (background scans).
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:

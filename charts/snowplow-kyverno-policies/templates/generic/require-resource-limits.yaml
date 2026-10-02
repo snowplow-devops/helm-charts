@@ -17,7 +17,7 @@ spec:
       enabled: {{ $p.background }}
 
   matchConstraints:
-    {{- include "snowplow-kyverno-policies.podMatchConstraints" $p | nindent 4 }}
+    {{- include "snowplow-kyverno-policies.podMatchConstraints" (dict "policy" $p "ephemeralContainers" false) | nindent 4 }}
 
   {{- with (include "snowplow-kyverno-policies.podMatchConditions" $p | trim) }}
   matchConditions:
@@ -27,8 +27,9 @@ spec:
   variables:
     - name: required
       expression: {{ toJson (required "policies.requireResourceLimits.requiredLimits is required" $p.requiredLimits) | quote }}
-    # has() guards throughout: a missing field is a CEL evaluation error, and
-    # under failurePolicy Ignore an error admits the Pod.
+    # has() guards throughout: a missing field is a CEL evaluation error, which
+    # Kyverno reports as an error under Audit and turns into a denial under
+    # Deny, so an unguarded expression would block compliant Pods.
     - name: allContainers
       expression: >-
         object.spec.containers +

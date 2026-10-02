@@ -209,18 +209,20 @@ policies:
   # It only protects a namespace when paired with a default-deny that the
   # namespace's own stack owns.
   #
-  # Each evaluation lists NetworkPolicies from the API server, so the chart also
-  # installs a ClusterRole that lets the Kyverno admission and reports
-  # controllers get/list them. Without it the lookup fails, and under
-  # failurePolicy Ignore every Pod is admitted.
+  # Each evaluation lists NetworkPolicies from the API server. Kyverno's chart
+  # already grants that through its view role binding (createViewRoleBinding,
+  # on by default); this chart also installs a ClusterRole granting get/list to
+  # the Kyverno admission and reports controllers, so the policy still works
+  # when that binding is turned off.
   requireNamespaceNetworkPolicy:
     enabled: false
     # Audit (PolicyReport only) / Warn (admission warning) / Deny (block).
     validationActions:
       - Audit
-    # Ignore admits Pods if the webhook is unavailable OR the NetworkPolicy
-    # lookup fails; Fail blocks them in both cases. Choose deliberately before
-    # moving to Deny, since this policy depends on an API call at admission.
+    # Ignore admits Pods if the Kyverno webhook is unavailable; Fail blocks
+    # them. A failed NetworkPolicy lookup is different: it is an evaluation
+    # error, which blocks the Pod under Deny whatever this says. Under Deny this
+    # policy therefore depends on the API server answering the lookup.
     failurePolicy: Ignore
     # Background-scan already-running Pods into PolicyReports, which also catches
     # a namespace whose NetworkPolicies were deleted after its Pods started.
