@@ -9,6 +9,9 @@ maintainers:
   - name: ianarsenault
     url: https://github.com/ianarsenault
     email: ianarsenault@users.noreply.github.com
+  - name: jmb11111
+    url: https://github.com/jmb11111
+    email: jmb11111@users.noreply.github.com
 keywords:
   - kyverno
   - policy
