@@ -1,3 +1,7 @@
+Version 0.3.59 (2026-10-01)
+---------------------------
+charts/snowplow-kyverno-policies-0.3.0: Add six Pod-validating security policies, each behind its own flag and all off by default: requireResourceLimits (CPU limits on every container, extensible via requiredLimits), podSecurityRestricted (the Pod Security Standards restricted profile as 15 pss-* ValidatingPolicies, matching Kubernetes PSA 1.35 per control), requireImageDigest, restrictImageRegistries (allowedRegistries matched on whole path segments), requireNamespaceNetworkPolicy (Pods need a NetworkPolicy in their namespace; renders a ClusterRole so the lookup still works when Kyverno's view role binding is disabled) and restrictSecretMounts (Pods may only reference Secrets in allowedSecrets). The Pod Security, image and Secret policies also check containers added by kubectl debug (pods/ephemeralcontainers). Each defaults to Audit with failurePolicy Ignore, excludes kube-system and kyverno, and has a per-Pod exemptionLabel. Adds kyverno test suites under tests/kyverno, run by scripts/kyverno-policy-test.sh and in CI. With default values nothing new renders, and enabling the existing policies renders output identical to 0.2.0 apart from the chart-version labels.
+
 Version 0.3.58 (2026-09-25)
 ---------------------------
 Upgrade Github Actions to Node 24 releases and pin them to commit SHAs (#361)

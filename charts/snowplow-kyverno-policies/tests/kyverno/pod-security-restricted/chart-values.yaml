@@ -1,0 +1,4 @@
+# Chart values used to render the policies under test (scripts/kyverno-policy-test.sh).
+policies:
+  podSecurityRestricted:
+    enabled: true

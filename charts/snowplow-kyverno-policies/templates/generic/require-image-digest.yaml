@@ -1,0 +1,50 @@
+{{- $p := .Values.policies.requireImageDigest }}
+{{- if $p.enabled }}
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-image-digest
+  labels:
+    {{- include "snowplow-kyverno-policies.labels" . | nindent 4 }}
+spec:
+  validationActions:
+    {{- toYaml (required "policies.requireImageDigest.validationActions is required" $p.validationActions) | nindent 4 }}
+  failurePolicy: {{ $p.failurePolicy }}
+
+  evaluation:
+    background:
+      enabled: {{ $p.background }}
+
+  matchConstraints:
+    {{- include "snowplow-kyverno-policies.podMatchConstraints" (dict "policy" $p "ephemeralContainers" true) | nindent 4 }}
+
+  {{- with (include "snowplow-kyverno-policies.podMatchConditions" $p | trim) }}
+  matchConditions:
+    {{- . | nindent 4 }}
+  {{- end }}
+
+  variables:
+    - name: allContainers
+      expression: >-
+        object.spec.containers +
+        object.spec.?initContainers.orValue([]) +
+        object.spec.?ephemeralContainers.orValue([])
+    # isImage() guards image(): image() on an unparseable reference is a CEL
+    # evaluation error, which Kyverno reports as an error under Audit and turns
+    # into a denial under Deny. Guarded, such an image is a plain failure.
+    - name: failing
+      expression: >-
+        variables.allContainers.filter(c,
+          !isImage(c.image) || !image(c.image).containsDigest()
+        ).map(c, c.name + ' (' + c.image + ')')
+
+  validations:
+    - expression: size(variables.failing) == 0
+      message: >-
+        Every container, initContainer and ephemeralContainer image must be
+        pinned by digest (image@sha256:...).
+      messageExpression: >-
+        'Containers ' + variables.failing.join(', ') +
+        ' must pin their image by digest (image@sha256:...).{{- with $p.exemptionLabel }} Label the Pod {{ . }}: "true" to exempt it.{{ end }}'
+{{- end }}

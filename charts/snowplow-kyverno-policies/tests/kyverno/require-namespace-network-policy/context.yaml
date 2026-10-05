@@ -1,0 +1,28 @@
+# NetworkPolicies the policy's resource.List() lookup sees. Namespaces not
+# listed here have none. At least one NetworkPolicy must exist somewhere: with
+# none at all the CLI's lookup returns an error rather than an empty list, and
+# the fail fixtures would test that error instead of a real failure.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Context
+metadata:
+  name: require-namespace-network-policy
+spec:
+  resources:
+    - apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: default-deny
+        namespace: protected
+      spec:
+        podSelector: {}
+        policyTypes: [Ingress, Egress]
+    - apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
+      metadata:
+        name: allow-all
+        namespace: allow-all
+      spec:
+        podSelector: {}
+        ingress: [{}]
+        egress: [{}]
+        policyTypes: [Ingress, Egress]

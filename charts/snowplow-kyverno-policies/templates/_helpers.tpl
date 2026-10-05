@@ -93,3 +93,61 @@ Usage:
     object.metadata.labels['{{ . }}'] != 'true'
 {{- end }}
 {{- end -}}
+
+{{/*
+Generic matchConstraints for a Pod-validating curated policy: Pod CREATE, minus
+any excluded namespaces (matched on the kubernetes.io/metadata.name label).
+With ephemeralContainers true it also matches UPDATE of the
+pods/ephemeralcontainers subresource, which is how `kubectl debug` adds a
+container to a running Pod; without it a debug container is only caught by
+background scans. Plain Pod UPDATE is deliberately not matched, so label and
+annotation changes on running Pods are never re-validated.
+Usage:
+  include "snowplow-kyverno-policies.podMatchConstraints" (dict "policy" .Values.policies.<policy> "ephemeralContainers" true)
+*/}}
+{{- define "snowplow-kyverno-policies.podMatchConstraints" -}}
+resourceRules:
+  - apiGroups:
+      - ""
+    apiVersions:
+      - v1
+    operations:
+      - CREATE
+    resources:
+      - pods
+{{- if .ephemeralContainers }}
+  - apiGroups:
+      - ""
+    apiVersions:
+      - v1
+    operations:
+      - UPDATE
+    resources:
+      - pods/ephemeralcontainers
+{{- end }}
+{{- with .policy.excludedNamespaces }}
+namespaceSelector:
+  matchExpressions:
+    - key: kubernetes.io/metadata.name
+      operator: NotIn
+      values:
+        {{- toYaml . | nindent 8 }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Generic matchConditions for a Pod-validating curated policy: skip Pods that
+carry the policy's exemptionLabel set to "true". Renders nothing when
+exemptionLabel is empty, so callers must guard the matchConditions key.
+Usage:
+  include "snowplow-kyverno-policies.podMatchConditions" .Values.policies.<policy>
+*/}}
+{{- define "snowplow-kyverno-policies.podMatchConditions" -}}
+{{- with .exemptionLabel }}
+- name: pod-not-exempt
+  expression: >-
+    !has(object.metadata.labels) ||
+    !('{{ . }}' in object.metadata.labels) ||
+    object.metadata.labels['{{ . }}'] != 'true'
+{{- end }}
+{{- end -}}

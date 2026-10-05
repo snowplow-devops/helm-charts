@@ -1,0 +1,243 @@
+# One Pod per code path in restrict-secret-mounts, against allowedSecrets in
+# chart-values.yaml. See kyverno-test.yaml for the expected result of each.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-no-secrets
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+  volumes:
+    - name: cfg
+      configMap:
+        name: app-config
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-hermes-envfrom
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+      envFrom:
+        - secretRef:
+            name: svc-hermes-secret
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-allowed-every-path
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+      envFrom:
+        - secretRef:
+            name: svc-hermes-secret
+      env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: svc-hermes-secret
+              key: token
+  initContainers:
+    - name: init
+      image: busybox
+      env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: svc-hermes-secret
+              key: token
+  ephemeralContainers:
+    - name: debug
+      image: busybox
+      envFrom:
+        - secretRef:
+            name: svc-hermes-secret
+  volumes:
+    - name: s
+      secret:
+        secretName: svc-hermes-secret
+    - name: p
+      projected:
+        sources:
+          - secret:
+              name: svc-hermes-secret
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-image-pull-secret
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+  imagePullSecrets:
+    - name: deploy-registry-creds
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-projected-no-secret
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+  volumes:
+    - name: p
+      projected:
+        sources:
+          - configMap:
+              name: app-config
+          - serviceAccountToken:
+              path: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-volume
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+  volumes:
+    - name: s
+      secret:
+        secretName: aws-credentials
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-projected
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+  volumes:
+    - name: p
+      projected:
+        sources:
+          - secret:
+              name: deploy-token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-env
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+      env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: vault-agent-creds
+              key: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-envfrom
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+      envFrom:
+        - secretRef:
+            name: snowdroid
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-init-env
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+  initContainers:
+    - name: init
+      image: busybox
+      env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: deploy-token
+              key: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-ephemeral-envfrom
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+  ephemeralContainers:
+    - name: debug
+      image: busybox
+      envFrom:
+        - secretRef:
+            name: aws-credentials
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-mixed
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+      envFrom:
+        - secretRef:
+            name: svc-hermes-secret
+      env:
+        - name: TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: aws-credentials
+              key: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-exempt
+  namespace: default
+  labels:
+    snowplow.io/skip-secret-mounts: "true"
+spec:
+  containers:
+    - name: app
+      image: nginx
+      envFrom:
+        - secretRef:
+            name: aws-credentials
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-excluded-namespace
+  namespace: kube-system
+spec:
+  containers:
+    - name: app
+      image: nginx
+      envFrom:
+        - secretRef:
+            name: aws-credentials

@@ -1,0 +1,64 @@
+# One Pod per code path in require-namespace-network-policy. The NetworkPolicies
+# each namespace has are in context.yaml; see kyverno-test.yaml for results.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-protected
+  namespace: protected
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-allow-all
+  namespace: allow-all
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-no-network-policy
+  namespace: team-b
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-default-namespace
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-exempt
+  namespace: team-b
+  labels:
+    snowplow.io/skip-namespace-network-policy: "true"
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-excluded-namespace
+  namespace: kube-system
+spec:
+  containers:
+    - name: app
+      image: nginx

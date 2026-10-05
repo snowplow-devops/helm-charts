@@ -1,0 +1,136 @@
+# One Pod per code path in require-image-digest. See kyverno-test.yaml for the
+# expected result of each.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-digest
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx@sha256:0000000000000000000000000000000000000000000000000000000000000000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-tag-and-digest
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27@sha256:0000000000000000000000000000000000000000000000000000000000000000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-ecr-digest
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com/snowplow/hermes-agent@sha256:0000000000000000000000000000000000000000000000000000000000000000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pass-all-container-types
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx@sha256:0000000000000000000000000000000000000000000000000000000000000000
+  initContainers:
+    - name: init
+      image: busybox@sha256:0000000000000000000000000000000000000000000000000000000000000000
+  ephemeralContainers:
+    - name: debug
+      image: busybox:1.36@sha256:0000000000000000000000000000000000000000000000000000000000000000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-no-tag
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-tag-only
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-ecr-tag-only
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: 793733611312.dkr.ecr.eu-central-1.amazonaws.com/grafana-v2:1.0
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-init-tag
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx@sha256:0000000000000000000000000000000000000000000000000000000000000000
+  initContainers:
+    - name: init
+      image: busybox:1.36
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-ephemeral-tag
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx@sha256:0000000000000000000000000000000000000000000000000000000000000000
+  ephemeralContainers:
+    - name: debug
+      image: busybox:1.36
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fail-unparseable-digest
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx@sha512:00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-exempt
+  namespace: default
+  labels:
+    snowplow.io/skip-image-digest: "true"
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: skip-excluded-namespace
+  namespace: kube-system
+spec:
+  containers:
+    - name: app
+      image: nginx:1.27

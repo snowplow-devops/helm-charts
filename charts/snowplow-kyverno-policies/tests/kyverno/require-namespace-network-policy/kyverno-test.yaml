@@ -1,0 +1,30 @@
+# Run with scripts/kyverno-policy-test.sh, which renders policy.yaml from the
+# chart first. policy.yaml is not committed.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: require-namespace-network-policy
+policies:
+  - policy.yaml
+resources:
+  - resources.yaml
+context: context.yaml
+results:
+  - policy: require-namespace-network-policy
+    isValidatingPolicy: true
+    result: pass
+    resources:
+      - pass-protected           # namespace has a default-deny NetworkPolicy
+      - pass-allow-all           # existence only: an allow-all policy satisfies it
+  - policy: require-namespace-network-policy
+    isValidatingPolicy: true
+    result: fail
+    resources:
+      - fail-no-network-policy   # no NetworkPolicy in team-b (others exist elsewhere)
+      - fail-default-namespace   # no NetworkPolicy in default
+  - policy: require-namespace-network-policy
+    isValidatingPolicy: true
+    result: skip
+    resources:
+      - skip-exempt              # exemptionLabel matchCondition
+      - skip-excluded-namespace  # excludedNamespaces namespaceSelector
