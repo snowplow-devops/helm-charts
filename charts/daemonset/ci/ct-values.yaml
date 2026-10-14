@@ -1,0 +1,9 @@
+# The default nginx image runs as root, which the hardened
+# containerSecurityContext (runAsNonRoot: true) rejects. Use the
+# unprivileged build so ct install exercises the default security context.
+image:
+  repository: "nginxinc/nginx-unprivileged"
+  tag: "latest"
+
+service:
+  targetPort: 8080
