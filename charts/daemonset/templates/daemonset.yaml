@@ -109,10 +109,8 @@ spec:
             name: {{ include "app.secret.fullname" . }}
         {{- end }}
 
-        {{- if .Values.config.securityContext  }}
         securityContext:
-          {{- toYaml $.Values.config.securityContext | nindent 10 }}
-        {{- end  }}
+          {{- toYaml (.Values.config.securityContext | default .Values.containerSecurityContext) | nindent 10 }}
 
         resources:
           {{- toYaml .Values.resources | nindent 10 }}

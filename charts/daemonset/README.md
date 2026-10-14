@@ -61,7 +61,7 @@ helm delete daemonset
 | config.args | list | `[]` |  |
 | config.env | string | `nil` | Map of environment variables to use within the job |
 | config.secrets | object | `{}` | Map of secrets that will be exposed as environment variables within the job |
-| config.securityContext | object | `{}` | Map of securityContext object applied to pods (https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
+| config.securityContext | object | `{}` | Deprecated, use containerSecurityContext. Map of securityContext applied to the container. When non-empty it replaces containerSecurityContext entirely, so existing overrides keep their exact behaviour. |
 | config.hostPIDAccess | bool | `false` | Allow pods access to host proccess information |
 | config.hostNetworkAccess | bool | `false` | Allow pods access to host network () |
 | config.dnsPolicy | string | `"ClusterFirst"` | DNS Policy for pods (https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/) |
@@ -69,6 +69,7 @@ helm delete daemonset
 | daemonsetAnnotations | object | `{}` | Annotations to be applied to the daemonset |
 | hostPaths | list | `[]` | List of host paths to mount to the deployment |
 | resources | object | `{}` | Map of resource constraints for the service |
+| containerSecurityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Container security context configuration. These defaults follow kubesec.io best practices for hardened deployments. runAsUser / runAsGroup are intentionally not pinned; the image's USER directive selects the runtime UID while runAsNonRoot: true still enforces the non-root invariant. readOnlyRootFilesystem defaults to false so existing deployments are not broken on upgrade. Node agents that need root, host access or extra capabilities must override these, e.g. runAsNonRoot: false or capabilities.add. config.securityContext, when set, takes precedence. |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |
 | tolerations | list | `[{"operator":"Exists"}]` | Tolerations for the daemonset pods. Defaults to tolerating all taints so the daemonset is scheduled onto every node in the cluster, including tainted nodes (e.g. Karpenter-provisioned nodes). Set to [] to disable and use default scheduling. |
 | nodeSelector | object | `{}` | Node selector for constraining the daemonset to specific nodes |

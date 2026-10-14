@@ -31,7 +31,8 @@ config:
   secrets: {}
   #  username: "password"
 
-  # -- Map of securityContext object applied to pods (https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  # -- Deprecated, use containerSecurityContext. Map of securityContext applied to the container.
+  # When non-empty it replaces containerSecurityContext entirely, so existing overrides keep their exact behaviour.
   securityContext: {}
   #  readOnlyRootFilesystem: true
   #  privileged: false
@@ -79,6 +80,32 @@ resources: {}
 #  requests:
 #    cpu: 400m
 #    memory: 512Mi
+
+# -- Container security context configuration
+# These defaults follow kubesec.io best practices for hardened deployments.
+#
+# runAsUser / runAsGroup are intentionally not pinned. Different container
+# images bake in different non-root USER directives, and forcing a specific
+# UID can prevent the image's user from accessing its own files. The image's
+# USER directive selects the runtime UID; runAsNonRoot: true still enforces
+# the non-root invariant. Override per-deployment if you need a specific UID.
+#
+# readOnlyRootFilesystem defaults to false so existing deployments are not
+# broken on upgrade; set it to true per-deployment once writable paths
+# (e.g. /tmp) are mounted.
+#
+# Node agents that need root, host access or extra capabilities (e.g. log
+# shippers, network agents) must override these, e.g. runAsNonRoot: false
+# or capabilities.add. config.securityContext, when set, takes precedence.
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop:
+      - ALL
+  seccompProfile:
+    type: RuntimeDefault
 
 # -- Grace period for termination of the service
 terminationGracePeriodSeconds: 60
