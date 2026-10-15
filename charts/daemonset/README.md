@@ -68,6 +68,8 @@ helm delete daemonset
 | configMaps | list | `[]` | List of config maps to mount to the deployment |
 | daemonsetAnnotations | object | `{}` | Annotations to be applied to the daemonset |
 | hostPaths | list | `[]` | List of host paths to mount to the deployment |
+| extraVolumes | list | `[]` | Additional volumes to attach to the pod spec. Useful with readOnlyRootFilesystem: true — declare writable scratch space (e.g. emptyDir on /tmp) without disabling the hardened default. |
+| extraVolumeMounts | list | `[]` | Additional volume mounts to attach to the container. Pair with extraVolumes above. |
 | resources | object | `{}` | Map of resource constraints for the service |
 | containerSecurityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":false,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Container security context configuration. These defaults follow kubesec.io best practices for hardened deployments. runAsUser / runAsGroup are intentionally not pinned; the image's USER directive selects the runtime UID while runAsNonRoot: true still enforces the non-root invariant. readOnlyRootFilesystem defaults to false so existing deployments are not broken on upgrade. Node agents that need root, host access or extra capabilities must override these, e.g. runAsNonRoot: false or capabilities.add. config.securityContext, when set, takes precedence. |
 | terminationGracePeriodSeconds | int | `60` | Grace period for termination of the service |

@@ -1,3 +1,7 @@
+Version 0.3.61 (2026-10-15)
+---------------------------
+charts/daemonset-0.7.1: Add extraVolumes and extraVolumeMounts (matching service-deployment) so writable scratch space such as an emptyDir on /tmp can be mounted under readOnlyRootFilesystem: true; with default values the rendered output is unchanged apart from the chart-version labels
+
 Version 0.3.60 (2026-10-14)
 ---------------------------
 charts/daemonset-0.7.0: Add containerSecurityContext with hardened defaults; config.securityContext is deprecated but still takes precedence when set
