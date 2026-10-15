@@ -72,6 +72,19 @@ hostPaths: []
 #    secretName: "secret-name" - optional
 #    secretDefaultMode: 256 - optional
 
+# -- Additional volumes to attach to the pod spec.
+# Useful with readOnlyRootFilesystem: true — declare writable scratch space
+# (e.g. emptyDir on /tmp) without disabling the hardened default.
+extraVolumes: []
+#  - name: tmp
+#    emptyDir: {}
+
+# -- Additional volume mounts to attach to the container.
+# Pair with extraVolumes above.
+extraVolumeMounts: []
+#  - name: tmp
+#    mountPath: /tmp
+
 # -- Map of resource constraints for the service
 resources: {}
 #  limits:
