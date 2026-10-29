@@ -25,6 +25,10 @@ spec:
         {{- include "avalanche.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: observer-prometheus
     spec:
+      {{- with (include "avalanche.componentAffinity" (dict "ctx" . "component" "observerPrometheus")) }}
+      affinity:
+        {{- . | nindent 8 }}
+      {{- end }}
       {{- $sa := include "avalanche.observerPrometheus.serviceAccountName" . }}
       {{- if $sa }}
       serviceAccountName: {{ $sa }}

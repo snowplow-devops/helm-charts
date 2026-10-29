@@ -28,12 +28,24 @@ data:
         {{- fail (printf "injector.config.delivery.mode must be \"http\" or \"kinesis\", got %q" $deliveryMode) }}
       {{- end }}
       {{- if eq $deliveryMode "kinesis" }}
-      {{- /* Collector-less: write straight to the raw Kinesis stream; endpoint is not rendered. */}}
+      {{- /* Collector-less: write straight to a Kinesis stream; endpoint is not rendered.
+             The record format decides WHICH stream is the valid target:
+               collector_payload (default) -> the raw collector_payloads stream
+               enriched_tsv               -> the enriched stream (QA-1315)
+             The chart cannot check that the ARN matches the format, so a mismatch
+             is silent: records are written and nothing downstream can read them. */}}
+      {{- $deliveryFormat := ($delivery.format | default "") }}
+      {{- if and (ne $deliveryFormat "") (not (has $deliveryFormat (list "collector_payload" "enriched_tsv"))) }}
+        {{- fail (printf "injector.config.delivery.format must be \"collector_payload\" or \"enriched_tsv\", got %q" $deliveryFormat) }}
+      {{- end }}
       delivery:
         mode: "kinesis"
         stream_arn: {{ required "injector.config.delivery.streamArn is required when delivery.mode is kinesis" $delivery.streamArn | quote }}
         region: {{ required "injector.config.delivery.region is required when delivery.mode is kinesis" $delivery.region | quote }}
         partition_key: {{ $delivery.partitionKey | default "random" | quote }}
+        {{- if $deliveryFormat }}
+        format: {{ $deliveryFormat | quote }}
+        {{- end }}
       {{- else if .Values.mockTarget.enabled }}
       endpoint: "http://{{ include "avalanche.fullname" . }}-mock-target:{{ .Values.mockTarget.port }}"
       {{- else if .Values.injector.config.endpoint }}
@@ -49,6 +61,17 @@ data:
       {{- if .Values.injector.config.insecureSkipVerify }}
       insecure_skip_verify: {{ .Values.injector.config.insecureSkipVerify }}
       {{- end }}
+      {{- /* http injector only (avalanche >= 0.21.0): rendered verbatim, so the
+             injector's own validation reports any bad key by name. Absent or
+             empty renders nothing, keeping every other injector unchanged. */}}
+      {{- with .Values.injector.config.headers }}
+      headers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.injector.config.requests }}
+      requests:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- if .Values.injector.config.generator }}
       generator:
         {{- if .Values.injector.config.generator.preset }}
@@ -56,6 +79,20 @@ data:
         {{- end }}
         {{- if hasKey .Values.injector.config.generator "seed" }}
         seed: {{ .Values.injector.config.generator.seed }}
+        {{- end }}
+        {{- /* QA-1289/QA-1290: select an alternative event source. Empty (absent)
+               keeps the weighted go-event-generator stream, so the collector and
+               enrich injectors render exactly as before. `signals` selects the
+               bounded-entity Signals stream. ordinal/ordinal_count are NOT
+               rendered here - the controller assigns them at runtime over NATS. */}}
+        {{- if .Values.injector.config.generator.source }}
+        source: {{ .Values.injector.config.generator.source | quote }}
+        {{- end }}
+        {{- if .Values.injector.config.generator.signalsPoolSize }}
+        signals_pool_size: {{ .Values.injector.config.generator.signalsPoolSize }}
+        {{- end }}
+        {{- if .Values.injector.config.generator.signalsRunID }}
+        signals_run_id: {{ .Values.injector.config.generator.signalsRunID | quote }}
         {{- end }}
       {{- end }}
   {{- end }}
@@ -203,6 +240,37 @@ data:
         {{- end }}
       fields:
         {{- range $field, $aggs := .Values.aggregatorKinesisStream.config.fields }}
+        {{ $field }}:
+          {{- range $aggs }}
+          - {{ . }}
+          {{- end }}
+        {{- end }}
+  {{- end }}
+
+  # Only alongside observerSignals, the measurement's only writer.
+  {{- if and .Values.aggregatorSignals.enabled .Values.observerSignals.enabled }}
+  aggregator-signals.yaml: |
+    type: {{ .Values.aggregatorSignals.config.type | quote }}
+    name: {{ .Values.aggregatorSignals.config.name | quote }}
+    config:
+      source_measurement: {{ .Values.aggregatorSignals.config.sourceMeasurement | quote }}
+      output_measurements:
+        window: {{ .Values.aggregatorSignals.config.outputMeasurements.window | quote }}
+        phase: {{ .Values.aggregatorSignals.config.outputMeasurements.phase | quote }}
+        run: {{ .Values.aggregatorSignals.config.outputMeasurements.run | quote }}
+      window_duration: {{ .Values.aggregatorSignals.config.windowDuration | quote }}
+      {{- with .Values.aggregatorSignals.config.sourceFilter }}
+      source_filter:
+        {{- range $tag, $value := . }}
+        {{ $tag }}: {{ $value | quote }}
+        {{- end }}
+      {{- end }}
+      group_by:
+        {{- range .Values.aggregatorSignals.config.groupBy }}
+        - {{ . }}
+        {{- end }}
+      fields:
+        {{- range $field, $aggs := .Values.aggregatorSignals.config.fields }}
         {{ $field }}:
           {{- range $aggs }}
           - {{ . }}
@@ -359,6 +427,15 @@ data:
           {{- if .streamName }}
           stream_name: {{ .streamName | quote }}
           {{- end }}
+          {{- /* QA-1473: identifiers for the rds_instance and ec2_asg kinds. Like
+                 streamName they sit outside the container_insights branch, so
+                 those targets get no pod-name fields. */}}
+          {{- if .dbInstanceIdentifier }}
+          db_instance_identifier: {{ .dbInstanceIdentifier | quote }}
+          {{- end }}
+          {{- if .autoScalingGroupName }}
+          auto_scaling_group_name: {{ .autoScalingGroupName | quote }}
+          {{- end }}
         {{- end }}
 
   external-observer-kubernetes-cloudwatch.yaml: |
@@ -403,4 +480,45 @@ data:
     config:
       timeout: "30s"
       underlying_type: "prometheus-jvm"
+  {{- end }}
+  {{- /*
+  Signals API observer (QA-1291). Same two-file shape as the prometheus pair:
+  observer-signals.yaml is the real config the pod self-loads via --config;
+  external-observer-signals.yaml is the "external" stub the TEST PLAN
+  references, so the controller coordinates the (self-configured) pod over NATS
+  for phase transitions. underlying_type is what IsNonGatingType matches on in
+  managed/DS4 mode, so a run never health-gates on this observer.
+
+  A Helm comment, not a "#" comment: the latter renders into the ConfigMap even
+  when the observer is disabled, which would make this change non-inert for the
+  collector and enrich charts.
+  */ -}}
+  {{- if .Values.observerSignals.enabled }}
+  observer-signals.yaml: |
+    type: {{ .Values.observerSignals.config.type | quote }}
+    name: {{ .Values.observerSignals.config.name | quote }}
+    config:
+      base_url: {{ required "observerSignals.config.baseURL is required when observerSignals.enabled is true (use the IN-CLUSTER Signals service, not the ingress - QA-1287)" .Values.observerSignals.config.baseURL | quote }}
+      console_url: {{ .Values.observerSignals.config.consoleURL | quote }}
+      run_id: {{ required "observerSignals.config.runID is required and MUST match injector generator.signalsRunID (QA-1289)" .Values.observerSignals.config.runID | quote }}
+      pool_size: {{ required "observerSignals.config.poolSize is required and MUST match injector generator.signalsPoolSize" .Values.observerSignals.config.poolSize }}
+      key_name: {{ required "observerSignals.config.keyName is required" .Values.observerSignals.config.keyName | quote }}
+      request_rate: {{ .Values.observerSignals.config.requestRate }}
+      request_timeout: {{ .Values.observerSignals.config.requestTimeout | quote }}
+      warmup_probe_interval: {{ .Values.observerSignals.config.warmupProbeInterval | quote }}
+      warmup_timeout: {{ .Values.observerSignals.config.warmupTimeout | quote }}
+      attributes:
+        {{- if not .Values.observerSignals.config.attributes }}
+        {{- fail "observerSignals.config.attributes must be a non-empty list of \"<group>_v<version>:<attribute>\" names" }}
+        {{- end }}
+        {{- range .Values.observerSignals.config.attributes }}
+        - {{ . | quote }}
+        {{- end }}
+
+  external-observer-signals.yaml: |
+    type: "external"
+    name: {{ .Values.observerSignals.config.name | quote }}
+    config:
+      timeout: "30s"
+      underlying_type: "signals-api"
   {{- end }}

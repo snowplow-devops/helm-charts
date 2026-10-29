@@ -1,0 +1,86 @@
+{{- if and .Values.aggregatorSignals.enabled .Values.observerSignals.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avalanche.fullname" . }}-aggregator-signals
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: aggregator-signals
+spec:
+  replicas: {{ .Values.aggregatorSignals.replicas }}
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: aggregator-signals
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: aggregator-signals
+    spec:
+      {{- with (include "avalanche.componentAffinity" (dict "ctx" . "component" "aggregatorSignals")) }}
+      affinity:
+        {{- . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.cloudserviceaccount.deploy }}
+      serviceAccount: {{ .Values.cloudserviceaccount.name }}
+      serviceAccountName: {{ .Values.cloudserviceaccount.name }}
+      {{- else }}
+      serviceAccount: ""
+      serviceAccountName: ""
+      {{- end }}
+      automountServiceAccountToken: true
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      containers:
+        - name: aggregator
+          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.aggregatorSignals.image) }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          args:
+            - "aggregator"
+            - "--config=/configs/aggregator-signals.yaml"
+            - "--nats-url={{ include "avalanche.natsUrl" . }}"
+            - "--component-id={{ .Values.aggregatorSignals.componentId }}"
+          env:
+            - name: AVALANCHE_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "avalanche.fullname" . }}-config
+                  key: log_level
+            - name: AVALANCHE_NATS_URL
+              value: {{ include "avalanche.natsUrl" . | quote }}
+            {{- include "avalanche.databaseEnv" . | nindent 12 }}
+            {{- include "avalanche.awsEnv" . | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /configs
+              readOnly: true
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - wget -q --spider http://{{ include "avalanche.fullname" . }}-nats:8222/healthz
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - wget -q --spider http://{{ include "avalanche.fullname" . }}-nats:8222/healthz
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          resources:
+            {{- toYaml .Values.aggregatorSignals.resources | nindent 12 }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "avalanche.fullname" . }}-config
+      restartPolicy: Always
+{{- end }}

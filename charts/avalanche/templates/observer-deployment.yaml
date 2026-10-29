@@ -20,6 +20,10 @@ spec:
         {{- include "avalanche.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: monitoring
     spec:
+      {{- with (include "avalanche.componentAffinity" (dict "ctx" . "component" "observer")) }}
+      affinity:
+        {{- . | nindent 8 }}
+      {{- end }}
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccount: {{ .Values.cloudserviceaccount.name }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}

@@ -178,6 +178,26 @@ presets:
         requests: { cpu: "500m", memory: "512Mi" }
         limits:   { cpu: "2000m", memory: "2Gi" }
 
+# Kubernetes affinity for every harness Deployment: nats, injector, all
+# observers, correlator, adjudicator, controller, the aggregators and
+# mockTarget (a downstream sink, e.g. for a Snowbridge HTTP target, so it loads
+# whichever node it lands on like any other harness pod). A non-empty
+# `<component>.affinity` replaces it for that component (no merge). Not applied
+# to the fluent-bit DaemonSet, which must run on every node.
+#
+# Harness pods that share a node with the system under test inflate its
+# measured CPU, so a perf test usually keeps them off its node:
+#
+# harnessAffinity:
+#   podAntiAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       - labelSelector:
+#           matchLabels:
+#             app.kubernetes.io/name: snowbridge   # the system under test's pod labels
+#         namespaces: ["<its namespace>"]          # omit if it shares the release namespace
+#         topologyKey: kubernetes.io/hostname
+harnessAffinity: {}
+
 # Cloud service account configuration (OIDC-based IAM integration)
 cloudserviceaccount:
   # Whether to create a service-account
@@ -234,6 +254,8 @@ nats:
     type: ClusterIP
     clientPort: 4222
     monitoringPort: 8222
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Injector configuration
 injector:
@@ -256,9 +278,21 @@ injector:
     # (or leaving delivery unset) keeps the default endpoint-based delivery.
     # delivery:
     #   mode: "kinesis"           # "http" (default) or "kinesis"
-    #   streamArn: ""             # raw collector_payloads stream ARN (required when mode: kinesis)
+    #   streamArn: ""             # target stream ARN (required when mode: kinesis) - see format
     #   region: ""                # AWS region of the stream (required when mode: kinesis)
     #   partitionKey: "random"    # "random" (default) or "correlation_id"
+    #   format: ""                # record format, kinesis mode only:
+    #                             #   "collector_payload" (default) - CollectorPayload
+    #                             #     Thrift, so streamArn must be the RAW
+    #                             #     collector_payloads stream
+    #                             #   "enriched_tsv" - Snowplow enriched TSV, so
+    #                             #     streamArn must be the ENRICHED stream. Skips
+    #                             #     collector and enrich entirely, which is what
+    #                             #     lets a component downstream of enrich be
+    #                             #     measured on its own (QA-1315).
+    #                             # Nothing validates ARN against format: point them at
+    #                             # different streams and records are written that no
+    #                             # consumer can parse, with no error anywhere.
     # Protocol for HTTP injector type (not used by snowplow type).
     protocol: "http"
     # 0 = inherit from sizingPreset; set to a non-zero value to override.
@@ -266,12 +300,47 @@ injector:
     timeout: "5s"
     # Skip TLS certificate verification (useful for testing with self-signed certs)
     insecureSkipVerify: false
+    # http injector type only (avalanche >= 0.21.0). Both are rendered verbatim;
+    # leave unset for the legacy fixed POST to `endpoint`. See avalanche
+    # docs/HTTP_INJECTOR.md for keys, defaults and validation.
+    # headers:                    # sent on every request
+    #   apikey: ""
+    # requests:                   # picked at random in proportion to weight
+    #   - method: GET             # GET/POST/PUT/DELETE/HEAD/PATCH (default POST)
+    #     path: /api/schemas/com.acme/click/jsonschema/1-0-0   # appended to endpoint
+    #     weight: 3               # default 1
+    #   - method: POST
+    #     path: /api/schemas
+    #     headers: {}             # per-request; overrides top-level headers
+    #     body: "{}"              # omit for a bodyless request
     # Generator config for snowplow injector type (go-event-generator)
     # generator:
     #   preset: "typical-web"
     #   seed: 0
+    #   source: ""                # event source. "" (default) = the weighted preset
+    #                             # stream. "signals" = the bounded-entity Signals
+    #                             # stream, which is required for Signals attribute
+    #                             # updates to land: the default stream mints a fresh
+    #                             # domain_userid per event, so every attribute key is
+    #                             # written once and never revisited and the Signals
+    #                             # API serves an effectively static cache while
+    #                             # looking entirely healthy (QA-1289).
+    #   signalsPoolSize: 0        # distinct domain_userids the Signals source cycles
+    #                             # through. Required when source is "signals" - no
+    #                             # default, deliberately: it is a LOAD-SHAPING knob,
+    #                             # since distinct entity count drives attribute-store
+    #                             # key count, the stated Signals ceiling. It also sets
+    #                             # the warm-up period - the pool is walked
+    #                             # round-robin, so every entity has been written after
+    #                             # signalsPoolSize events and stays warm thereafter.
+    #   signalsRunID: ""          # scopes the entity namespace to one run. MUST match
+    #                             # the run id the Signals API observer is given: both
+    #                             # sides compute entity ids independently from config,
+    #                             # with no runtime discovery channel between them.
   # {} = inherit from sizingPreset; set requests/limits to override.
   resources: {}
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Observer configuration
 observer:
@@ -293,6 +362,8 @@ observer:
     # region: ""     # AWS region
   # {} = inherit from sizingPreset; set requests/limits to override.
   resources: {}
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Mock Target configuration (self-contained testing without external collector)
 mockTarget:
@@ -309,6 +380,8 @@ mockTarget:
     limits:
       memory: "256Mi"
       cpu: "500m"
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Correlator configuration
 correlator:
@@ -334,6 +407,8 @@ correlator:
     port: 8090
   # {} = inherit from sizingPreset; set requests/limits to override.
   resources: {}
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Adjudicator configuration
 adjudicator:
@@ -357,6 +432,8 @@ adjudicator:
       correlation_rate >= 0.95 && error_rate <= 0.05
   # {} = inherit from sizingPreset; set requests/limits to override.
   resources: {}
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Controller configuration
 controller:
@@ -394,6 +471,8 @@ controller:
     tlsSecretName: ""
   # {} = inherit from sizingPreset; set requests/limits to override.
   resources: {}
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Aggregator configuration (injection timing metrics)
 aggregator:
@@ -433,6 +512,8 @@ aggregator:
         - max
   # {} = inherit from sizingPreset; set requests/limits to override.
   resources: {}
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Kubernetes Monitoring Aggregator configuration (Phase 12.3)
 # Aggregates kubernetes_monitoring metrics into window/phase/run statistics
@@ -550,6 +631,8 @@ aggregatorKubernetes:
         - sum
   # {} = inherit from sizingPreset; set requests/limits to override.
   resources: {}
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Kinesis Stream Aggregator configuration (QA-827 Phase 2)
 # Aggregates kinesis_stream_monitoring per-stream rows into (stream × phase)
@@ -612,6 +695,67 @@ aggregatorKinesisStream:
     limits:
       memory: "256Mi"
       cpu: "500m"
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
+
+# Signals API rollup. Writes the signals_api_monitoring_window/_phase/_run
+# tables that signals_api_monitoring_* CEL rules read. Renders only when
+# observerSignals is enabled too: the signals-api observer is this measurement's
+# only writer.
+aggregatorSignals:
+  enabled: false
+  image:
+    repository: avalanche-aggregator-private
+    tag: latest
+  replicas: 1
+  componentId: "signals-api-aggregator"
+  config:
+    type: "metrics-aggregator"
+    name: "signals-api-aggregator"
+    sourceMeasurement: "signals_api_monitoring"
+    # Measurement reads only. Freshness intervals describe the injector's write
+    # period rather than Signals, and warm-up reads are cold by design.
+    sourceFilter:
+      mode: measurement
+    outputMeasurements:
+      window: "signals_api_monitoring_window"
+      phase: "signals_api_monitoring_phase"
+      run: "signals_api_monitoring_run"
+    windowDuration: "30s"  # ~300 reads per window at the observer's 10 RPS default
+    # No `outcome`: the error rate comes from the numeric is_* fields, not from
+    # one series per outcome.
+    groupBy:
+      - run_id
+      - phase_id
+    fields:
+      # Every read, errors and timeouts included.
+      request_latency_ms:
+        - p50
+        - p90
+        - p99
+        - max
+        - count
+      # ok reads only: the observer writes it on nothing else.
+      ok_latency_ms:
+        - p50
+        - p90
+        - p99
+        - max
+      is_error:
+        - mean
+        - sum
+      is_null_unexpected:
+        - mean
+        - sum
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "500m"
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Database configuration (optional)
 database:
@@ -648,6 +792,70 @@ aws:
 # cloudserviceaccount.deploy is true (e.g. DS4) the pod reuses that
 # ServiceAccount for its Timestream IRSA role; otherwise (sandbox/local) it
 # runs under the default ServiceAccount with AWS creds injected via aws.*.
+# Signals API observer (QA-1291). Polls the Snowplow Signals
+# get-online-attributes API and records request latency, outcome and attribute
+# values to the signals_api_monitoring measurement.
+#
+# Supplementary observer: it takes no part in correlation and never gates the
+# run. A Signals outage, an expired console token or a slow response degrades
+# the recorded metric, it does not fail the load test (QA-1121).
+#
+# It MUST be pointed at the in-cluster Signals service, not the external
+# ingress. The same call over the ingress carries TLS and network overhead that
+# swamps the measurement (~111ms vs 5-10ms in-cluster, QA-1287).
+#
+# Reuses the cloudserviceaccount IRSA role for Timestream access, as
+# observer-prometheus does.
+observerSignals:
+  enabled: false
+  image:
+    repository: avalanche-observer-private
+    tag: latest
+  replicas: 1
+  componentId: "signals-api-observer"
+  config:
+    type: "signals-api"
+    name: "signals-api-observer"
+    # In-cluster Signals Go server, e.g.
+    # http://svc-<env>-signals-go.<namespace>.svc.cluster.local:8080
+    baseURL: ""
+    # Console host the M2M bearer token is minted from.
+    consoleURL: "https://console.snowplowanalytics.com"
+    # MUST match the injector's generator.signalsRunID. Both sides compute
+    # entity ids independently via EntityID(run_id, index) with no runtime
+    # discovery channel between them (QA-1289); a mismatch yields a run in
+    # which every read is null and nothing says why.
+    runID: ""
+    # MUST match the injector's generator.signalsPoolSize. The observer reads
+    # round-robin over [0, poolSize).
+    poolSize: 0
+    # The run-scoped Signals attribute key to read by.
+    keyName: ""
+    # Fully-qualified attribute names, "<group>_v<version>:<attribute>".
+    attributes: []
+    # Requests per second during the measurement phase.
+    requestRate: 10
+    requestTimeout: "10s"
+    warmupProbeInterval: "1s"
+    warmupTimeout: "120s"
+  # Console credentials. Rendered into a Secret and delivered via envFrom, so
+  # they never appear in a rendered values file or config map. Leave empty in
+  # values and supply from the deployer.
+  credentials:
+    orgId: ""
+    apiKey: ""
+    apiKeyId: ""
+  # Preset-independent plain resource block (does not use sizingPreset).
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
+
 observerPrometheus:
   enabled: false
   image:
@@ -676,6 +884,8 @@ observerPrometheus:
     limits:
       cpu: "500m"
       memory: "256Mi"
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Kubernetes Infrastructure Observer configuration (Phase 12.1 + QA-822)
 observerKubernetes:
@@ -714,9 +924,15 @@ observerKubernetes:
     # rbac.scope=namespace (see rbac.scope above).
     enabled: true
   cloudwatch:
-    # CloudWatch observer (QA-824 + QA-828): reads pod-level Container Insights
-    # metrics and/or AWS/Kinesis stream metrics via IRSA. See targets[].kind for
-    # which AWS namespace each target observes.
+    # CloudWatch observer (QA-824 + QA-828 + QA-1473): reads pod-level Container
+    # Insights metrics, AWS/Kinesis stream metrics, AWS/RDS instance metrics
+    # and/or CloudWatch-agent host metrics per Auto Scaling group, via IRSA.
+    # targets[].kind selects the AWS namespace, and each kind needs its own
+    # identifier field:
+    #   container_insights -> clusterName + namespace
+    #   kinesis_stream     -> streamName
+    #   rds_instance       -> dbInstanceIdentifier
+    #   ec2_asg            -> autoScalingGroupName (agent must aggregate to it)
     enabled: false
     pollInterval: "60s"  # CloudWatch resolution floor is 60s
     targets: []
@@ -740,6 +956,12 @@ observerKubernetes:
     # - kind: kinesis_stream
     #   region: "eu-central-1"
     #   streamName: "kns-com-snplow-qa-aws-qa-...-raw"
+    # - kind: rds_instance
+    #   region: "eu-central-1"
+    #   dbInstanceIdentifier: "qa-...-iglu-rds-..."
+    # - kind: ec2_asg
+    #   region: "eu-central-1"
+    #   autoScalingGroupName: "qa-...-iglu-server-..."
   image:
     repository: avalanche-observer-private
     tag: kubernetes
@@ -792,6 +1014,8 @@ observerKubernetes:
     iamRoleArn: ""
   # {} = inherit from sizingPreset; set requests/limits to override.
   resources: {}
+  # {} = inherit harnessAffinity; set to replace it for this component.
+  affinity: {}
 
 # Logging configuration
 logging:

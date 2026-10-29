@@ -58,6 +58,12 @@ enabled (QA-1121).
 {{- end -}}
 {{- end }}
 
+{{- define "avalanche.observerSignals.serviceAccountName" -}}
+{{- if .Values.cloudserviceaccount.deploy -}}
+{{- required "cloudserviceaccount.name is required when cloudserviceaccount.deploy is true (observer-signals reuses that ServiceAccount for its Timestream IRSA role)" .Values.cloudserviceaccount.name -}}
+{{- end -}}
+{{- end }}
+
 {{/*
 Create chart name and version as used by the chart label.
 */}}
@@ -123,6 +129,29 @@ Usage:
 {{- fail (printf "avalanche: sizingPreset %q component %q is missing a 'resources' block" $ctx.Values.sizingPreset $component) -}}
 {{- end -}}
 {{- toYaml $preset.resources -}}
+{{- end -}}
+{{- end }}
+
+{{/*
+Resolve component affinity: a non-empty `<component>.affinity` replaces (does
+not merge with) `.Values.harnessAffinity`; with both empty this renders nothing.
+Wrap the call in `with` so an unset affinity leaves no `affinity:` key or blank
+line in the pod spec.
+
+Usage:
+      {{- with (include "avalanche.componentAffinity" (dict "ctx" . "component" "injector")) }}
+      affinity:
+        {{- . | nindent 8 }}
+      {{- end }}
+*/}}
+{{- define "avalanche.componentAffinity" -}}
+{{- $ctx := .ctx -}}
+{{- $component := .component -}}
+{{- $override := (index $ctx.Values $component "affinity") | default dict -}}
+{{- if gt (len $override) 0 -}}
+{{- toYaml $override -}}
+{{- else if $ctx.Values.harnessAffinity -}}
+{{- toYaml $ctx.Values.harnessAffinity -}}
 {{- end -}}
 {{- end }}
 

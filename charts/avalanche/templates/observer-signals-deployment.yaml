@@ -1,0 +1,125 @@
+{{- if .Values.observerSignals.enabled }}
+# observer-signals (QA-1291): polls the Snowplow Signals get-online-attributes
+# API and records request latency, outcome and attribute values to the metrics
+# DB. Signals exposes no /metrics endpoint (QA-1286), so calling the API is the
+# only way to measure it, and it runs in-cluster because the same call over the
+# VPN is dominated by TLS and network (~111ms vs 5-10ms, QA-1287).
+#
+# Supplementary observer: it never gates the run (QA-1121) and reports an empty
+# Heartbeat.Readiness so it stays out of the pre-injection gate (QA-1300).
+# Reuses the cloudserviceaccount IRSA role for Timestream, as
+# observer-prometheus does. Self-configures from its mounted config and connects
+# to NATS for phase coordination.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "avalanche.fullname" . }}-observer-signals
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "snowplow.labels" . | nindent 4 }}
+    app.kubernetes.io/component: observer-signals
+spec:
+  replicas: {{ .Values.observerSignals.replicas }}
+  selector:
+    matchLabels:
+      {{- include "avalanche.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: observer-signals
+  template:
+    metadata:
+      labels:
+        {{- include "snowplow.labels" . | nindent 8 }}
+        {{- include "avalanche.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: observer-signals
+    spec:
+      {{- with (include "avalanche.componentAffinity" (dict "ctx" . "component" "observerSignals")) }}
+      affinity:
+        {{- . | nindent 8 }}
+      {{- end }}
+      {{- $sa := include "avalanche.observerSignals.serviceAccountName" . }}
+      {{- if $sa }}
+      serviceAccountName: {{ $sa }}
+      {{- end }}
+      imagePullSecrets:
+      - name: {{ .Values.dockerconfigjson.name }}
+      containers:
+        - name: observer-signals
+          image: {{ include "avalanche.image" (dict "images" .Values.images "image" .Values.observerSignals.image) }}
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          args:
+            - observer
+            - --config
+            - /configs/observer-signals.yaml
+          # Console credentials arrive as a Secret rather than config, so they
+          # never appear in a rendered values file or config map.
+          envFrom:
+            - secretRef:
+                name: {{ include "avalanche.fullname" . }}-signals-credentials
+          env:
+            - name: AVALANCHE_LOG_LEVEL
+              value: {{ .Values.images.logLevel | quote }}
+            - name: AVALANCHE_NATS_URL
+              value: "nats://{{ include "avalanche.fullname" . }}-nats:4222"
+            - name: AVALANCHE_COMPONENT_ID
+              value: {{ .Values.observerSignals.componentId | quote }}
+            # Database configuration
+            {{- if eq .Values.database.type "influxdb" }}
+            - name: AVALANCHE_DB_TYPE
+              value: "influxdb"
+            - name: AVALANCHE_INFLUXDB_URL
+              value: {{ .Values.database.influxdb.url | quote }}
+            - name: AVALANCHE_INFLUXDB_TOKEN
+            {{- if .Values.database.influxdb.token }}
+              value: {{ .Values.database.influxdb.token | quote }}
+            {{- else }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "avalanche.fullname" . }}-db-credentials
+                  key: influxdb-token
+                  optional: true
+            {{- end }}
+            - name: AVALANCHE_INFLUXDB_ORG
+              value: {{ .Values.database.influxdb.org | quote }}
+            - name: AVALANCHE_INFLUXDB_BUCKET
+              value: {{ .Values.database.influxdb.bucket | quote }}
+            {{- else if eq .Values.database.type "timestream" }}
+            - name: AVALANCHE_DB_TYPE
+              value: "timestream"
+            - name: AVALANCHE_TIMESTREAM_ENABLED
+              value: "true"
+            - name: AVALANCHE_TIMESTREAM_DATABASE
+              value: {{ .Values.database.timestream.database | quote }}
+            - name: AVALANCHE_TIMESTREAM_REGION
+              value: {{ .Values.database.timestream.region | quote }}
+            {{- end }}
+            {{- include "avalanche.awsEnv" . | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: /configs
+              readOnly: true
+          {{- with .Values.observerSignals.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          # Liveness/readiness probe NATS health endpoint (consistent with other observers)
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - wget -q --spider http://{{ include "avalanche.fullname" . }}-nats:8222/healthz
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - wget -q --spider http://{{ include "avalanche.fullname" . }}-nats:8222/healthz
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "avalanche.fullname" . }}-config
+{{- end }}

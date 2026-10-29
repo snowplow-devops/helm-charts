@@ -20,6 +20,10 @@ spec:
         {{- include "avalanche.selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: messaging
     spec:
+      {{- with (include "avalanche.componentAffinity" (dict "ctx" . "component" "nats")) }}
+      affinity:
+        {{- . | nindent 8 }}
+      {{- end }}
       containers:
         - name: nats
           image: {{ .Values.nats.image.repository }}:{{ .Values.nats.image.tag }}
