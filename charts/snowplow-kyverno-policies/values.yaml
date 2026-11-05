@@ -46,6 +46,10 @@ policies:
     # they are recreated.
     mutate:
       enabled: false
+      # Ignore keeps Pod creation working when the Kyverno webhook is
+      # unavailable (the Pod is admitted unpatched). Fail blocks every Pod
+      # CREATE in the matched namespaces until Kyverno is back.
+      failurePolicy: Ignore
     # ValidatingPolicy, for ongoing compliance reporting or enforcement.
     validate:
       enabled: false
