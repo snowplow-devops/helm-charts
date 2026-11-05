@@ -104,6 +104,9 @@ livenessProbe:
 # -- Grace period for termination of the service
 terminationGracePeriodSeconds: 60
 
+# -- Whether to mount the service account API token into the pod; set to true only for workloads that call the Kubernetes API
+automountServiceAccountToken: false
+
 hpa:
   # -- Whether to deploy HPA rules
   deploy: true

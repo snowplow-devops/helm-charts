@@ -44,7 +44,7 @@ spec:
       serviceAccount: ""
       serviceAccountName: ""
       {{- end }}
-      automountServiceAccountToken: true
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
 
       {{- if .Values.priorityClassName }}

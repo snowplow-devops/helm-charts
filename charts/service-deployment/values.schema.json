@@ -6,6 +6,10 @@
             "description": "Affinity supports podAffinity, podAntiAffinity, or nodeAffinity",
             "type": "object"
         },
+        "automountServiceAccountToken": {
+            "description": "Whether to mount the service account API token into the pod; set to true only for workloads that call the Kubernetes API",
+            "type": "boolean"
+        },
         "cloudserviceaccount": {
             "type": "object",
             "properties": {
