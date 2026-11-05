@@ -1,3 +1,8 @@
+Version 0.3.62 (2026-11-05)
+---------------------------
+charts/service-deployment-0.44.0: Add automountServiceAccountToken (default false) so the service account API token is no longer mounted into the pod; previously hardcoded to true. Set it to true for workloads that call the Kubernetes API. Upgrading changes the pod spec and rolls pods
+charts/snowplow-iglu-server-0.20.0: Add service.automountServiceAccountToken (default false) for the Iglu Server deployment; previously hardcoded to true. The Cloud SQL Proxy deployment is unchanged. Upgrading changes the pod spec and rolls pods
+
 Version 0.3.61 (2026-10-15)
 ---------------------------
 charts/daemonset-0.7.1: Add extraVolumes and extraVolumeMounts (matching service-deployment) so writable scratch space such as an emptyDir on /tmp can be mounted under readOnlyRootFilesystem: true; with default values the rendered output is unchanged apart from the chart-version labels

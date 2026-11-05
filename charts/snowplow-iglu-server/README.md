@@ -1,6 +1,6 @@
 # snowplow-iglu-server
 
-![Version: 0.18.0](https://img.shields.io/badge/Version-0.18.0-informational?style=flat-square) ![AppVersion: 0.13.0](https://img.shields.io/badge/AppVersion-0.13.0-informational?style=flat-square)
+![Version: 0.20.0](https://img.shields.io/badge/Version-0.20.0-informational?style=flat-square) ![AppVersion: 0.13.0](https://img.shields.io/badge/AppVersion-0.13.0-informational?style=flat-square)
 
 A Helm Chart to deploy the Snowplow Iglu Server project
 
@@ -10,7 +10,7 @@ A Helm Chart to deploy the Snowplow Iglu Server project
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| jbeemster | <jbeemster@users.noreply.github.com> | <https://github.com/jbeemster> |
+| ianarsenault | <ianarsenault@users.noreply.github.com> | <https://github.com/ianarsenault> |
 
 ## Source Code
 
@@ -53,6 +53,7 @@ A Helm Chart to deploy the Snowplow Iglu Server project
 | hooks.secrets.admin_password | string | `""` |  |
 | hooks.secrets.admin_username | string | `""` |  |
 | service.annotations | object | `{}` | Map of annotations to add to the service. |
+| service.automountServiceAccountToken | bool | `false` | Whether to mount the service account API token into the Iglu Server pod; set to true only if it needs to call the Kubernetes API |
 | service.aws.targetGroupARN | string | `""` | EC2 TargetGroup ARN to bind the service onto |
 | service.config.database.dbname | string | `""` | Postgres database name |
 | service.config.database.host | string | `""` | Postgres database host |

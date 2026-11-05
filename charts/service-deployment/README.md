@@ -1,6 +1,6 @@
 # service-deployment
 
-![Version: 0.43.1](https://img.shields.io/badge/Version-0.43.1-informational?style=flat-square)
+![Version: 0.44.0](https://img.shields.io/badge/Version-0.44.0-informational?style=flat-square)
 
 A Helm Chart to setup a generic deployment with optional service/hpa/vpa bindings
 
@@ -30,6 +30,7 @@ A Helm Chart to setup a generic deployment with optional service/hpa/vpa binding
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Affinity supports podAffinity, podAntiAffinity, or nodeAffinity |
+| automountServiceAccountToken | bool | `false` | Whether to mount the service account API token into the pod; set to true only for workloads that call the Kubernetes API |
 | cloudserviceaccount.aws.roleARN | string | `""` | IAM Role ARN to bind to the k8s service account |
 | cloudserviceaccount.azure.managedIdentityId | string | `""` | Workload managed identity id to bind to the k8s service account |
 | cloudserviceaccount.deploy | bool | `false` | Whether to create a service-account |

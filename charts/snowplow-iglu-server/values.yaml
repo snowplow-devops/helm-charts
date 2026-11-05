@@ -25,6 +25,8 @@ service:
   maxReplicas: 4
   targetCPUUtilizationPercentage: 75
   terminationGracePeriodSeconds: 630
+  # -- Whether to mount the service account API token into the Iglu Server pod; set to true only if it needs to call the Kubernetes API
+  automountServiceAccountToken: false
 
   livenessProbe:
     initialDelaySeconds: 30

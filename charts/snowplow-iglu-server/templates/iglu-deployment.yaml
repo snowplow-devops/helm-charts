@@ -19,7 +19,7 @@ spec:
       {{- if .Values.cloudserviceaccount.deploy }}
       serviceAccountName: {{ .Values.cloudserviceaccount.name }}
       {{- end }}
-      automountServiceAccountToken: true
+      automountServiceAccountToken: {{ .Values.service.automountServiceAccountToken }}
       terminationGracePeriodSeconds: {{ .Values.service.terminationGracePeriodSeconds }}
 
       {{- if not .Values.service.image.isRepositoryPublic }}
