@@ -1,3 +1,7 @@
+Version 0.3.63 (2026-11-06)
+---------------------------
+charts/snowplow-kyverno-policies-0.3.1: Add policies.disableServiceAccountTokenAutomount.mutate.failurePolicy (default Ignore) for the disable-automount-service-account-token MutatingPolicy, which previously set none, so Kyverno defaulted its webhook to Fail and rejected every Pod create in matched namespaces whenever Kyverno had no ready endpoints. This now matches every other policy in the chart. Set it to Fail to keep the previous behaviour. With default values the only rendered change is the MutatingPolicy's failurePolicy, apart from the chart-version labels
+
 Version 0.3.62 (2026-11-05)
 ---------------------------
 charts/service-deployment-0.44.0: Add automountServiceAccountToken (default false) so the service account API token is no longer mounted into the pod; previously hardcoded to true. Set it to true for workloads that call the Kubernetes API. Upgrading changes the pod spec and rolls pods
