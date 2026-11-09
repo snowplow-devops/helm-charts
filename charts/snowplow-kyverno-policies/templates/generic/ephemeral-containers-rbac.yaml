@@ -1,0 +1,24 @@
+{{- $p := .Values.policies }}
+{{- if or $p.podSecurityRestricted.enabled $p.requireImageDigest.enabled $p.restrictImageRegistries.enabled $p.restrictSecretMounts.enabled }}
+---
+# The policies that check ephemeral containers match the pods/ephemeralcontainers
+# subresource. Kyverno's reports controller must be able to read every resource
+# a policy matches, and nothing in Kyverno's chart grants it this subresource,
+# so without this role those policies never report Ready.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:pod-ephemeral-containers
+  labels:
+    {{- include "snowplow-kyverno-policies.labels" . | nindent 4 }}
+    rbac.kyverno.io/aggregate-to-reports-controller: "true"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods/ephemeralcontainers
+    verbs:
+      - get
+      - list
+      - watch
+{{- end }}
