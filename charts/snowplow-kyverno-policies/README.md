@@ -155,6 +155,11 @@ section applies to all of them:
   `validationActions: [Audit]` and `failurePolicy: Ignore`, with background
   scanning on. Enabling one only produces PolicyReports until it is moved to
   `Deny`, and no running Pod is restarted.
+- Enabling any of `podSecurityRestricted`, `requireImageDigest`,
+  `restrictImageRegistries` or `restrictSecretMounts` also renders a ClusterRole
+  granting `get`/`list`/`watch` on `pods/ephemeralcontainers`, aggregated into
+  Kyverno's reports controller. Those policies match that subresource, and
+  without the permission they never report Ready.
 - They match Pods, not workloads. Under `Deny`, a rejected Pod stalls its
   Deployment's rollout with events on the ReplicaSet.
 - containers, initContainers and ephemeralContainers are all checked. The one
@@ -346,7 +351,9 @@ resource "helm_release" "kyverno_policies" {
   and background controllers need, bump the chart version. That helper does not
   aggregate into the reports controller, so a ValidatingPolicy that looks up
   resources during background scans needs its own ClusterRole, as in
-  `templates/generic/require-namespace-network-policy.yaml`. A Pod-validating
+  `templates/generic/require-namespace-network-policy.yaml`. A policy that
+  matches `pods/ephemeralcontainers` must be added to the condition in
+  `templates/generic/ephemeral-containers-rbac.yaml`. A Pod-validating
   policy should reuse the `podMatchConstraints` and `podMatchConditions` helpers
   and add a test suite (see Testing).
 - **Parameterised, want N of them** -> no template change; add `customPolicies[]`
