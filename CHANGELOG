@@ -1,3 +1,7 @@
+Version 0.3.65 (2026-11-12)
+---------------------------
+charts/aws-otel-collector-0.18.0: Bump version used to 0.51.0 (#371)
+
 Version 0.3.64 (2026-11-09)
 ---------------------------
 charts/snowplow-kyverno-policies-0.3.2: Add a ClusterRole granting Kyverno's reports controller get, list and watch on pods/ephemeralcontainers, rendered when podSecurityRestricted, requireImageDigest, restrictImageRegistries or restrictSecretMounts is enabled. Those policies match that subresource and without the permission they stayed not Ready with RBACPermissionsGranted false on a cluster running the reports controller. With default values the rendered output is unchanged apart from the chart-version labels
