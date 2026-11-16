@@ -1,0 +1,33 @@
+# Pods for the field-only (pre-0.4.0) behaviour. See kyverno-test.yaml.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: token-mounted
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: kube-api-access-aaaaa
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+  volumes:
+    - name: kube-api-access-aaaaa
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: globally-exempt
+  namespace: default
+  labels:
+    snowplow.io/kyverno-exempt: "true"
+spec:
+  containers:
+    - name: app
+      image: nginx

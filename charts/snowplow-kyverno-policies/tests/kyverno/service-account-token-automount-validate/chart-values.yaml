@@ -1,0 +1,9 @@
+# Chart values used to render the policy under test (scripts/kyverno-policy-test.sh).
+# The mounted-token check on its own, without the mutation, under Audit.
+policies:
+  disableServiceAccountTokenAutomount:
+    validate:
+      enabled: true
+      validationActions:
+        - Audit
+      checkMountedToken: true

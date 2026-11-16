@@ -1,0 +1,12 @@
+# Chart values used to render the policies under test (scripts/kyverno-policy-test.sh).
+# Token removal and the mounted-token check, as rolled out per cohort.
+policies:
+  disableServiceAccountTokenAutomount:
+    mutate:
+      enabled: true
+      removeTokenVolume: true
+    validate:
+      enabled: true
+      validationActions:
+        - Audit
+      checkMountedToken: true

@@ -1,0 +1,23 @@
+# Without removeTokenVolume the mutation only sets the field: the token volume
+# and its mount stay.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: token-mounted
+  namespace: default
+spec:
+  automountServiceAccountToken: false
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: kube-api-access-aaaaa
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+  volumes:
+    - name: kube-api-access-aaaaa
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token

@@ -5,6 +5,12 @@ global:
 # Extra labels applied to every policy and RBAC object
 labels: {}
 
+# Pods labelled with this key set to "true" are exempt from every Pod policy in
+# this chart, on top of each policy's own exemptionLabel. Kyverno also checks it
+# on a controller's Pod template (autogen), so label the template. Set to "" to
+# remove the chart-wide escape hatch.
+globalExemptionLabel: snowplow.io/kyverno-exempt
+
 # ---------------------------------------------------------------------------
 # Curated catalog of opinionated Kyverno policies.
 # ---------------------------------------------------------------------------
@@ -50,6 +56,13 @@ policies:
       # unavailable (the Pod is admitted unpatched). Fail blocks every Pod
       # CREATE in the matched namespaces until Kyverno is back.
       failurePolicy: Ignore
+      # Also remove the default ServiceAccount token volume (kube-api-access-*)
+      # and its volumeMounts from every container. Without this the mutation
+      # only sets the field: the ServiceAccount admission plugin has already
+      # mounted the token by the time Kyverno runs, so the token stays. Other
+      # projected tokens (IRSA, EKS Pod Identity, Azure Workload Identity) are
+      # never touched.
+      removeTokenVolume: false
     # ValidatingPolicy, for ongoing compliance reporting or enforcement.
     validate:
       enabled: false
@@ -61,6 +74,12 @@ policies:
       failurePolicy: Ignore
       # Background-scan already-running Pods into PolicyReports.
       background: true
+      # Check whether a container actually mounts the default ServiceAccount
+      # token (a kube-api-access-* volume) instead of only checking
+      # spec.automountServiceAccountToken. Under Deny this requires
+      # mutate.enabled and mutate.removeTokenVolume, or every Pod in scope is
+      # denied; the chart refuses to render that combination.
+      checkMountedToken: false
     # Namespaces exempt from both modes, matched on the kubernetes.io/metadata.name
     # label the API server sets on every namespace. Add the namespace of any
     # controller that talks to the Kubernetes API. Emptying this list ([] or

@@ -78,23 +78,6 @@ namespaceSelector:
 {{- end -}}
 
 {{/*
-Shared matchConditions for the service-account-token automount policies: skip
-Pods that carry the exemption label set to "true". Renders nothing when
-exemptionLabel is empty, so callers must guard the matchConditions key.
-Usage:
-  include "snowplow-kyverno-policies.automountMatchConditions" .Values.policies.disableServiceAccountTokenAutomount
-*/}}
-{{- define "snowplow-kyverno-policies.automountMatchConditions" -}}
-{{- with .exemptionLabel }}
-- name: pod-not-exempt
-  expression: >-
-    !has(object.metadata.labels) ||
-    !('{{ . }}' in object.metadata.labels) ||
-    object.metadata.labels['{{ . }}'] != 'true'
-{{- end }}
-{{- end -}}
-
-{{/*
 Generic matchConstraints for a Pod-validating curated policy: Pod CREATE, minus
 any excluded namespaces (matched on the kubernetes.io/metadata.name label).
 With ephemeralContainers true it also matches UPDATE of the
@@ -136,15 +119,24 @@ namespaceSelector:
 {{- end -}}
 
 {{/*
-Generic matchConditions for a Pod-validating curated policy: skip Pods that
-carry the policy's exemptionLabel set to "true". Renders nothing when
-exemptionLabel is empty, so callers must guard the matchConditions key.
+Shared matchConditions for every Pod policy, the service-account-token
+automount policies included. Skips Pods that carry the policy's own
+exemptionLabel, or the chart-wide globalExemptionLabel, set to "true". Each
+label renders as its own condition and an empty label renders nothing, so with
+both empty the result is empty and callers must guard the matchConditions key.
 Usage:
-  include "snowplow-kyverno-policies.podMatchConditions" .Values.policies.<policy>
+  include "snowplow-kyverno-policies.podMatchConditions" (dict "policy" .Values.policies.<policy> "root" $)
 */}}
 {{- define "snowplow-kyverno-policies.podMatchConditions" -}}
-{{- with .exemptionLabel }}
+{{- with .policy.exemptionLabel }}
 - name: pod-not-exempt
+  expression: >-
+    !has(object.metadata.labels) ||
+    !('{{ . }}' in object.metadata.labels) ||
+    object.metadata.labels['{{ . }}'] != 'true'
+{{- end }}
+{{- with .root.Values.globalExemptionLabel }}
+- name: pod-not-globally-exempt
   expression: >-
     !has(object.metadata.labels) ||
     !('{{ . }}' in object.metadata.labels) ||

@@ -1,0 +1,32 @@
+# Run with scripts/kyverno-policy-test.sh, which renders policy.yaml from the
+# chart first. policy.yaml is not committed.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: service-account-token-automount-field-only
+policies:
+  - policy.yaml
+resources:
+  - resources.yaml
+results:
+  - policy: disable-automount-service-account-token
+    isMutatingPolicy: true
+    patchedResources: patched.yaml
+    result: pass
+    resources:
+      - token-mounted                 # field set, token volume and mount kept
+  - policy: disable-automount-service-account-token
+    isMutatingPolicy: true
+    result: skip
+    resources:
+      - globally-exempt               # globalExemptionLabel matchCondition
+  - policy: require-service-account-token-automount-disabled
+    isValidatingPolicy: true
+    result: pass
+    resources:
+      - token-mounted                 # the field check passes although the token is mounted
+  - policy: require-service-account-token-automount-disabled
+    isValidatingPolicy: true
+    result: skip
+    resources:
+      - globally-exempt
