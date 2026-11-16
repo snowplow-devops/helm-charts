@@ -115,6 +115,66 @@ cluster-wide by default: exempt those workloads by namespace
 and roll out through `validate` with `validationActions: [Audit]` first to find
 them.
 
+#### Opting a workload out
+
+There are four ways to keep the token for a workload that needs the Kubernetes
+API. Use the narrowest one that fits.
+
+| Option | Scope | Use it when |
+|--------|-------|-------------|
+| `excludedNamespaces` | Every Pod in the namespace | The whole namespace is cluster infrastructure (controllers, operators). Set in this chart's values. |
+| `exemptionLabel` on the Pod | One workload, this policy only | You control the workload's Pod template, for example through its chart's `podLabels` value. |
+| `globalExemptionLabel` on the Pod | One workload, every Pod policy in this chart | As above, but the workload must also skip the other policies. Prefer the per-policy label. |
+| `PolicyException` | Workloads selected by a CEL condition | You cannot label the Pods, for example a third-party chart without a `podLabels` value, Helm hook Jobs, or Jobs created by a CronJob. |
+
+**Label.** Put the label on the Pod template, not only on the Deployment,
+CronJob or other controller. Kyverno checks it both on the Pod and, through
+autogen, on the controller's `spec.template`:
+
+```yaml
+# e.g. a chart's podLabels value, or spec.template.metadata.labels
+snowplow.io/automount-service-account-token: "true"
+```
+
+The label is the default `exemptionLabel`. It exempts the Pod from both
+`mutate` and `validate`, and it has no effect on clusters without Kyverno, so it
+is safe to set unconditionally. `snowplow.io/kyverno-exempt: "true"` (the default
+`globalExemptionLabel`) works the same way but exempts the Pod from every Pod
+policy.
+
+**PolicyException.** Kyverno must have PolicyExceptions enabled
+(`features.policyExceptions.enabled` in the Kyverno chart). Restrict them to a
+namespace that workload owners cannot write to
+(`features.policyExceptions.namespace`), otherwise anyone who can create Pods
+in a namespace can also exempt them. Reference both policies, so an exempted
+workload is not rejected once `validate` moves to `Deny`, and keep the condition
+as narrow as possible:
+
+```yaml
+apiVersion: policies.kyverno.io/v1beta1
+kind: PolicyException
+metadata:
+  name: my-namespace-my-release
+  namespace: kyverno   # the namespace set in features.policyExceptions.namespace
+spec:
+  policyRefs:
+    - name: disable-automount-service-account-token
+      kind: MutatingPolicy
+    - name: require-service-account-token-automount-disabled
+      kind: ValidatingPolicy
+  matchConditions:
+    - name: release-workloads
+      # Guard every field access with has(). An evaluation error counts as a
+      # policy error, so an unguarded expression can block Pod creation.
+      expression: >-
+        request.namespace == 'my-namespace' &&
+        has(object.metadata.labels) &&
+        object.metadata.labels['app.kubernetes.io/instance'] == 'my-release'
+```
+
+As with the policies themselves, an exception only affects Pods created after
+it exists. Recreate the workload's Pods to pick it up.
+
 #### Removing the token
 
 The ServiceAccount admission plugin runs before any webhook. By the time Kyverno
