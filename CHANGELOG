@@ -1,3 +1,7 @@
+Version 0.3.66 (2026-11-16)
+---------------------------
+charts/snowplow-kyverno-policies-0.3.3: Document how to opt a workload out of disableServiceAccountTokenAutomount (excludedNamespaces, the exemptionLabel on the Pod template, or a PolicyException referencing both policies) and when to use each. Documentation only: the rendered output is unchanged apart from the chart-version labels
+
 Version 0.3.65 (2026-11-12)
 ---------------------------
 charts/aws-otel-collector-0.18.0: Bump version used to 0.51.0 (#371)
