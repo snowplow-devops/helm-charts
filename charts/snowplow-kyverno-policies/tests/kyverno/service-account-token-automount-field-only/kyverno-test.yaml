@@ -15,18 +15,10 @@ results:
     result: pass
     resources:
       - token-mounted                 # field set, token volume and mount kept
-  - policy: disable-automount-service-account-token
-    isMutatingPolicy: true
-    result: skip
-    resources:
-      - globally-exempt               # globalExemptionLabel matchCondition
+      - global-label-off-by-default   # globalExemptionLabel is "" by default, so the label is ignored
   - policy: require-service-account-token-automount-disabled
     isValidatingPolicy: true
     result: pass
     resources:
       - token-mounted                 # the field check passes although the token is mounted
-  - policy: require-service-account-token-automount-disabled
-    isValidatingPolicy: true
-    result: skip
-    resources:
-      - globally-exempt
+      - global-label-off-by-default

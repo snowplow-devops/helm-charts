@@ -23,7 +23,7 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: globally-exempt
+  name: global-label-off-by-default
   namespace: default
   labels:
     snowplow.io/kyverno-exempt: "true"

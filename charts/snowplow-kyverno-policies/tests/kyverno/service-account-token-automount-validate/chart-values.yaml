@@ -1,5 +1,7 @@
 # Chart values used to render the policy under test (scripts/kyverno-policy-test.sh).
 # The mounted-token check on its own, without the mutation, under Audit.
+# Opt into the chart-wide exemption label so its matchCondition is tested.
+globalExemptionLabel: snowplow.io/kyverno-exempt
 policies:
   disableServiceAccountTokenAutomount:
     validate:

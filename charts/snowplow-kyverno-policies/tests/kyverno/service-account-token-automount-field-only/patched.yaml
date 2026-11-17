@@ -21,3 +21,16 @@ spec:
         sources:
           - serviceAccountToken:
               path: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: global-label-off-by-default
+  namespace: default
+  labels:
+    snowplow.io/kyverno-exempt: "true"
+spec:
+  automountServiceAccountToken: false
+  containers:
+    - name: app
+      image: nginx

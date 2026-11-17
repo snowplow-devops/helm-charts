@@ -5,11 +5,13 @@ global:
 # Extra labels applied to every policy and RBAC object
 labels: {}
 
-# Pods labelled with this key set to "true" are exempt from every Pod policy in
-# this chart, on top of each policy's own exemptionLabel. Kyverno also checks it
-# on a controller's Pod template (autogen), so label the template. Set to "" to
-# remove the chart-wide escape hatch.
-globalExemptionLabel: snowplow.io/kyverno-exempt
+# Opt-in. When set, Pods labelled with this key set to "true" are exempt from
+# every Pod policy in this chart, on top of each policy's own exemptionLabel,
+# including policies in Deny mode. Anyone who can create a Pod can set the
+# label, so only enable it on clusters where that is acceptable. Kyverno also
+# checks it on a controller's Pod template (autogen), so label the template.
+# For example: snowplow.io/kyverno-exempt
+globalExemptionLabel: ""
 
 # ---------------------------------------------------------------------------
 # Curated catalog of opinionated Kyverno policies.
