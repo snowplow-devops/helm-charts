@@ -63,7 +63,10 @@ policies:
       # only sets the field: the ServiceAccount admission plugin has already
       # mounted the token by the time Kyverno runs, so the token stays. Other
       # projected tokens (IRSA, EKS Pod Identity, Azure Workload Identity) are
-      # never touched.
+      # never touched. The removed volume also holds ca.crt and namespace, so
+      # opt out every workload that calls the Kubernetes API or reads those
+      # files, and every Pod a token-copying injector such as the Vault agent
+      # injector handles, before turning this on (see the README).
       removeTokenVolume: false
     # ValidatingPolicy, for ongoing compliance reporting or enforcement.
     validate:

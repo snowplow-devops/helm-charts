@@ -211,10 +211,25 @@ the mutation's `failurePolicy` to `Fail` is not recommended: it blocks every Pod
 in scope whenever Kyverno is unavailable. Use `Audit` instead of `Deny` if Pods
 must never be rejected by this policy.
 
-Turn `removeTokenVolume` on only once every workload in scope that calls the
-Kubernetes API has an opt-out (`exemptionLabel`, `excludedNamespaces`, a
-PolicyException or, if the cluster sets it, `globalExemptionLabel`), because from then on those Pods
-really lose the token as they are recreated.
+The removed volume holds more than the token. It is the whole
+`/var/run/secrets/kubernetes.io/serviceaccount` directory: `token`, `ca.crt`
+and `namespace`. Once it is gone, all three are missing. That breaks:
+
+- applications that call the Kubernetes API, including Kubernetes client
+  libraries that load their in-cluster config from that directory;
+- applications that only read `ca.crt` or `namespace` from it, for example to
+  find their own namespace;
+- mutating webhooks that run after Kyverno and copy the default token mount
+  into a sidecar they inject, such as the Vault agent injector. Webhooks run in
+  name order, and those injectors look for the mount and fail without it.
+  Depending on the injector's own `failurePolicy`, the Pod is then rejected or
+  starts without its sidecar.
+
+Turn `removeTokenVolume` on only once every such workload in scope has an
+opt-out (`exemptionLabel`, `excludedNamespaces`, a PolicyException or, if the
+cluster sets it, `globalExemptionLabel`), because from then on those Pods
+really lose the token as they are recreated. Before turning it on, also check
+the cluster's `MutatingWebhookConfiguration`s for an injector like that.
 
 #### Other caveats
 
