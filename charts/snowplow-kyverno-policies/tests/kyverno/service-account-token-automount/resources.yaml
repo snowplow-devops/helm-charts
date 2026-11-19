@@ -1,0 +1,166 @@
+# One Pod per code path in disable-automount-service-account-token and
+# require-service-account-token-automount-disabled. Token volumes and mounts
+# are written as the ServiceAccount admission plugin adds them, before Kyverno
+# runs. See kyverno-test.yaml for the expected result of each.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: token-in-all-container-types
+  namespace: default
+spec:
+  initContainers:
+    - name: init
+      image: busybox
+      volumeMounts:
+        - name: kube-api-access-aaaaa
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: kube-api-access-aaaaa
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+    - name: sidecar
+      image: busybox
+      volumeMounts:
+        - name: kube-api-access-aaaaa
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+  volumes:
+    - name: data
+      emptyDir: {}
+    - name: kube-api-access-aaaaa
+      projected:
+        sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+          - configMap:
+              name: kube-root-ca.crt
+              items:
+                - key: ca.crt
+                  path: ca.crt
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: irsa-and-token
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: kube-api-access-bbbbb
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          readOnly: true
+        - name: aws-iam-token
+          mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+          readOnly: true
+  volumes:
+    - name: aws-iam-token
+      projected:
+        sources:
+          - serviceAccountToken:
+              audience: sts.amazonaws.com
+              expirationSeconds: 86400
+              path: token
+    - name: kube-api-access-bbbbb
+      projected:
+        sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: no-token
+  namespace: default
+spec:
+  containers:
+    - name: app
+      image: nginx
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: token-volume-not-mounted
+  namespace: default
+spec:
+  automountServiceAccountToken: false
+  containers:
+    - name: app
+      image: nginx
+  volumes:
+    - name: kube-api-access-ccccc
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: exempt
+  namespace: default
+  labels:
+    snowplow.io/automount-service-account-token: "true"
+spec:
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: kube-api-access-ddddd
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+  volumes:
+    - name: kube-api-access-ddddd
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: globally-exempt
+  namespace: default
+  labels:
+    snowplow.io/kyverno-exempt: "true"
+spec:
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: kube-api-access-eeeee
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+  volumes:
+    - name: kube-api-access-eeeee
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: excluded-namespace
+  namespace: kube-system
+spec:
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: kube-api-access-fffff
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+  volumes:
+    - name: kube-api-access-fffff
+      projected:
+        sources:
+          - serviceAccountToken:
+              path: token
