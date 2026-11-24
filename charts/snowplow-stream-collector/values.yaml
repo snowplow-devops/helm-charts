@@ -1,0 +1,78 @@
+# -- Cloud specific bindings (options: aws, gcp)
+cloud: ""
+
+service:
+  # -- HTTP port to bind and expose the service on
+  port: 8080
+
+  nginx:
+    # -- Whether to serve request with an NGINX proxy side-car instead of the Collector directly
+    deploy: false
+    image:
+      repository: "nginx"
+      tag: "stable-alpine"
+      isRepositoryPublic: true
+
+  ssl:
+    # -- Whether to enable the TLS port (requires service.nginx.deploy to be true)
+    enable: false
+    # -- HTTPS port to bind and expose the service on
+    port: 8443
+    # -- Certificate in PEM form
+    certificateBase64: ""
+    # -- Certificate Private Key in PEM form
+    certificatePrivateKeyBase64: ""
+
+  image:
+    # -- Which image should be pulled (options: stdout, nsq, kinesis, sqs, kafka or pubsub)
+    target: "stdout"
+    repository: "snowplow/scala-stream-collector"
+    tag: "2.5.0"
+    isRepositoryPublic: true
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 75
+  terminationGracePeriodSeconds: 630
+
+  readinessProbe:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+    successThreshold: 2
+
+  config:
+    hoconBase64: ""
+    javaOpts: ""
+
+  aws:
+    # -- EC2 TargetGroup ARN to bind the service onto
+    targetGroupARN: ""
+
+  gcp:
+    # -- Name of the Network Endpoint Group to bind onto (default: .Release.Name)
+    networkEndpointGroupName: ""
+
+secrets:
+  docker:
+    # -- Name of the secret to use for the private repository
+    name: "dockerhub"
+    # -- Username for the private repository
+    username: ""
+    # -- Password for the private repository
+    password: ""
+    # -- Repository server URL
+    server: "https://index.docker.io/v1/"
+    # -- Email address for user of the private repository
+    email: ""
+
+serviceAccount:
+  # -- Whether to create a service-account
+  deploy: false
+
+  aws:
+    # -- IAM Role ARN to bind to the k8s service account
+    roleARN: ""
+  gcp:
+    # -- Service Account email to bind to the k8s service account
+    serviceAccount: ""

@@ -1,0 +1,24 @@
+{{- if eq .Values.service.image.target "stdout" }}
+------------------------------------------------------------------------------------------------------------------------
+WARNING: Your Collector is running in stdout mode which means all collected events are written directly to the pod logs.
+         In production you will need to target an external stream to persist events safely and allow for consumption by
+         downstream services like Snowplow Enrich. 
+------------------------------------------------------------------------------------------------------------------------
+{{- end }}
+
+The Collector can be accessed via port {{ .Values.service.port }} on the following DNS names from within your cluster:
+
+    {{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local
+
+To connect to your server from outside the cluster execute the following commands:
+
+    kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ .Release.Name }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+You can check if the service is healthy by hitting the following endpoint:
+
+    http://localhost:{{ .Values.service.port }}/health
+
+You can send a test event through (note: in stdout mode your events will land in the pod logs directly):
+
+    http://localhost:{{ .Values.service.port }}/i?e=pv
+    http://localhost:{{ .Values.service.port }}/i
