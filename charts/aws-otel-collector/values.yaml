@@ -39,6 +39,11 @@ resources:
 tolerations:
   - operator: Exists
 
+# -- PriorityClass for the collector pods. A DaemonSet pod cannot move to another
+# node, so on a full node it must be able to preempt Deployment pods to start.
+# Empty uses the cluster's globalDefault PriorityClass.
+priorityClassName: ""
+
 # -- Node selector for constraining the collector to specific nodes
 nodeSelector: {}
 
