@@ -1,0 +1,61 @@
+# Expected Pods after disable-automount-service-account-token with
+# removeTokenVolume: the kube-api-access-* volume and every mount of it are
+# gone, everything else is untouched.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: token-in-all-container-types
+  namespace: default
+spec:
+  automountServiceAccountToken: false
+  initContainers:
+    - name: init
+      image: busybox
+      volumeMounts: []
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: data
+          mountPath: /data
+    - name: sidecar
+      image: busybox
+      volumeMounts: []
+  volumes:
+    - name: data
+      emptyDir: {}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: irsa-and-token
+  namespace: default
+spec:
+  automountServiceAccountToken: false
+  containers:
+    - name: app
+      image: nginx
+      volumeMounts:
+        - name: aws-iam-token
+          mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+          readOnly: true
+  volumes:
+    - name: aws-iam-token
+      projected:
+        sources:
+          - serviceAccountToken:
+              audience: sts.amazonaws.com
+              expirationSeconds: 86400
+              path: token
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: no-token
+  namespace: default
+spec:
+  automountServiceAccountToken: false
+  containers:
+    - name: app
+      image: nginx

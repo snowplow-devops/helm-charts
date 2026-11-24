@@ -1,3 +1,7 @@
+Version 0.3.66 (2026-11-16)
+---------------------------
+charts/snowplow-kyverno-policies-0.4.0: Add globalExemptionLabel (default "", opt-in): when set, Pods labelled with it set to "true" are skipped by every Pod policy, on top of each policy's own exemptionLabel. Add policies.disableServiceAccountTokenAutomount.mutate.removeTokenVolume (default false), which also removes the kube-api-access-* token volume and its mounts from every container and init container, leaving IRSA, EKS Pod Identity and Azure Workload Identity tokens alone; until now the mutation only set automountServiceAccountToken and the token stayed mounted. Add validate.checkMountedToken (default false), which fails Pods that actually mount the token instead of checking the field; the chart refuses to render it under Deny without removeTokenVolume. Add kyverno test suites for the SA token policies, and README sections on removing the token (including the failurePolicy interaction under Deny, and which workloads need an opt-out: Kubernetes API clients, readers of ca.crt or namespace, and token-copying injectors such as Vault agent) and on the ways to opt a workload out (labels, excludedNamespaces, PolicyException). With default values the rendered output is unchanged apart from the chart-version labels
+
 Version 0.3.65 (2026-11-12)
 ---------------------------
 charts/aws-otel-collector-0.18.0: Bump version used to 0.51.0 (#371)

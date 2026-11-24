@@ -37,6 +37,7 @@ Cloud-specific curated policies are gated on both their `enabled` flag **and**
 |-----|---------|-------------|
 | `global.cloud` | `""` | `aws` / `gcp` / `azure`. Gates cloud-specific curated policies. |
 | `labels` | `{}` | Extra labels applied to every rendered object. |
+| `globalExemptionLabel` | `""` | Opt-in. When set (for example `snowplow.io/kyverno-exempt`), Pods labelled `<key>: "true"` are exempt from every Pod policy, on top of each policy's own `exemptionLabel`, including policies in `Deny` mode. |
 | `policies.ackAcmDnsValidation.enabled` | `false` | AWS-only. Bridge ACK ACM `Certificate` validation to ACK Route53 `RecordSet`. |
 | `policies.ackAcmDnsValidation.hostedZoneAnnotation` | `snowplow.io/hosted-zone-id` | Certificate annotation carrying the target hosted zone ID. |
 | `policies.ackAcmDnsValidation.ttl` | `60` | TTL (seconds) for the generated validation RecordSet. |
@@ -45,10 +46,12 @@ Cloud-specific curated policies are gated on both their `enabled` flag **and**
 | `policies.ackAcmDnsValidation.evaluation.synchronize` | `true` | Re-reconcile the generated RecordSet if it is modified or deleted. |
 | `policies.disableServiceAccountTokenAutomount.mutate.enabled` | `false` | Patch Pods on CREATE to `spec.automountServiceAccountToken: false`. |
 | `policies.disableServiceAccountTokenAutomount.mutate.failurePolicy` | `Ignore` | `Fail` blocks every Pod CREATE in the matched namespaces while the Kyverno webhook is unavailable. |
+| `policies.disableServiceAccountTokenAutomount.mutate.removeTokenVolume` | `false` | Also remove the `kube-api-access-*` token volume and its mounts. Without it the token stays mounted. See [Removing the token](#removing-the-token). |
 | `policies.disableServiceAccountTokenAutomount.validate.enabled` | `false` | Report or block Pods that do not set it to `false`. |
 | `policies.disableServiceAccountTokenAutomount.validate.validationActions` | `[Audit]` | `Audit` (PolicyReport only), `Warn` (admission warning) or `Deny` (block). |
 | `policies.disableServiceAccountTokenAutomount.validate.failurePolicy` | `Ignore` | `Fail` makes admission depend on the Kyverno webhook being up. |
 | `policies.disableServiceAccountTokenAutomount.validate.background` | `true` | Background-scan already-running Pods into PolicyReports. |
+| `policies.disableServiceAccountTokenAutomount.validate.checkMountedToken` | `false` | Fail Pods where a container mounts a `kube-api-access-*` volume, instead of checking the field. Under `Deny` requires `mutate.removeTokenVolume`. |
 | `policies.disableServiceAccountTokenAutomount.excludedNamespaces` | `[kube-system, kyverno]` | Namespaces exempt from both modes. Emptying it applies the policy cluster-wide. |
 | `policies.disableServiceAccountTokenAutomount.exemptionLabel` | `snowplow.io/automount-service-account-token` | Pods labelled `<key>: "true"` are exempt from both modes. `""` removes the escape hatch. |
 | `policies.requireResourceLimits.enabled` | `false` | Report or block Pods whose containers do not set `resources.limits` for every `requiredLimits` entry. |
@@ -84,12 +87,14 @@ Cloud-agnostic. Stops Pods mounting a ServiceAccount token they do not need. The
 two modes are independent and can be enabled together:
 
 - **`mutate`** renders a `MutatingPolicy` that patches Pods on CREATE to
-  `spec.automountServiceAccountToken: false`. Nothing else has to change:
-  controller-created Pods are patched at admission regardless of what the
+  `spec.automountServiceAccountToken: false`, and with `removeTokenVolume` also
+  removes the token itself (see [Removing the token](#removing-the-token)).
+  Controller-created Pods are patched at admission regardless of what the
   Deployment/StatefulSet template says, so no workload chart needs editing.
 - **`validate`** renders a `ValidatingPolicy` that flags (or with
   `validationActions: [Deny]`, blocks) Pods that do not have it set to `false`,
-  for ongoing compliance.
+  or with `checkMountedToken`, Pods that still mount the token, for ongoing
+  compliance.
 
 With both enabled the mutation runs first in the admission chain, so the
 validation sees the patched Pod and passes.
@@ -110,6 +115,122 @@ cluster-wide by default: exempt those workloads by namespace
 and roll out through `validate` with `validationActions: [Audit]` first to find
 them.
 
+#### Opting a workload out
+
+There are four ways to keep the token for a workload that needs the Kubernetes
+API. Use the narrowest one that fits. Labels can be set by anyone who can create
+the Pod; a `PolicyException` can be restricted to cluster admins.
+
+| Option | Scope | Use it when |
+|--------|-------|-------------|
+| `excludedNamespaces` | Every Pod in the namespace | The whole namespace is cluster infrastructure (controllers, operators). Set in this chart's values. |
+| `exemptionLabel` on the Pod | One workload, this policy only | You control the workload's Pod template, for example through its chart's `podLabels` value. |
+| `globalExemptionLabel` on the Pod | One workload, every Pod policy in this chart | Off by default. Only if the cluster sets it and the workload must also skip the other policies. Prefer the per-policy label. |
+| `PolicyException` | Workloads selected by a CEL condition | You cannot label the Pods, for example a third-party chart without a `podLabels` value, Helm hook Jobs, or Jobs created by a CronJob. |
+
+**Label.** Put the label on the Pod template, not only on the Deployment,
+CronJob or other controller. Kyverno checks it both on the Pod and, through
+autogen, on the controller's `spec.template`:
+
+```yaml
+# e.g. a chart's podLabels value, or spec.template.metadata.labels
+snowplow.io/automount-service-account-token: "true"
+```
+
+The label is the default `exemptionLabel`. It exempts the Pod from both
+`mutate` and `validate`, and it has no effect on clusters without Kyverno, so it
+is safe to set unconditionally. If a cluster sets `globalExemptionLabel`, that
+label works the same way but exempts the Pod from every Pod policy.
+
+**PolicyException.** Kyverno must have PolicyExceptions enabled
+(`features.policyExceptions.enabled` in the Kyverno chart). Restrict them to a
+namespace that workload owners cannot write to
+(`features.policyExceptions.namespace`), otherwise anyone who can create Pods
+in a namespace can also exempt them. Reference both policies, so an exempted
+workload is not rejected once `validate` moves to `Deny`, and keep the condition
+as narrow as possible:
+
+```yaml
+apiVersion: policies.kyverno.io/v1beta1
+kind: PolicyException
+metadata:
+  name: my-namespace-my-release
+  namespace: kyverno   # the namespace set in features.policyExceptions.namespace
+spec:
+  policyRefs:
+    - name: disable-automount-service-account-token
+      kind: MutatingPolicy
+    - name: require-service-account-token-automount-disabled
+      kind: ValidatingPolicy
+  matchConditions:
+    - name: release-workloads
+      # Guard every field access with has(). An evaluation error counts as a
+      # policy error, so an unguarded expression can block Pod creation.
+      expression: >-
+        request.namespace == 'my-namespace' &&
+        has(object.metadata.labels) &&
+        object.metadata.labels['app.kubernetes.io/instance'] == 'my-release'
+```
+
+As with the policies themselves, an exception only affects Pods created after
+it exists. Recreate the workload's Pods to pick it up.
+
+#### Removing the token
+
+The ServiceAccount admission plugin runs before any webhook. By the time Kyverno
+sees a Pod, the plugin has already added the `kube-api-access-<random>` projected
+volume and mounted it into every container. Setting
+`automountServiceAccountToken: false` at that point changes the field but not
+the mount, so with the defaults the token is still there.
+
+- **`mutate.removeTokenVolume: true`** also removes that volume, and every
+  `volumeMount` of it from `containers` and `initContainers`. Ephemeral
+  containers cannot be set on Pod CREATE, and one added later through
+  `kubectl debug` has no token volume left to mount. Only projected volumes named `kube-api-access-*` are
+  removed. IRSA (`aws-iam-token`), EKS Pod Identity (`eks-pod-identity-token`)
+  and Azure Workload Identity (`azure-identity-token`) tokens are left alone,
+  so cloud credentials keep working.
+- **`validate.checkMountedToken: true`** makes the validation check what is
+  actually mounted: it fails a Pod where any container mounts a
+  `kube-api-access-*` volume, and passes one that mounts none, whatever the
+  field says. That also fixes the ServiceAccount-level case in the caveats below.
+
+Both default to `false`, so upgrading to 0.4.0 does not change behaviour.
+Mutating webhooks run before validating ones, so with both on a Pod is
+validated after its token is removed and passes. Under `Deny`,
+`checkMountedToken` without `removeTokenVolume` would reject every Pod in
+scope, so the chart refuses to render that combination.
+
+With both on and `Deny`, mind the `failurePolicy` interaction. With the default
+`Ignore` on both webhooks, a Kyverno outage skips both and Pods are admitted
+with their token, so nothing is blocked. If only the mutation call fails (it
+errors or times out) while the validation call succeeds, the token is still
+mounted and that Pod is denied; its controller retries. In other words `Deny`
+fails closed on a failed mutation but still fails open on an outage. Setting
+the mutation's `failurePolicy` to `Fail` is not recommended: it blocks every Pod
+in scope whenever Kyverno is unavailable. Use `Audit` instead of `Deny` if Pods
+must never be rejected by this policy.
+
+The removed volume holds more than the token. It is the whole
+`/var/run/secrets/kubernetes.io/serviceaccount` directory: `token`, `ca.crt`
+and `namespace`. Once it is gone, all three are missing. That breaks:
+
+- applications that call the Kubernetes API, including Kubernetes client
+  libraries that load their in-cluster config from that directory;
+- applications that only read `ca.crt` or `namespace` from it, for example to
+  find their own namespace;
+- mutating webhooks that run after Kyverno and copy the default token mount
+  into a sidecar they inject, such as the Vault agent injector. Webhooks run in
+  name order, and those injectors look for the mount and fail without it.
+  Depending on the injector's own `failurePolicy`, the Pod is then rejected or
+  starts without its sidecar.
+
+Turn `removeTokenVolume` on only once every such workload in scope has an
+opt-out (`exemptionLabel`, `excludedNamespaces`, a PolicyException or, if the
+cluster sets it, `globalExemptionLabel`), because from then on those Pods
+really lose the token as they are recreated. Before turning it on, also check
+the cluster's `MutatingWebhookConfiguration`s for an injector like that.
+
 #### Other caveats
 
 - `automountServiceAccountToken` is immutable on a running Pod, so the mutation
@@ -117,10 +238,12 @@ them.
 - The policies match Pods, not workloads. Under `Deny`, a rejected Pod does not
   reject its Deployment — the rollout stalls with events on the ReplicaSet
   instead of failing the `kubectl apply`.
-- The validation requires the field to be set to `false` *on the Pod*. A Pod
-  that leaves it unset while its ServiceAccount sets
+- Without `checkMountedToken`, the validation requires the field to be set to
+  `false` *on the Pod*. A Pod that leaves it unset while its ServiceAccount sets
   `automountServiceAccountToken: false` is effectively compliant but will still
-  be flagged; enabling `mutate` alongside makes the two agree.
+  be flagged; enabling `mutate` alongside makes the two agree. It also passes a
+  Pod that sets the field but still mounts the token, which is what every Pod
+  looks like after a `mutate` without `removeTokenVolume`.
 - Namespaces are excluded on the `kubernetes.io/metadata.name` label the API
   server sets on every namespace, so no namespace labelling is needed.
 - Emptying `excludedNamespaces` (`[]` or `null`) is not "exclude nothing safely":
@@ -181,8 +304,14 @@ section applies to all of them:
 
 #### Exemption labels
 
+If `globalExemptionLabel` is set (it is off by default), every Pod policy,
+`disableServiceAccountTokenAutomount` included, also skips Pods labelled with it
+set to `"true"`, even in `Deny` mode. Prefer the per-policy label: it exempts a
+Pod from one policy instead of all of them.
+
 | Policy | `exemptionLabel` default |
 |--------|--------------------------|
+| `disableServiceAccountTokenAutomount` | `snowplow.io/automount-service-account-token` |
 | `requireResourceLimits` | `snowplow.io/skip-resource-limits` |
 | `podSecurityRestricted` | `snowplow.io/skip-pod-security` |
 | `requireImageDigest` | `snowplow.io/skip-image-digest` |
@@ -370,6 +499,7 @@ suite in `tests/kyverno/<policy>/`:
 | `kyverno-test.yaml` | Expected result (`pass` / `fail` / `skip`) per fixture |
 | `resources.yaml` | Fixture Pods, one per code path |
 | `context.yaml` | Optional. Cluster objects for `resource.List()` lookups |
+| `patched.yaml` | Optional. Expected Pods after a MutatingPolicy (`patchedResources`) |
 
 The policies are Go templates, so they cannot be tested as committed.
 `scripts/kyverno-policy-test.sh` copies each suite to a temp directory, renders

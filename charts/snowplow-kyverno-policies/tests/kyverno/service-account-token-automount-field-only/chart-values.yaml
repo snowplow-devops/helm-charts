@@ -1,0 +1,12 @@
+# Chart values used to render the policies under test (scripts/kyverno-policy-test.sh).
+# Both new flags off, as every cluster runs until the cohort rollout: the
+# mutation only sets the field and the validation only checks it.
+policies:
+  disableServiceAccountTokenAutomount:
+    mutate:
+      enabled: true
+    validate:
+      enabled: true
+      validationActions:
+        - Audit
+        - Deny

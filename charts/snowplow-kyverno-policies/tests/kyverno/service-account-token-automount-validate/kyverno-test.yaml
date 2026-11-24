@@ -1,0 +1,31 @@
+# Run with scripts/kyverno-policy-test.sh, which renders policy.yaml from the
+# chart first. policy.yaml is not committed. Same fixtures as
+# service-account-token-automount.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: service-account-token-automount-validate
+policies:
+  - policy.yaml
+resources:
+  - resources.yaml
+results:
+  - policy: require-service-account-token-automount-disabled
+    isValidatingPolicy: true
+    result: pass
+    resources:
+      - no-token                      # nothing mounted
+      - token-volume-not-mounted      # volume present but no container mounts it
+  - policy: require-service-account-token-automount-disabled
+    isValidatingPolicy: true
+    result: fail
+    resources:
+      - token-in-all-container-types  # mounted in containers and initContainers
+      - irsa-and-token                # the kube-api-access mount fails it, not aws-iam-token
+  - policy: require-service-account-token-automount-disabled
+    isValidatingPolicy: true
+    result: skip
+    resources:
+      - exempt                        # exemptionLabel matchCondition
+      - globally-exempt               # globalExemptionLabel matchCondition
+      - excluded-namespace            # excludedNamespaces namespaceSelector

@@ -1,0 +1,45 @@
+# Run with scripts/kyverno-policy-test.sh, which renders policy.yaml from the
+# chart first. policy.yaml is not committed.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: service-account-token-automount
+policies:
+  - policy.yaml
+resources:
+  - resources.yaml
+results:
+  - policy: disable-automount-service-account-token
+    isMutatingPolicy: true
+    patchedResources: patched.yaml
+    result: pass
+    resources:
+      - token-in-all-container-types  # volume and mounts removed in containers and initContainers
+      - irsa-and-token                # only the kube-api-access volume goes, aws-iam-token stays
+      - no-token                      # nothing to remove, only the field is set
+  - policy: disable-automount-service-account-token
+    isMutatingPolicy: true
+    result: skip
+    resources:
+      - exempt                        # exemptionLabel matchCondition
+      - globally-exempt               # globalExemptionLabel matchCondition
+      - excluded-namespace            # excludedNamespaces namespaceSelector
+  # Validation sees the mutated Pod, as at admission (mutating webhooks run
+  # before validating ones), so a Pod that loses its token passes. The
+  # mounted-token check failing on its own is covered by
+  # service-account-token-automount-validate.
+  - policy: require-service-account-token-automount-disabled
+    isValidatingPolicy: true
+    result: pass
+    resources:
+      - token-in-all-container-types  # token removed by the mutation
+      - irsa-and-token                # kube-api-access removed, aws-iam-token is not a match
+      - no-token                      # nothing mounted
+      - token-volume-not-mounted      # volume present but no container mounts it
+  - policy: require-service-account-token-automount-disabled
+    isValidatingPolicy: true
+    result: skip
+    resources:
+      - exempt
+      - globally-exempt
+      - excluded-namespace
