@@ -16,6 +16,9 @@ spec:
         {{- include "aws-otel-collector.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ include "aws-otel-collector.serviceAccountName" . }}
+      {{- with .Values.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}

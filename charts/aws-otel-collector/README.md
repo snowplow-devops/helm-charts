@@ -53,6 +53,7 @@ helm delete aws-otel-collector --namespace kube-system
 | resources.requests.cpu | string | `"20m"` |  |
 | resources.requests.memory | string | `"100Mi"` |  |
 | tolerations | list | `[{"operator":"Exists"}]` | Tolerations for the collector pods. Defaults to tolerating all taints so the collector is scheduled onto every node in the cluster, including tainted nodes (e.g. Karpenter-provisioned nodes). Set to [] to disable and use default scheduling. |
+| priorityClassName | string | `""` | PriorityClass for the collector pods. A DaemonSet pod cannot move to another node, so on a full node it must be able to preempt Deployment pods to start. Empty uses the cluster's globalDefault PriorityClass. |
 | nodeSelector | object | `{}` | Node selector for constraining the collector to specific nodes |
 | affinity | object | `{}` | Affinity rules for the collector pods |
 | serviceAccount.create | bool | `true` | Whether to create a service account or not |
