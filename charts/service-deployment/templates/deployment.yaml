@@ -7,7 +7,7 @@ metadata:
 spec:
   {{- if .Values.deployment.scaleToZero }}
   replicas: 0
-  {{- else if not .Values.hpa.deploy }}
+  {{- else if and (not .Values.hpa.deploy) (not (kindIs "invalid" .Values.deployment.replicas)) }}
   replicas: {{ .Values.deployment.replicas }}
   {{- end }}
   selector:

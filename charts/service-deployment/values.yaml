@@ -285,6 +285,7 @@ deployment:
   # -- Can be either a "Deployment" or "StatefulSet"
   kind: "Deployment"
   # deployment replica can only be set if hpa.enabled = false
+  # set to null to leave replicas unset, e.g. when an external autoscaler such as KEDA owns the count
   replicas: 1
   # -- When enabled, disables the HPA and scales the deployment to zero replicas
   scaleToZero: false
