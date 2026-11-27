@@ -1,3 +1,7 @@
+Version 0.3.68 (2026-11-27)
+---------------------------
+charts/service-deployment-0.44.1: Leave replicas out of the Deployment when deployment.replicas is null and the HPA is off. It used to render an empty replicas field, so every upgrade sent replicas: null, Kubernetes reset the count to 1 and an external autoscaler such as KEDA had to scale back up. With a number set, or the HPA on, the rendered output is unchanged apart from the chart-version labels
+
 Version 0.3.67 (2026-11-24)
 ---------------------------
 charts/aws-otel-collector-0.19.0: Add priorityClassName (default ""), which sets the PriorityClass of the collector DaemonSet pods. A DaemonSet pod cannot move to another node, so without a class above the workloads on a full node it cannot preempt them and stays Pending. With default values the rendered output is unchanged apart from the chart-version labels
